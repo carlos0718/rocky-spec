@@ -63,4 +63,4 @@ Desarrolladores individuales o equipos chicos que usan uno o más agentes de có
 
 | Fecha | Cambio | Commit |
 |-------|--------|--------|
-| 2026-08-31 | Spec inicial vía Modo Adopción — RF-1 a RF-5, US-1 a US-6, RNF-1 a RNF-5 | (pendiente del primer commit) |
+| 2026-08-31 | Spec inicial vía Modo Adopción — RF-1 a RF-5, US-1 a US-6, RNF-1 a RNF-5 | `b90cf74` |
