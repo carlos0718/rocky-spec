@@ -27,8 +27,8 @@ dependencies = [
 dev = ["pytest>=7.0"]
 
 [project.urls]
-Homepage = "https://github.com/charly/spec-charless"
-Changelog = "https://github.com/charly/spec-charless/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/carlos0718/spec-charless"
+Changelog = "https://github.com/carlos0718/spec-charless/blob/master/CHANGELOG.md"
 
 [project.scripts]
 charless = "spec_charless.cli:main"
