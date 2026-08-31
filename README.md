@@ -4,6 +4,16 @@ Toolkit multi-agente para **Spec-Driven Development**, nivel **Spec-Anchored** (
 
 Nacido como una skill de Claude, ahora es un framework agnóstico de agente: la misma base de conocimiento (`.charless/`) sirve para Claude Code, Cursor, y los agentes que se agreguen — sin duplicar contenido entre ellos.
 
+## Tres nombres parecidos, tres cosas distintas
+
+| Nombre | Qué es | Dónde vive |
+|---|---|---|
+| **`charless`** | El comando que se tipea en la terminal | `[project.scripts]` en `pyproject.toml` |
+| **`spec-charless`** | (a) El nombre del paquete pip/PyPI, y (b) la skill de Claude Code que `charless init --agent claude` genera **dentro del proyecto destino** | (a) este repo, (b) `.claude/skills/spec-charless/SKILL.md` de cada proyecto — se invoca ahí como `/spec-charless` |
+| **`charless-ia`** | La skill **original**, la que se usa para desarrollar este framework y crear/adoptar/retomar proyectos (flujo P0→P8.5) | `~/.claude/skills/charless-ia/` — no viaja dentro de ningún proyecto destino |
+
+En criollo: `charless-ia` es la skill "meta" que construye cosas (incluido este mismo repo). `spec-charless` es el paquete que ese trabajo produce. `charless` es el nombre del comando una vez instalado. Cuando alguien corre `charless init --agent claude` sobre *su* proyecto, se genera ahí una skill nueva llamada `/spec-charless` — una copia empaquetada del conocimiento, no la misma skill `charless-ia`.
+
 ## Instalación
 
 Requiere **Python 3.9 o superior**. No hace falta clonar el repo ni compilar nada: `pip` sabe instalar directamente desde GitHub.
@@ -149,6 +159,7 @@ charless check qa .
 |---|---|
 | `charless` | Sin subcomando: muestra el banner de bienvenida (estado del proyecto si ya tiene `.charless/`, o la lista de agentes si es la primera vez) y la ayuda. |
 | `charless --version` | Imprime la versión instalada, leída de los metadatos del paquete. |
+| `charless commands` | Esta misma tabla, renderizada en la terminal. |
 | `charless init [PATH] --agent <agente>` | Instala el conocimiento compartido (`.charless/`) en `PATH` (default: `.`) y genera la integración de cada `--agent` (repetible: `--agent claude --agent cursor`). |
 | `charless init [PATH] --agent <agente> --force` | Igual que arriba, pero regenera `.charless/` aunque ya exista. |
 | `charless list-integrations` | Lista los agentes soportados por esta versión (`claude`, `cursor`). |

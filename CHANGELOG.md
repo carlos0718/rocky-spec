@@ -6,6 +6,12 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Added
+- **Rediseño de la pantalla de bienvenida** (`welcome.py`): todo el contenido queda envuelto en un borde único, título/autoría/tagline centrados, y la versión instalada visible junto al autor (`by Carlos Jesus · v0.3.1`).
+- **`charless commands`** — comando nuevo que imprime la tabla completa de comandos con su descripción (espejo de la tabla del README), para no tener que ir a buscarla fuera de la terminal.
+- La tabla de "Agentes soportados" del welcome ahora incluye una columna "Se invoca con", aclarando que `/spec-charless` (Claude Code) y `/charless-*` (Cursor) son comandos del **agente**, distintos de `charless` (la CLI).
+- README: nueva sección "Tres nombres parecidos, tres cosas distintas" — desambigua `charless` (comando), `spec-charless` (paquete pip + skill generada en el proyecto destino) y `charless-ia` (la skill original con la que se construye este framework).
+
 ## [0.3.1] - 2026-08-31
 
 ### Fixed

@@ -8,7 +8,7 @@ import click
 from . import scaffold
 from .integrations import INTEGRATION_REGISTRY, SHARED_DIR_NAME
 from .scripts import health_check, qa_review, version_check
-from .welcome import show_init_banner, show_welcome
+from .welcome import show_commands, show_init_banner, show_welcome
 
 
 @click.group(invoke_without_command=True)
@@ -60,6 +60,12 @@ def init(path: Path, agents: tuple[str, ...], force: bool) -> None:
 
     manifest_path.write_text(json.dumps(full_manifest, indent=2), encoding="utf-8")
     click.echo(f"\nListo. {len(agents)} integración(es) activa(s) en {project_root}")
+
+
+@main.command(name="commands")
+def commands() -> None:
+    """Lista todos los comandos de la CLI con su descripción."""
+    show_commands()
 
 
 @main.command(name="list-integrations")
