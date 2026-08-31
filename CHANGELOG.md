@@ -6,7 +6,11 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
-## [0.5.0] - 2026-08-31
+### Fixed
+- **El diseño del welcome se rompía al angostar la terminal** — `Text(BANNER, ...)` no tenía `no_wrap`/`overflow` seteados en el `console.print()` real, así que Rich repartía cada línea del ASCII art a la mitad e intercalaba los pedazos con la línea siguiente. Ahora usa `no_wrap=True, overflow="crop"` (crop limpio, sin corrupción), y por debajo de `BANNER_WIDTH` (~103 cols) muestra un título compacto ("SPEC CHARLESS") en vez de un banner recortado a la mitad.
+
+### Changed
+- **Los recuadros "Glosario" y "Agentes soportados"/"Este proyecto ya usa spec-charless" ahora se arman en dos columnas lado a lado cuando el ancho de la terminal alcanza para los dos** (`rich.columns.Columns`, centrado como grupo) — si no entran, se apilan uno debajo del otro, cada uno igual centrado (antes quedaban pegados a la izquierda). El layout se recalcula contra `console.width` en cada corrida, no queda fijo.
 
 ### Fixed
 - **`charless check qa` no detectaba placeholders con sintaxis `{{NOMBRE, default: valor}}`** que sobrevivían sin rellenar en el archivo final — `qa_review.py` tenía su propio regex, separado y más simple que el de `render_template.py`, que solo reconocía `{{NOMBRE}}`. Unificado: ahora reusa `render_template.find_unresolved()`, la misma fuente de verdad para "qué es un placeholder sin resolver" en todo el proyecto.
