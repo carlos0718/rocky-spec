@@ -11,6 +11,7 @@
 - [x] Instalación en modo editable (`pip install -e .`)
 - [x] `.gitignore` (agregado al hacer el health-check de seguridad — no existía)
 - [x] Primer commit + repo en GitHub (https://github.com/carlos0718/spec-charless)
+- [x] Crear rama `dev` desde `master` (ver `AGENTS.md` sección "Branching — GitFlow simplificado")
 
 ## Features iniciales
 - [x] `charless init` con soporte multi-agente (US-1)

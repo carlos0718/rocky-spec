@@ -63,7 +63,7 @@ spec-charless/
 
 - Naming: snake_case para módulos y funciones Python, kebab-case para el nombre del paquete
 - Commits: Conventional Commits (feat/fix/docs/test/chore)
-- Branches: main como única rama por ahora (proyecto de un solo mantenedor)
+- Branches: GitFlow simplificado — main / dev / feature/* / fix/*, ver sección "Branching" abajo
 - Todo el conocimiento (commands/reference/templates) en español; el código Python (nombres de funciones/variables/docstrings de una línea) en inglés cuando es más natural, comentarios largos en español
 
 ## Code style — boundaries
@@ -93,43 +93,61 @@ python3 -m build
 
 - (vacío al inicio, agregar acá problemas conocidos y workarounds)
 
-## Agregar o modificar features — flujo de iteración (Spec-Anchored)
+## Agregar o modificar código — flujo de iteración (Plan → Confirmar → Implementar)
 
 > **Spec-Anchored** es uno de los niveles reconocidos de Spec-Driven Development (junto a Spec-First y Spec-as-Source — ver `.charless/reference/methodologies.md` de la skill para el detalle). Significa que `SPEC.md` es un documento **vivo**: se actualiza en cada cambio de alcance, no solo una vez al principio del proyecto.
 
-**Regla:** antes de escribir cualquier línea de código para una feature nueva o un cambio de dominio, los documentos de arquitectura se actualizan primero y se commitean. El código siempre viene después de la spec.
+**Regla ampliada — no negociable:** ante **cualquier** pedido de cambio (feature nueva o corrección), el código nunca se toca en el mismo paso en que se recibe el pedido. Primero se decide si afecta el alcance de `SPEC.md`, después se muestra un plan breve, y recién con **confirmación explícita del usuario** se implementa. Nunca "aprovechar" que ya se entendió el pedido para adelantar el código — eso es exactamente lo que este flujo existe para evitar.
 
-### Cuándo aplica este flujo
+### Paso 1 — ¿Este pedido cambia el alcance de SPEC.md?
 
-- El usuario dice "quiero agregar X", "vamos a incorporar Y", "necesito que también haga Z"
-- El usuario dice "quitemos X", "simplificamos Y", "eso ya no va"
-- El usuario agrega una entidad nueva al dominio, cambia relaciones, o modifica reglas de negocio
+- **Sí** — es una feature nueva, cambia comportamiento ya documentado, agrega/quita una entidad de dominio, o cambia un requisito no funcional. Frases típicas: "quiero agregar X", "vamos a incorporar Y", "quitemos Z", "que también haga...".
+  → Ir al **Paso 2a**.
+- **No** — es una corrección puntual que no cambia lo que `SPEC.md` ya dice que el sistema debe hacer (el comportamiento esperado ya estaba documentado o implícito, y el código no lo cumplía).
+  → Ir al **Paso 2b**.
 
-### Pasos del flujo
+Si hay duda real sobre cuál de los dos es, preguntar antes de asumir — es más barato confirmar acá que deshacer un cambio de alcance no documentado.
+
+### Paso 2a — Si cambia el alcance: actualizar SPEC.md primero, después mostrar el plan
 
 ```
 1. SPEC.md primero
-   └── Agregar / quitar la feature en la tabla de prioridades (P0/P1/P2)
-   └── Agregar / quitar user stories si aplica
-   └── Actualizar criterios de aceptación del MVP
+   └── Agregar / quitar la feature en la tabla de prioridades (P0/P1/P2) con su RF-N
+   └── Agregar / quitar user stories (US-N) referenciando el RF-N que implementan
+   └── Actualizar criterios de aceptación del MVP y, si aplica, los RNF-N afectados
 
 2. Dominio (si la feature toca entidades o reglas de negocio)
    └── Actualizar diagrama de entidades en SPEC.md
    └── Actualizar DB schema en SPEC.md (agregar/modificar/eliminar tabla o columna)
    └── Actualizar API contracts si cambian endpoints
 
-3. TODO.md
-   └── Agregar las nuevas tareas en la sección correcta (Dominio/DB → API → Frontend)
-   └── Si se quitó algo, marcar o eliminar las tareas correspondientes
+3. Mostrar el plan de implementación técnica — QUÉ se va a tocar, en qué archivos,
+   en qué orden (Dominio/DB → API → Frontend, o por feature si el proyecto usa ese
+   modo). NO implementar todavía.
 
-4. COMMIT de documentación (antes del código)
-   └── git add SPEC.md TODO.md
-   └── git commit -m "docs: [agregar|quitar] feature X — spec y dominio actualizados"
-   └── git push
+4. Esperar confirmación explícita del usuario.
+```
 
-5. Implementar el código
-   └── Seguir el orden del TODO: DB → API → Frontend
-   └── Cada tarea = 1 commit + push (según la convención de git de este proyecto)
+**Recién con la confirmación**, commitear la documentación (`docs: agregar feature X — spec y dominio actualizados`) y pasar al Paso 3 de este documento (Implementar).
+
+### Paso 2b — Si NO cambia el alcance: mostrar el plan sin tocar SPEC.md ni código
+
+```
+1. Describir en 3-5 líneas: qué se va a cambiar, en qué archivo(s), y por qué
+   esto corrige el comportamiento sin alterar lo que SPEC.md ya documenta.
+2. Terminar con una pregunta explícita — "¿Avanzo con esto?" o equivalente.
+3. Esperar la respuesta. No continuar en el mismo turno asumiendo que sí.
+```
+
+Si en el camino de implementar la corrección se descubre que en realidad **sí** hay un cambio de alcance escondido (el bug era, en el fondo, un requisito mal documentado), pausar y volver al Paso 1 — no seguir de largo.
+
+### Paso 3 — Implementar (solo después de la confirmación, cualquiera de los dos caminos)
+
+```
+└── Antes de tocar código: ver "Branching — GitFlow simplificado" más abajo —
+    ¿estás en una rama feature/fix, o hay que crear una?
+└── Seguir el orden acordado en el plan (Dominio/DB → API → Frontend, o por feature)
+└── Cada tarea = 1 commit + push (según la convención de git de este proyecto)
 ```
 
 ### Formato del commit de documentación
@@ -142,7 +160,7 @@ docs: modificar dominio — [entidad] ahora tiene [cambio]
 
 ### Por qué este orden importa
 
-Si el código va antes que la spec, en 2 semanas el SPEC.md refleja lo que se pensó al principio, no lo que se construyó. El dominio queda desincronizado con la DB real. El TODO.md tiene tareas para features que ya no existen. Spec-Anchored evita eso: los documentos son siempre la fuente de verdad.
+Si el código va antes que la spec, en 2 semanas el SPEC.md refleja lo que se pensó al principio, no lo que se construyó. El dominio queda desincronizado con la DB real. El TODO.md tiene tareas para features que ya no existen. Spec-Anchored evita eso. Y si el código se implementa sin mostrar el plan primero, se pierde la oportunidad de corregir el rumbo **antes** de escribir — que es mucho más barato que corregirlo después.
 
 ---
 
@@ -207,6 +225,7 @@ Cada ítem del `TODO.md` (o del archivo de grupo correspondiente en `todos/`, si
 
 0. **Spec Drift Check** (ver detalle completo abajo): ¿el código que estoy por commitear agrega algo que no está en `SPEC.md`? Si sí, actualizar `SPEC.md` primero (con su línea en "Historial de cambios") y commitear ese cambio de doc junto con el código, o en un commit `docs:` separado inmediatamente antes.
 0-bis. **TODO Size Check** (ver detalle completo abajo): si este proyecto todavía usa el modo único (sin carpeta `todos/`), ¿`TODO.md` se está acercando al límite de tamaño? Si sí, avisar antes de seguir agregando tareas.
+0-ter. **Branch Discipline Check** (ver detalle completo en "Branching — GitFlow simplificado" más abajo): ¿la rama actual es `main` o `dev`? Si sí y el cambio no es trivial, avisar antes de commitear — se espera trabajar en `feature/<nombre>` o `fix/<nombre>`, no directo sobre las ramas principales.
 1. Editar `TODO.md` (modo único) o el archivo de grupo en `todos/` (modo orquestador) y marcar el checkbox como hecho: `- [ ]` → `- [x]`. En modo orquestador, si esa era la **última tarea del grupo**, actualizar también la fila correspondiente en la tabla "Estado por grupo" de `TODO.md`, en el mismo commit.
 1-bis. **Actualizar `CHANGELOG.md`** si el tipo del commit es `feat`, `fix`, o breaking change (ver tabla de arriba): agregar una línea bajo `[Unreleased]`, en la categoría correspondiente (`Added`/`Fixed`/`Changed`), en el mismo commit. Si el tipo no entra al changelog (`docs`, `test`, `chore`, etc.), no tocar `CHANGELOG.md`.
 2. Hacer `git add` de **los archivos de código relacionados a esa tarea + el archivo de TODO editado + `CHANGELOG.md` si se tocó, todo junto** (no mezclar varias tareas en un commit, y no dejar el TODO para un commit aparte)
@@ -272,6 +291,45 @@ wc -l TODO.md
 - **< 300 líneas**: sin acción.
 - **300-500 líneas**: avisar una vez, sin bloquear: *"`TODO.md` tiene [N] líneas y va camino a superar el límite recomendado — cuando quieras lo migramos a `todos/` (un archivo por capa o por feature, según cómo prefieras organizarlo). No hace falta ahora."*
 - **500+ líneas**: proponer la migración activamente antes de seguir agregando tareas nuevas: *"`TODO.md` ya superó las 500 líneas. Te propongo migrarlo a `todos/` ahora, antes de seguir sumando — muevo las tareas existentes por grupo, no se pierde nada, y `TODO.md` queda como orquestador. ¿Lo hacemos, y por capas o por features?"* Si el usuario confirma, aplicar el mecanismo de split de `.charless/commands/p6-p7-files-todo.md` sección "¿TODO único o dividido — y por qué eje?" usando las tareas ya existentes en vez de generar desde cero.
+
+## Branching — GitFlow simplificado
+
+**Regla:** `master` es siempre estable. `dev` es la rama de integración — el trabajo del día a día nunca se hace directo sobre `master` ni sobre `dev`, sino en una rama propia por feature o corrección.
+
+> Este repo usa `master` como rama troncal (histórica, no `main`) — el resto del esquema GitFlow es el mismo.
+
+- `master` → producción (en este caso, la versión publicada/taggeada del paquete), siempre en estado deployable.
+- `dev` → integración. Se crea una sola vez desde `master` al adoptar esta convención (ver tarea en `TODO.md`).
+- `feature/<nombre-corto>` → una feature nueva (lo que dispara el Paso 2a del flujo de arriba). Sale de `dev`, vuelve a `dev`.
+- `fix/<nombre-corto>` → una corrección (Paso 2b). Sale de `dev` (o de `master` si es un hotfix urgente), vuelve a la misma rama de la que salió.
+
+```bash
+# Una sola vez, al adoptar esta convención
+git checkout master
+git checkout -b dev
+git push -u origin dev
+
+# Al empezar a trabajar en algo nuevo
+git checkout dev
+git pull
+git checkout -b feature/nombre-corto    # o fix/nombre-corto
+
+# Al terminar, mergear de vuelta (o abrir PR, según cómo trabaje el equipo)
+git checkout dev
+git merge feature/nombre-corto
+git push
+```
+
+**Esto es insistente a propósito** — es común que esta convención quede escrita pero en la práctica todo se siga commiteando directo a `master`/`dev`. Por eso el Branch Discipline Check (paso 0-ter del Workflow de Git, arriba) no es solo una mención pasiva: antes de cada commit no trivial, si la rama actual es `master` o `dev`, avisar explícitamente y ofrecer crear la rama correspondiente ahí mismo — no asumir que "ya se sabe" y dejarlo pasar.
+
+**Recordatorio de versión al mergear a `dev` o `master`** (ver `.charless/reference/versioning.md` de la skill para el detalle completo): al mergear una rama `feature/*` o `fix/*`, recordar — no ejecutar solo, es una decisión del usuario — que corresponde bumpear la versión según el tipo de cambio:
+- Se mergeó al menos un `fix` → PATCH
+- Se mergeó al menos un `feat` → MINOR
+- Se mergeó algo con `!` o `BREAKING CHANGE` → MAJOR
+
+> "Antes de mergear a `dev`, recordatorio: esta rama trae [feat/fix/breaking], así que al taguear el próximo release correspondería subir la versión [MINOR/PATCH/MAJOR] (`{{version_actual}}` → `{{version_sugerida}}`). ¿Lo hacemos ahora o lo dejamos para cuando se junten más cambios?"
+
+No bumpear la versión en cada merge automáticamente — el recordatorio es para que la decisión de taguear un release no se pierda, no para reemplazar el criterio de "release es un hito, no cada commit" (ver "Versionado y releases" abajo).
 
 ## Versionado y releases — Semantic Versioning
 

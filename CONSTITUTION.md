@@ -6,7 +6,7 @@
 
 ## Gobernanza
 
-- **Versión de esta Constitution**: 1.0.0
+- **Versión de esta Constitution**: 1.1.0
 - **Fecha de ratificación**: 2026-08-31
 - **Última enmienda**: 2026-08-31
 
@@ -61,6 +61,7 @@ Estos patrones son la forma concreta en que este proyecto aplica el Artículo 1 
 ## Artículo 6 — Boundaries
 
 **Preguntar primero** (no asumir, confirmar con el humano antes de aplicar):
+- Cualquier feature nueva o corrección: mostrar el plan (con o sin cambio de `SPEC.md`, según corresponda) y esperar confirmación explícita antes de tocar código — ver `AGENTS.md` sección "Agregar o modificar código (Plan → Confirmar → Implementar)". Esta regla es la base de todas las demás de este artículo.
 - Cambios de arquitectura que tocan 3+ módulos.
 - Agregar una dependencia nueva no trivial (más de un wrapper chico).
 - Desactivar alguno de los artículos de esta Constitution para este proyecto puntual.
@@ -77,6 +78,7 @@ Estos patrones son la forma concreta en que este proyecto aplica el Artículo 1 
 - Los commits siguen **Conventional Commits** — el tipo (`feat`/`fix`/`feat!`) no es una etiqueta libre, determina el bump de SemVer y si entra al `CHANGELOG.md`.
 - La versión del proyecto sigue **SemVer** (`MAJOR.MINOR.PATCH`) — romper compatibilidad es siempre MAJOR, sin excepción, incluso si el cambio fue chico de programar.
 - Un release (tag de versión) es una decisión explícita, nunca automática por acumulación de commits.
+- El trabajo del día a día se hace en `feature/*`/`fix/*`, nunca directo sobre `master`/`dev` — ver `AGENTS.md` sección "Branching". Al mergear a `dev` o `master`, recordar (no ejecutar solo) si corresponde bumpear versión.
 
 Detalle completo, ejemplos y la relación con los snapshots de `specs/` en `.charless/reference/versioning.md` de la skill.
 
@@ -100,3 +102,4 @@ Excepciones explícitas a algún artículo de arriba, acordadas para este proyec
 | Fecha | Versión | Cambio | Motivo |
 |-------|---------|--------|--------|
 | 2026-08-31 | 1.0.0 | Ratificación inicial | Setup del proyecto (P6) |
+| 2026-08-31 | 1.1.0 | Artículo 6: regla de Plan → Confirmar → Implementar. Artículo 7: adopción de branching GitFlow simplificado (`master`/`dev`/`feature`/`fix`) | Pedido explícito del usuario de empezar a aplicar la metodología GitFlow de ahora en adelante |
