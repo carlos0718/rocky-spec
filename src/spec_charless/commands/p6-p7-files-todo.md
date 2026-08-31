@@ -4,6 +4,22 @@
 
 Crear, dentro del directorio del proyecto, copiando desde `.charless/templates/`:
 
+**Si `charless` está disponible**: en vez de copiar cada `.template` y reemplazar `{{PLACEHOLDER}}` a mano, volcar todos los valores recolectados hasta acá (stack de P3, tipo/descripción de P1, decisiones de P5.6/P5.7, licencia elegida más abajo, etc.) a un JSON plano y correr `charless build`:
+
+```bash
+# .charless/build-values.json
+{
+  "PROJECT_NAME": "...", "PROJECT_TYPE": "...", "FRONTEND": "...", "BACKEND": "...",
+  "LICENSE_CHOICE": "mit",
+  "...": "el resto de los {{PLACEHOLDER}} que aparezcan en cada .template"
+}
+```
+```bash
+charless build . --values .charless/build-values.json
+```
+
+Genera `CONSTITUTION.md`, `SPEC.md`, `AGENTS.md`, `CLAUDE.md`, `SECURITY.md`, `OBSERVABILITY.md`, `CHANGELOG.md`, `README.md`, `TODO.md` y `LICENSE` (si se pasó `LICENSE_CHOICE`) en una sola pasada, y reporta qué placeholder quedó sin resolver por archivo — no pisa un archivo que ya exista salvo `--force`. **Si no está disponible**, copiar cada template a mano y reemplazar los placeholders uno por uno, con el mismo criterio de abajo.
+
 **Rellenar la sección "Stack" y "Overview del proyecto" de `AGENTS.md`** con la tabla final de P3 (`{{FRONTEND}}`, `{{BACKEND}}`, `{{ORM_DB}}`, `{{STYLES}}`, `{{TESTING}}`, `{{OTHER_TOOLS}}`) y el tipo de proyecto de P1 (`{{PROJECT_TYPE}}`, `{{PROJECT_DESCRIPTION}}` — mismo texto que `SPEC.md` "Descripción", no reescribir). Si alguna capa no aplica (ej. proyecto sin backend), completar con "—", no dejar el placeholder ni inventar un valor.
 
 **Código / híbrido**:

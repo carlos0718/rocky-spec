@@ -162,6 +162,7 @@ charless check qa .
 | `charless commands` | Esta misma tabla, renderizada en la terminal. |
 | `charless init [PATH] --agent <agente>` | Instala el conocimiento compartido (`.charless/`) en `PATH` (default: `.`) y genera la integración de cada `--agent` (repetible: `--agent claude --agent cursor`). |
 | `charless init [PATH] --agent <agente> --force` | Igual que arriba, pero regenera `.charless/` aunque ya exista. |
+| `charless build [PATH] --values <json> [--force]` | Renderiza `SPEC.md`, `CONSTITUTION.md`, `AGENTS.md`, `CLAUDE.md`, `SECURITY.md`, `OBSERVABILITY.md`, `CHANGELOG.md`, `README.md`, `TODO.md` y `LICENSE` desde `.charless/templates/` a partir de un JSON de valores — no pisa archivos existentes salvo `--force`. |
 | `charless list-integrations` | Lista los agentes soportados por esta versión (`claude`, `cursor`). |
 | `charless check code [PATH]` | Health-check: tamaño de archivo y code smells estructurales. |
 | `charless check security [PATH]` | Health-check: `.env` commiteado, secrets hardcodeados, vulnerabilidades conocidas. |

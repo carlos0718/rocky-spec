@@ -7,6 +7,7 @@ import click
 
 from . import scaffold
 from .integrations import INTEGRATION_REGISTRY, SHARED_DIR_NAME
+from .scripts import build as build_script
 from .scripts import health_check, qa_review, version_check
 from .welcome import show_commands, show_init_banner, show_welcome
 
@@ -60,6 +61,39 @@ def init(path: Path, agents: tuple[str, ...], force: bool) -> None:
 
     manifest_path.write_text(json.dumps(full_manifest, indent=2), encoding="utf-8")
     click.echo(f"\nListo. {len(agents)} integración(es) activa(s) en {project_root}")
+
+
+@main.command(name="build")
+@click.argument("path", type=click.Path(exists=True, file_okay=False, path_type=Path), default=".")
+@click.option(
+    "--values",
+    "values_path",
+    type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    required=True,
+    help="JSON plano {PLACEHOLDER: valor} para rellenar los templates. Clave especial "
+    "LICENSE_CHOICE (mit/apache2/proprietary) para generar LICENSE.",
+)
+@click.option("--force", is_flag=True, help="Sobrescribir archivos que ya existan en el proyecto.")
+def build(path: Path, values_path: Path, force: bool) -> None:
+    """Renderiza los archivos base (SPEC.md, CONSTITUTION.md, AGENTS.md...) desde .charless/templates/."""
+    project_root = path.resolve()
+    values = json.loads(values_path.read_text(encoding="utf-8"))
+    result = build_script.build(project_root, values, force=force)
+
+    for f in result.generated:
+        click.echo(f"✓ {f}")
+    for f in result.skipped_existing:
+        click.echo(f"⏭  {f} ya existe — usá --force para regenerarlo")
+    for f, placeholders in result.unresolved.items():
+        click.echo(f"⚠️  {f}: placeholders sin rellenar — {', '.join(placeholders)}")
+    if result.invalid_license_choice:
+        click.echo(
+            f"⚠️  LICENSE_CHOICE='{result.invalid_license_choice}' no es válido "
+            f"({', '.join(sorted(build_script.LICENSE_CHOICES))}) — LICENSE no se generó"
+        )
+
+    if not result.generated and not result.skipped_existing:
+        click.echo("Nada para generar — ¿corriste `charless init` antes? (falta .charless/templates/)")
 
 
 @main.command(name="commands")

@@ -75,6 +75,7 @@ COMMANDS = [
     ("charless commands", "Esta tabla."),
     ("charless init [PATH] --agent <agente>", "Instala .charless/ y genera la integración de cada --agent (repetible)."),
     ("charless init [PATH] --agent <agente> --force", "Igual que arriba, pero regenera .charless/ aunque ya exista."),
+    ("charless build [PATH] --values <json> [--force]", "Renderiza SPEC.md/CONSTITUTION.md/AGENTS.md/... desde .charless/templates/ a partir de un JSON de valores."),
     ("charless list-integrations", "Lista los agentes soportados por esta versión."),
     ("charless check code [PATH]", "Health-check: tamaño de archivo y code smells estructurales."),
     ("charless check security [PATH]", "Health-check: secrets hardcodeados, .env commiteado, vulnerabilidades."),

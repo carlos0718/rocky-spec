@@ -12,6 +12,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 ### Changed
 - **`mode-adopt.md` (MA-1.5/1.6/1.7) y `p7.5-qa-review.md` (Pasos 1 y 4) ahora prefieren los `charless check *` deterministas** en vez de duplicar la misma lógica en heurísticos de `find`/`grep`/`wc -l` como único camino — el heurístico en prosa queda como fallback explícito para cuando `charless` no está instalado. `health_check.py` ya se declaraba a sí mismo "equivalente determinista" de estos pasos en sus propios docstrings; faltaba conectarlo. Segundo paso de tres para cerrar la brecha entre los checks en código y las instrucciones que sigue el LLM.
 
+### Added
+- **`charless build`** (RF-8/US-10) — conecta `render_template.py` (existía, con tests propios, pero nada lo llamaba) al flujo real de P6/P7. Toma un JSON plano de valores y renderiza `CONSTITUTION.md`, `SPEC.md`, `AGENTS.md`, `CLAUDE.md`, `SECURITY.md`, `OBSERVABILITY.md`, `CHANGELOG.md`, `README.md`, `TODO.md` y `LICENSE` (si se pasa `LICENSE_CHOICE`) desde `.charless/templates/*.template` en una sola pasada — no pisa un archivo que ya exista salvo `--force`, y reporta placeholders sin resolver por archivo (mismo `find_unresolved()` que ya usa `check qa`). `p6-p7-files-todo.md` documenta correrlo en vez de que el LLM copie cada template y reemplace los marcadores a mano. Tercer y último paso del plan para cerrar la brecha entre los checks deterministas y las instrucciones en prosa del flujo P0-P8.5.
+
 ## [0.4.0] - 2026-08-31
 
 ### Added
