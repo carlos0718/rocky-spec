@@ -35,4 +35,3 @@ charless = "spec_charless.cli:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/spec_charless"]
-
