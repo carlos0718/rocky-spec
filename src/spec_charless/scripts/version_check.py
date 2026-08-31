@@ -19,7 +19,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 CONVENTIONAL_TYPE_PATTERN = re.compile(r"^(?P<type>\w+)(\([^)]*\))?(?P<breaking>!)?:\s")
-BREAKING_FOOTER_PATTERN = re.compile(r"BREAKING CHANGE:")
+# El footer BREAKING CHANGE: es, por convención, su propia línea/párrafo al
+# final del commit -- anclado a inicio de línea para no confundir una mención
+# suelta dentro de una viñeta o una oración con el footer real.
+BREAKING_FOOTER_PATTERN = re.compile(r"^BREAKING[ -]CHANGE:", re.MULTILINE)
 
 FIX_BUDGET_WARN = 3  # 3-5 fixes acumulados en una feature -> aviso suave (🟡)
 FIX_BUDGET_STRONG = 6  # 6+ -> aviso fuerte (🔴), mismo patrón que el TODO Size Check

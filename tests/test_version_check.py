@@ -110,6 +110,26 @@ def test_breaking_change_footer_in_body_bumps_major(repo: Path) -> None:
     assert report.bump == "major"
 
 
+def test_breaking_change_mentioned_mid_bullet_is_not_a_real_footer(repo: Path) -> None:
+    _git(["tag", "v0.6.0"], repo)
+    path = repo / "file.txt"
+    path.write_text("cambio\n")
+    _git(["add", "file.txt"], repo)
+    _git(
+        [
+            "commit",
+            "-m",
+            "feat: agregar deteccion de footer\n\n"
+            "- BREAKING CHANGE: se detecta en el body, no en el subject",
+        ],
+        repo,
+    )
+
+    report = version_check.check_version(repo)
+
+    assert report.bump == "minor"
+
+
 def test_fix_budget_warning_escalates_on_feature_branch(repo: Path) -> None:
     _git(["checkout", "-b", "dev"], repo)
     _git(["checkout", "-b", "feature/algo"], repo)
