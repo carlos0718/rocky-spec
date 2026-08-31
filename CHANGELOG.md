@@ -6,6 +6,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-08-31
+
 ### Fixed
 - **El diseño del welcome se rompía al angostar la terminal** — `Text(BANNER, ...)` no tenía `no_wrap`/`overflow` seteados en el `console.print()` real, así que Rich repartía cada línea del ASCII art a la mitad e intercalaba los pedazos con la línea siguiente. Ahora usa `no_wrap=True, overflow="crop"` (crop limpio, sin corrupción), y por debajo de `BANNER_WIDTH` (~103 cols) muestra un título compacto ("SPEC CHARLESS") en vez de un banner recortado a la mitad.
 
