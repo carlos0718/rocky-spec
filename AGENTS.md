@@ -320,6 +320,8 @@ git merge feature/nombre-corto
 git push
 ```
 
+**El merge nunca es automático — es un punto de parada explícito, no el último paso de una cadena.** Después de commitear y pushear la rama `feature/*`/`fix/*` (o de dejar lista una rama `dev` para un release), parar ahí y mostrar al usuario un resumen del cambio: qué se hizo, qué archivos se tocaron, resultado de tests/checks relevantes. Recién con confirmación explícita ("mergeo", "dale", "sí") ejecutar `git merge` — nunca encadenar commit → push → merge sin que el usuario vea qué se está por integrar a `dev` o `master`. Esto aplica igual a ambos sentidos del merge: `feature/*`/`fix/*` → `dev`, y `dev` → `master` en un release.
+
 **Esto es insistente a propósito** — es común que esta convención quede escrita pero en la práctica todo se siga commiteando directo a `master`/`dev`. Por eso el Branch Discipline Check (paso 0-ter del Workflow de Git, arriba) no es solo una mención pasiva: antes de cada commit no trivial, si la rama actual es `master` o `dev`, avisar explícitamente y ofrecer crear la rama correspondiente ahí mismo — no asumir que "ya se sabe" y dejarlo pasar.
 
 **Sugerencia de versión al mergear `feature/*`/`fix/*` → `dev`** (o `fix/*` → `master` en un hotfix — ver `.charless/reference/versioning.md` de la skill para el detalle completo): antes de ese merge, correr `charless check version .` — calcula el bump exacto a partir de los commits reales desde el último tag (Conventional Commits, regla "el más alto gana": MAJOR > MINOR > PATCH, nunca se apilan varios bumps), en vez de que el agente tenga que "acordarse" en prosa. Mostrar el resultado al usuario y preguntar si se taguea ahora o se deja para cuando se junten más cambios — **nunca taguear solo**, es una decisión del usuario.

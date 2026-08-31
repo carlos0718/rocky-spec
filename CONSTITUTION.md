@@ -6,7 +6,7 @@
 
 ## Gobernanza
 
-- **Versión de esta Constitution**: 1.1.0
+- **Versión de esta Constitution**: 1.2.0
 - **Fecha de ratificación**: 2026-08-31
 - **Última enmienda**: 2026-08-31
 
@@ -79,6 +79,7 @@ Estos patrones son la forma concreta en que este proyecto aplica el Artículo 1 
 - La versión del proyecto sigue **SemVer** (`MAJOR.MINOR.PATCH`) — romper compatibilidad es siempre MAJOR, sin excepción, incluso si el cambio fue chico de programar.
 - Un release (tag de versión) es una decisión explícita, nunca automática por acumulación de commits.
 - El trabajo del día a día se hace en `feature/*`/`fix/*`, nunca directo sobre `master`/`dev` — ver `AGENTS.md` sección "Branching". Al mergear a `dev` o `master`, recordar (no ejecutar solo) si corresponde bumpear versión.
+- **El merge nunca es automático** — después de commitear y pushear una rama, parar y mostrar un resumen del cambio antes de ejecutar `git merge`, esperando confirmación explícita. Nunca encadenar commit → push → merge sin que el usuario vea qué se integra a `dev`/`master`.
 
 Detalle completo, ejemplos y la relación con los snapshots de `specs/` en `.charless/reference/versioning.md` de la skill.
 
@@ -103,3 +104,4 @@ Excepciones explícitas a algún artículo de arriba, acordadas para este proyec
 |-------|---------|--------|--------|
 | 2026-08-31 | 1.0.0 | Ratificación inicial | Setup del proyecto (P6) |
 | 2026-08-31 | 1.1.0 | Artículo 6: regla de Plan → Confirmar → Implementar. Artículo 7: adopción de branching GitFlow simplificado (`master`/`dev`/`feature`/`fix`) | Pedido explícito del usuario de empezar a aplicar la metodología GitFlow de ahora en adelante |
+| 2026-08-31 | 1.2.0 | Artículo 7: el merge nunca es automático — parar y mostrar un resumen antes de ejecutar `git merge`, esperar confirmación explícita | Pedido explícito del usuario tras notar que los merges a `dev`/`master` se venían ejecutando en cadena sin pausa |

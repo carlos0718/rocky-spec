@@ -6,6 +6,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Changed
+- **El merge nunca es automático** (`AGENTS.md` sección "Branching", `CONSTITUTION.md` Artículo 7, y sus templates): después de commitear y pushear una rama `feature/*`/`fix/*` (o de dejar `dev` lista para un release), el flujo ahora exige parar y mostrar un resumen del cambio antes de ejecutar `git merge`, esperando confirmación explícita — nunca encadenar commit → push → merge sin que el usuario vea qué se integra a `dev`/`master`. Pedido explícito del usuario tras notar que los merges se venían haciendo en cadena sin pausa.
+
 ## [0.5.0] - 2026-08-31
 
 ### Fixed
