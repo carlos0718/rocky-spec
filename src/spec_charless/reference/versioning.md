@@ -60,6 +60,12 @@ Formato `MAJOR.MINOR.PATCH` (ej. `1.4.2`):
 
 **Regla de oro**: la versión de un paquete/API describe **el contrato con quien lo consume**, no el esfuerzo que costó — un cambio interno enorme que no afecta la interfaz pública puede ser un PATCH; un cambio de una línea que rompe un endpoint es MAJOR.
 
+**El número de versión vive en un solo lugar del código — nunca hardcodeado en varios.** Si el número aparece suelto en más de un archivo (ej. `pyproject.toml` y además una constante `VERSION = "1.2.3"` en el código fuente), tarde o temprano alguien actualiza uno y se olvida del otro — y ahí `--version` empieza a mentir. La forma correcta es leerlo en runtime desde donde ya está declarado una vez:
+- **Python**: `importlib.metadata.version("nombre-del-paquete")` en vez de una constante propia (con un fallback tipo `"0.0.0+sin-instalar"` para cuando se corre desde el código fuente sin instalar).
+- **Node**: `require("./package.json").version` en vez de duplicarlo en el código.
+
+Si el proyecto ya tiene una constante de versión hardcodeada en más de un archivo, es una señal de deuda técnica — migrarla a fuente única la primera vez que se toque ese código, no dejarla para "después".
+
 ## Keep a Changelog
 
 `CHANGELOG.md` sigue el formato de [Keep a Changelog](https://keepachangelog.com/): orden cronológico inverso (lo último arriba), y cada versión agrupa sus cambios en categorías fijas:
@@ -110,6 +116,11 @@ gh release create v0.2.0 --notes-file <(sed -n '/## \[0.2.0\]/,/## \[/p' CHANGEL
 ```
 
 **Cuándo taguear**: no en cada commit ni en cada `feat`/`fix` — en hitos reales: primer deploy a producción, antes de un cambio grande, o cuando el usuario lo pide explícitamente. Para proyectos que son librerías/paquetes publicados (npm, PyPI), taguear en cada publish es la norma.
+
+**Caso especial — distribución vía `git+https://...` antes de publicar en un registry**: si el proyecto todavía no está en PyPI/npm y se instala directo desde el repo (`pip install git+https://...`, `npm install git+https://...`), **cada push a la rama principal ya es una publicación de hecho** — cualquiera puede instalar el estado actual en cualquier momento, aunque nadie haya "publicado" nada formalmente. Esto tensiona con la regla de arriba ("no taguear en cada commit"): si no se taguea con más disciplina en esta fase, dos personas que instalan en momentos distintos terminan con código distinto reportando el mismo número de versión — el número deja de significar algo confiable. Mitigación mínima:
+- Taguear cada vez que se hace un cambio que alguien podría instalar y notar (más seguido que "recién cuando hay un release formal", pero no en cada commit chico).
+- Recomendar siempre instalar fijando un tag o commit específico (`pip install git+https://...@v0.1.0`), nunca la rama flotante — es la única forma de que "instalé la v0.1.0" signifique lo mismo para todos.
+- Si un tag se declaró en el `CHANGELOG.md` pero nunca se creó de verdad (`git tag` faltante), el release no está completo — no alcanza con escribir la sección del changelog.
 
 **Relación con los snapshots de `specs/`**: cerrar una fase de producto (ver `.charless/reference/methodologies.md` sección "Snapshots de fase") y hacer un release de código son decisiones parecidas pero independientes — pueden coincidir (cerrar el MVP y taguear `v1.0.0` el mismo día) o no.
 

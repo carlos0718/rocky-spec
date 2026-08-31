@@ -4,9 +4,10 @@ import shutil
 from importlib import resources
 from pathlib import Path
 
+from . import __version__
 from .integrations import CommandDefinition, SHARED_DIR_NAME
 
-CHARLESS_VERSION = "0.2.0"
+CHARLESS_VERSION = __version__  # fuente única: metadatos del paquete (ver __init__.py)
 
 # key -> (título legible, nombre de archivo dentro de commands/)
 # El orden acá es el orden real del flujo de creación (P0 -> P8.5).
