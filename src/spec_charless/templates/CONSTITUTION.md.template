@@ -27,7 +27,7 @@
 | **YAGNI** | No implementar lo que no se necesita hoy. |
 | **Clean Code** | Nombres que se explican solos. Funciones < 30 líneas. Early returns. Logs estructurados, nunca `console.log("texto")` — ver `OBSERVABILITY.md` para la librería y el formato exacto de este proyecto. |
 
-Detalle completo, ejemplos y contraejemplos en `~/.claude/skills/charless-ia/.charless/reference/coding-principles.md`.
+Detalle completo, ejemplos y contraejemplos en `.charless/reference/coding-principles.md` de la skill.
 
 ## Artículo 2 — Tamaño y estructura de archivos
 
