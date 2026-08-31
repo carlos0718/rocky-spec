@@ -13,9 +13,10 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from .render_template import find_unresolved
+
 ID_PATTERN = re.compile(r"\b(RF|US|RNF)-(\d+)\b")
 IMPLEMENTS_PATTERN = re.compile(r"implementa (RF-\d+)")
-PLACEHOLDER_PATTERN = re.compile(r"\{\{([A-Z_][A-Z0-9_]*)\}\}")
 
 
 @dataclass
@@ -42,7 +43,7 @@ def check_placeholder_completeness(*files: Path) -> dict[str, list[str]]:
         if not f.exists():
             continue
         text = f.read_text(encoding="utf-8", errors="ignore")
-        found = sorted(set(PLACEHOLDER_PATTERN.findall(text)))
+        found = find_unresolved(text)
         if found:
             result[str(f)] = found
     return result

@@ -16,6 +16,18 @@ def test_check_placeholder_completeness_empty_when_resolved(tmp_path):
     assert result == {}
 
 
+def test_check_placeholder_completeness_detects_placeholder_with_inline_default(tmp_path):
+    # Regresion: antes de unificar con render_template.find_unresolved(), un
+    # placeholder con sintaxis `{{NOMBRE, default: valor}}` que sobrevivia sin
+    # rellenar en el archivo final no se detectaba -- el regex propio de
+    # qa_review solo reconocia `{{NOMBRE}}` simple.
+    f = tmp_path / "SECURITY.md"
+    f.write_text("Hasheo: {{PASSWORD_HASHING, default: bcrypt}}\n")
+    result = qa_review.check_placeholder_completeness(f)
+    assert str(f) in result
+    assert result[str(f)] == ["PASSWORD_HASHING"]
+
+
 def test_traceability_detects_orphan_rf(tmp_path):
     spec = tmp_path / "SPEC.md"
     spec.write_text("RF-1 Login\nRF-2 Perfil\nUS-1 (implementa RF-1): login\n")

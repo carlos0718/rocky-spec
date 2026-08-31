@@ -6,6 +6,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Fixed
+- **`charless check qa` no detectaba placeholders con sintaxis `{{NOMBRE, default: valor}}`** que sobrevivían sin rellenar en el archivo final — `qa_review.py` tenía su propio regex, separado y más simple que el de `render_template.py`, que solo reconocía `{{NOMBRE}}`. Unificado: ahora reusa `render_template.find_unresolved()`, la misma fuente de verdad para "qué es un placeholder sin resolver" en todo el proyecto.
+
 ## [0.4.0] - 2026-08-31
 
 ### Added
