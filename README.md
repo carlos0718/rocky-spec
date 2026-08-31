@@ -96,6 +96,60 @@ charless check observability .
 charless check qa .
 ```
 
+### Comandos disponibles
+
+| Comando | Qué hace |
+|---|---|
+| `charless` | Sin subcomando: muestra el banner de bienvenida (estado del proyecto si ya tiene `.charless/`, o la lista de agentes si es la primera vez) y la ayuda. |
+| `charless --version` | Imprime la versión instalada, leída de los metadatos del paquete. |
+| `charless init [PATH] --agent <agente>` | Instala el conocimiento compartido (`.charless/`) en `PATH` (default: `.`) y genera la integración de cada `--agent` (repetible: `--agent claude --agent cursor`). |
+| `charless init [PATH] --agent <agente> --force` | Igual que arriba, pero regenera `.charless/` aunque ya exista. |
+| `charless list-integrations` | Lista los agentes soportados por esta versión (`claude`, `cursor`). |
+| `charless check code [PATH]` | Health-check: tamaño de archivo y code smells estructurales. |
+| `charless check security [PATH]` | Health-check: `.env` commiteado, secrets hardcodeados, vulnerabilidades conocidas. |
+| `charless check observability [PATH]` | Health-check: error tracking, health endpoint, logging estructurado. |
+| `charless check qa [PATH]` | Trazabilidad RF → US → RNF → tarea y placeholders sin rellenar. |
+
+`PATH` es opcional en todos los `check` — por default corre sobre el directorio actual (`.`).
+
+## Cómo trabaja
+
+```mermaid
+flowchart TD
+    subgraph repo["Repo spec-charless (este repo)"]
+        knowledge["src/spec_charless/<br/>commands/ · reference/ · templates/"]
+    end
+
+    init["charless init --agent claude --agent cursor"]
+
+    subgraph dest["Proyecto destino"]
+        shared[".charless/<br/>(copia versionada del conocimiento)"]
+        claude_int[".claude/skills/spec-charless/SKILL.md"]
+        cursor_int[".cursor/commands/*.md<br/>.cursor/rules/charless.mdc"]
+    end
+
+    agent["Claude Code / Cursor<br/>(sesión del agente)"]
+    files["SPEC.md · CONSTITUTION.md · AGENTS.md<br/>SECURITY.md · OBSERVABILITY.md · TODO.md · ..."]
+    checks["charless check code / security / observability / qa"]
+
+    knowledge -->|se copia una sola vez| init
+    init --> shared
+    init --> claude_int
+    init --> cursor_int
+
+    claude_int -->|apunta a| shared
+    cursor_int -->|apunta a| shared
+
+    agent -->|lee el puntero de su integración| claude_int
+    agent -->|lee el puntero de su integración| cursor_int
+    agent -->|sigue el índice P0→P8 / MA / modo resume| shared
+    agent -->|genera / actualiza| files
+
+    checks -.->|corre código determinista,<br/>no depende del agente| files
+```
+
+**Cómo leerlo**: el conocimiento (`commands/`, `reference/`, `templates/`) vive una sola vez, en este repo. `charless init` lo copia a `.charless/` dentro del proyecto destino y genera un puntero delgado por cada agente elegido — el agente (Claude Code, Cursor) lee ese puntero y de ahí sigue hacia `.charless/`, que es la fuente real de instrucciones. Los `charless check` son código Python determinista que audita los archivos generados (`SPEC.md`, `SECURITY.md`, etc.) directamente, sin pasar por el agente.
+
 ## Cómo está armado
 
 ```
@@ -110,7 +164,7 @@ src/spec_charless/
 ├── scaffold.py                (copia el conocimiento a .charless/ del proyecto destino)
 ├── integrations/
 │   ├── base.py                (IntegrationBase — contrato que cumple cada agente)
-│   ├── claude.py               (genera .claude/skills/charless-ia/SKILL.md)
+│   ├── claude.py               (genera .claude/skills/spec-charless/SKILL.md)
 │   └── cursor.py                (genera .cursor/commands/*.md + .cursor/rules/charless.mdc)
 └── scripts/
     ├── render_template.py       (relleno determinista de {{PLACEHOLDER}})
@@ -124,7 +178,7 @@ src/spec_charless/
 
 | Agente | Formato generado |
 |---|---|
-| Claude Code | `.claude/skills/charless-ia/SKILL.md` |
+| Claude Code | `.claude/skills/spec-charless/SKILL.md` |
 | Cursor | `.cursor/commands/charless-*.md` + `.cursor/rules/charless.mdc` |
 
 ## Licencia
