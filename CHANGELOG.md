@@ -6,8 +6,12 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Fixed
+- **El diseño del welcome se rompía al angostar la terminal** — `Text(BANNER, ...)` no tenía `no_wrap`/`overflow` seteados en el `console.print()` real, así que Rich repartía cada línea del ASCII art a la mitad e intercalaba los pedazos con la línea siguiente. Ahora usa `no_wrap=True, overflow="crop"` (crop limpio, sin corrupción), y por debajo de `BANNER_WIDTH` (~103 cols) muestra un título compacto ("SPEC CHARLESS") en vez de un banner recortado a la mitad.
+
 ### Changed
 - **El merge nunca es automático** (`AGENTS.md` sección "Branching", `CONSTITUTION.md` Artículo 7, y sus templates): después de commitear y pushear una rama `feature/*`/`fix/*` (o de dejar `dev` lista para un release), el flujo ahora exige parar y mostrar un resumen del cambio antes de ejecutar `git merge`, esperando confirmación explícita — nunca encadenar commit → push → merge sin que el usuario vea qué se integra a `dev`/`master`. Pedido explícito del usuario tras notar que los merges se venían haciendo en cadena sin pausa.
+- **Los recuadros "Glosario" y "Agentes soportados"/"Este proyecto ya usa spec-charless" ahora se arman en dos columnas lado a lado cuando el ancho de la terminal alcanza para los dos** (`rich.columns.Columns`, centrado como grupo) — si no entran, se apilan uno debajo del otro, cada uno igual centrado (antes quedaban pegados a la izquierda). El layout se recalcula contra `console.width` en cada corrida, no queda fijo.
 
 ## [0.5.0] - 2026-08-31
 

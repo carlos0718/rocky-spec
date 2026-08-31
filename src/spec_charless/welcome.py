@@ -14,7 +14,9 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from rich.console import Console, Group
+from rich.align import Align
+from rich.columns import Columns
+from rich.console import Console, Group, RenderableType
 from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
@@ -32,6 +34,16 @@ BANNER = r"""
 ███████║██║     ███████╗╚██████╗    ╚██████╗██║  ██║██║  ██║██║  ██║███████╗███████╗███████║███████║
 ╚══════╝╚═╝     ╚══════╝ ╚═════╝     ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚══════╝
 """.strip("\n")
+
+# Ancho natural del arte ASCII -- si la terminal no entra, se muestra un
+# título compacto en vez de romper el arte a la mitad (ver _banner_renderable).
+BANNER_WIDTH = max(len(line) for line in BANNER.splitlines())
+COMPACT_TITLE = "SPEC CHARLESS"
+
+# Borde (1 char c/lado) + padding=(1, 2) (2 chars c/lado) del Panel exterior
+# de show_welcome -- se resta al ancho de la consola para saber cuánto
+# espacio real tiene el contenido de adentro.
+OUTER_PANEL_OVERHEAD = 6
 
 AUTHOR = "by Carlos Jesus"
 
@@ -115,6 +127,34 @@ def _commands_table() -> Table:
     return table
 
 
+def _banner_renderable(available_width: int) -> Text:
+    """Arte ASCII completo si entra; si no, un título compacto en vez de
+    dejar que Rich reparta cada línea a la mitad (lo que rompía el diseño
+    al angostar la terminal por debajo de BANNER_WIDTH)."""
+    if available_width >= BANNER_WIDTH:
+        return Text(BANNER, style="bold cyan", justify="center", no_wrap=True, overflow="crop")
+    return Text(COMPACT_TITLE, style="bold cyan", justify="center")
+
+
+def _centered_panels(available_width: int, *panels: Panel) -> RenderableType:
+    """Panel único: centrado. Dos paneles: en columnas lado a lado si
+    entran ambos con margen, si no, apilados (cada uno igual centrado)."""
+    if len(panels) == 1:
+        return Align.center(panels[0])
+
+    widths = [console.measure(p).maximum for p in panels]
+    gap = 2
+    if sum(widths) + gap * (len(panels) - 1) <= available_width:
+        return Align.center(Columns(panels, padding=(0, gap), expand=False))
+
+    stacked: list[RenderableType] = []
+    for i, p in enumerate(panels):
+        if i > 0:
+            stacked.append("")
+        stacked.append(Align.center(p))
+    return Group(*stacked)
+
+
 def show_commands() -> None:
     """``charless commands`` -- la tabla completa, con descripción, de todo
     lo que la CLI sabe hacer. Espejo del README, no de la skill/agente."""
@@ -130,9 +170,14 @@ def show_commands() -> None:
 
 def show_welcome(project_root: Path | None = None) -> None:
     """Pantalla de bienvenida. Si ``project_root`` ya tiene ``.charless/``,
-    muestra el estado actual del proyecto en vez del onboarding genérico."""
+    muestra el estado actual del proyecto en vez del onboarding genérico.
+
+    El layout se recalcula contra el ancho real de la terminal en cada
+    corrida (``console.width``) -- nada queda fijo de una corrida a otra."""
+    available_width = max(console.width - OUTER_PANEL_OVERHEAD, 20)
+
     header = Group(
-        Text(BANNER, style="bold cyan", justify="center"),
+        _banner_renderable(available_width),
         Text(f"{AUTHOR}  ·  v{__version__}", style="dim italic", justify="center"),
         Text(TAGLINE, style="italic", justify="center"),
     )
@@ -144,10 +189,9 @@ def show_welcome(project_root: Path | None = None) -> None:
         body.append(f"  • {line}")
     body.append("")
 
-    body.append(
-        Panel(_glossary_table(), title="[bold]Glosario[/bold]", border_style="dim", expand=False)
+    glossary_panel = Panel(
+        _glossary_table(), title="[bold]Glosario[/bold]", border_style="dim", expand=False
     )
-    body.append("")
 
     shared = (project_root or Path(".")) / SHARED_DIR_NAME
     manifest_path = shared / "install-manifest.json"
@@ -158,28 +202,26 @@ def show_welcome(project_root: Path | None = None) -> None:
         if manifest_path.exists():
             active = set(json.loads(manifest_path.read_text()).keys())
 
-        body.append(
-            Panel(
-                _integrations_table(active),
-                title=f"[bold]Este proyecto ya usa spec-charless[/bold] (.charless/ v{version})",
-                border_style="green",
-                expand=False,
-            )
+        integrations_panel = Panel(
+            _integrations_table(active),
+            title=f"[bold]Este proyecto ya usa spec-charless[/bold] (.charless/ v{version})",
+            border_style="green",
+            expand=False,
         )
+        body.append(_centered_panels(available_width, glossary_panel, integrations_panel))
         body.append(
             "\nPróximos pasos: [cyan]charless check qa .[/cyan] · "
             "[cyan]charless init --agent <otro>[/cyan] para sumar un agente más · "
             "[cyan]charless commands[/cyan] para ver todos los comandos"
         )
     else:
-        body.append(
-            Panel(
-                _integrations_table(),
-                title="[bold]Agentes soportados[/bold]",
-                border_style="cyan",
-                expand=False,
-            )
+        integrations_panel = Panel(
+            _integrations_table(),
+            title="[bold]Agentes soportados[/bold]",
+            border_style="cyan",
+            expand=False,
         )
+        body.append(_centered_panels(available_width, glossary_panel, integrations_panel))
         body.append(
             "\nEmpezar: [cyan]charless init . --agent claude[/cyan] "
             "(repetí --agent para instalar más de uno) · "
