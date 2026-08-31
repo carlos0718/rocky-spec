@@ -18,12 +18,59 @@ uv tool install git+https://github.com/carlos0718/spec-charless.git
 pipx install git+https://github.com/carlos0718/spec-charless.git
 ```
 
+**¿No tenés `uv` o `pipx` todavía?** Ninguno de los dos viene instalado por default — hace falta instalarlos primero:
+
+<details>
+<summary><b>Instalar uv</b></summary>
+
+```powershell
+# Windows (PowerShell)
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+```bash
+# macOS / Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+# o, si ya tenés Python: pip install uv
+```
+
+Detalle y otros métodos (Homebrew, Scoop, etc.) en la [guía oficial](https://docs.astral.sh/uv/getting-started/installation/).
+</details>
+
+<details>
+<summary><b>Instalar pipx</b></summary>
+
+```powershell
+# Windows
+py -m pip install --user pipx
+.\pipx.exe ensurepath
+```
+
+```bash
+# macOS
+brew install pipx
+pipx ensurepath
+```
+
+```bash
+# Linux (Ubuntu/Debian con apt, o vía pip en el resto)
+sudo apt install pipx  # o: python3 -m pip install --user pipx
+pipx ensurepath
+```
+
+Detalle en la [guía oficial](https://pipx.pypa.io/latest/how-to/install-pipx.html).
+</details>
+
+**Reiniciá la terminal después de instalar `uv`/`pipx`** — el comando de instalación agrega su carpeta al PATH, pero la sesión actual de la terminal no se entera hasta que la reabrís.
+
+> **Si `charless --version` da "no se reconoce como comando" después de instalar**: el ejecutable se instaló bien (podés verificarlo con `uv tool list` / `pipx list`), pero su carpeta todavía no está en el PATH de la sesión actual. Corré `uv tool update-shell` (o `pipx ensurepath` si usaste pipx) y **reabrí la terminal** — es un paso aparte que no se hace solo durante el `install`.
+
 ### Fijar una versión
 
 Sin sufijo, los comandos de arriba instalan la punta de `master`, que puede moverse entre una instalación y otra. Para reproducibilidad, agregá `@` y el tag de la versión:
 
 ```bash
-uv tool install "git+https://github.com/carlos0718/spec-charless.git@v0.2.0"
+uv tool install "git+https://github.com/carlos0718/spec-charless.git@v0.3.0"
 ```
 
 Las versiones publicadas están en [Releases](https://github.com/carlos0718/spec-charless/releases), con sus notas en el [CHANGELOG](CHANGELOG.md).
