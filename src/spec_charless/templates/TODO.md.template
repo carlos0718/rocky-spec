@@ -27,6 +27,7 @@
 - [ ] Configurar variables de entorno (.env)
 - [ ] Inicializar repo git y primer commit
 - [ ] Conectar a GitHub / GitLab
+- [ ] Crear rama `dev` desde `main` (ver `AGENTS.md` sección "Branching — GitFlow simplificado")
 - [ ] Configurar CI básico
 
 ## Features iniciales

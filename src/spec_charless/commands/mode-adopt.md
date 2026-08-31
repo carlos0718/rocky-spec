@@ -30,7 +30,10 @@ Procesar los resultados para detectar:
 | **Testing** | deps: `vitest`, `jest`, `playwright`, `cypress` |
 | **ORM / DB** | deps: `prisma`, `drizzle-orm`, `mongoose`, `typeorm` |
 | **Arquitectura** | carpetas en `src/`: `features/`, `components/`, `domain/`, `pages/`, `api/`, `routes/` |
+| **Branching** | `git branch -a` → ¿existe `dev`? `git log --oneline -20` → ¿los commits recientes son directo sobre `main`/`dev`, o vienen de ramas `feature/*`/`fix/*` mergeadas? |
 | **Archivos de skill** | `AGENTS.md`, `CLAUDE.md`, `SPEC.md`, `TODO.md`, `design-system/MASTER.md` — qué ya existe |
+
+Si no existe `dev`, se crea en MA-6 al generar `AGENTS.md` (queda como tarea en el TODO si el usuario prefiere hacerlo después). Si los commits recientes son mayormente directo sobre ramas principales, es un hallazgo 🟡 — se reporta en MA-2 igual que salud del código/seguridad/observabilidad, no se fuerza un cambio de hábito sin avisar primero.
 
 ### MA-1.5 · Health check — tamaño de archivos y code smells
 
