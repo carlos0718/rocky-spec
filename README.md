@@ -6,11 +6,68 @@ Nacido como una skill de Claude, ahora es un framework agnóstico de agente: la 
 
 ## Instalación
 
+Requiere **Python 3.9 o superior**. No hace falta clonar el repo ni compilar nada: `pip` sabe instalar directamente desde GitHub.
+
+### Recomendado — como herramienta aislada (`uv` o `pipx`)
+
+Instala `charless` en su propio entorno y lo deja disponible en el PATH, sin ensuciar tu Python del sistema. Mismo comando en **Windows, Linux y macOS**:
+
 ```bash
-pip install -e .
-# o, cuando esté publicado:
-# uv tool install spec-charless
+uv tool install git+https://github.com/carlos0718/spec-charless.git
+# o, si preferís pipx:
+pipx install git+https://github.com/carlos0718/spec-charless.git
 ```
+
+### Alternativa — con `pip` en un entorno virtual
+
+<details>
+<summary><b>Windows</b> (PowerShell)</summary>
+
+```powershell
+py -m venv .venv
+.venv\Scripts\Activate.ps1
+py -m pip install git+https://github.com/carlos0718/spec-charless.git
+```
+</details>
+
+<details>
+<summary><b>Linux / macOS</b></summary>
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install "git+https://github.com/carlos0718/spec-charless.git"
+```
+</details>
+
+> En Linux y macOS instalar con `pip` fuera de un entorno virtual suele fallar con `externally-managed-environment` — es una protección del sistema operativo, no un error del paquete. Usá `uv`/`pipx` o un venv.
+
+Verificá que quedó bien:
+
+```bash
+charless --version
+charless list-integrations
+```
+
+### Actualizar y desinstalar
+
+```bash
+uv tool upgrade spec-charless      # o: pipx upgrade spec-charless
+uv tool uninstall spec-charless    # o: pipx uninstall spec-charless
+```
+
+Con `pip`, reinstalá agregando `--force-reinstall` al comando de instalación.
+
+### Para desarrollar sobre la herramienta
+
+```bash
+git clone https://github.com/carlos0718/spec-charless.git
+cd spec-charless
+pip install -e ".[dev]"
+pytest
+```
+
+> **Nota:** todavía no está publicado en PyPI, así que `pip install spec-charless` (sin la URL de git) no funciona. Se instala desde el repo con los comandos de arriba.
 
 ## Uso
 

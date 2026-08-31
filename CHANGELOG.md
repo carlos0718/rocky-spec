@@ -11,6 +11,7 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 - Banner ampliado: "CHARLESS" ahora tiene el mismo arte ASCII (fuente `ansi_shadow`) que "SPEC", con "by Carlos Jesus" como autoría. Sumada una reseña de features del kit y un glosario de siglas propias (RF, US, RNF, MA, P) antes de la tabla de integraciones.
 
 ### Changed
+- Instalación: el README documenta `uv tool install` / `pipx install` / `pip install` desde el repo (`git+https://...`) para Windows, Linux y macOS, con verificación, actualización y desinstalación. PyPI deja de ser requisito de uso y pasa a mejora opcional (RF-6/US-8).
 - Rename del paquete: `charless-cli` → `spec-charless` (el comando sigue siendo `charless`, corto para tipear).
 
 ### Added

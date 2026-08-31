@@ -26,7 +26,8 @@
 - [x] Documentación y templates generados en español (RNF-4)
 - [x] Tracking por hash de instalación — `uninstall` no pisa ediciones manuales (US-6)
 - [x] Interfaz de bienvenida con rich (banner SPEC+CHARLESS, autoría, features, glosario, estado del proyecto)
-- [ ] Publicar en PyPI (US-7)
+- [x] Documentar la instalación desde el repo para Windows, Linux y macOS (US-7)
+- [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
 - [ ] Integración con Gemini CLI
 - [ ] Integración con Codex CLI
 - [ ] Integración con Windsurf

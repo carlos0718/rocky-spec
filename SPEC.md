@@ -18,7 +18,8 @@ Desarrolladores individuales o equipos chicos que usan uno o más agentes de có
 | RF-2 | P0 (must) | Arquitectura de integraciones extensible | Registry de plugins (`IntegrationBase`) — agregar un agente nuevo no requiere tocar el conocimiento compartido ni las integraciones existentes |
 | RF-3 | P0 (must) | Health-checks deterministas | `charless check {code,security,observability,qa}` — código real, no prosa que un LLM interpreta cada vez |
 | RF-4 | P1 (should) | Instalación no destructiva | Tracking por hash de instalación — desinstalar nunca pisa archivos editados a mano por el usuario |
-| RF-5 | P2 (nice) | Publicación en registry público | Distribución vía PyPI (`pip install spec-charless`), hoy se instala en modo editable desde el repo |
+| RF-5 | P1 (should) | Instalación reproducible desde el repo | `pip install git+https://github.com/carlos0718/spec-charless.git` en Windows, Linux y macOS, sin clonar ni compilar |
+| RF-6 | P3 (opcional) | Publicación en registry público | Distribución vía PyPI (`pip install spec-charless`). No bloquea el uso: RF-5 ya cubre la instalación en las tres plataformas |
 
 ## User Stories clave
 
@@ -28,7 +29,8 @@ Desarrolladores individuales o equipos chicos que usan uno o más agentes de có
 - **US-4** (implementa RF-3): Como desarrollador, quiero correr `charless check security` sobre mi proyecto, para detectar secrets hardcodeados y archivos fuera de límite sin depender de que un LLM lo interprete bien cada vez
 - **US-5** (implementa RF-3): Como desarrollador, quiero correr `charless check qa`, para saber si hay historias de usuario sin tarea asociada o requisitos no funcionales sin plan de trabajo
 - **US-6** (implementa RF-4): Como desarrollador, quiero desinstalar una integración sin perder los archivos que edité a mano después de instalarla
-- **US-7** (implementa RF-5): Como mantenedor, quiero publicar el paquete en PyPI, para que se instale con `pip install spec-charless` en vez de clonar el repo
+- **US-7** (implementa RF-5): Como desarrollador en Windows, Linux o macOS, quiero instalar la herramienta con un solo comando apuntando al repo, para usarla sin clonarlo ni configurar un entorno de desarrollo
+- **US-8** (implementa RF-6): Como mantenedor, quiero publicar el paquete en PyPI, para que se instale con `pip install spec-charless` con un nombre corto y versiones fijadas
 
 ## Criterios de aceptación — MVP listo cuando:
 
@@ -37,6 +39,7 @@ Desarrolladores individuales o equipos chicos que usan uno o más agentes de có
 - [x] Los tres health-checks (`code`, `security`, `observability`) corren sin depender de que un LLM interprete bash
 - [ ] El chequeo de trazabilidad (`qa`) corre sobre un proyecto real generado por la propia herramienta
 - [ ] Al menos una integración adicional (Gemini o Codex) funcionando de punta a punta
+- [x] El README documenta la instalación desde el repo para Windows, Linux y macOS (US-7)
 
 ## Requisitos no funcionales
 
@@ -52,7 +55,7 @@ Desarrolladores individuales o equipos chicos que usan uno o más agentes de có
 
 ## Fuera del alcance (v1)
 
-- Publicación en PyPI — hoy se instala en modo editable (`pip install -e .`) desde el repo
+- Publicación en PyPI (RF-6) — se instala directo desde el repo con `pip install git+...`, que cubre las tres plataformas; PyPI queda como mejora de conveniencia, no como requisito de uso
 - Integraciones con Windsurf, GitHub Copilot, Gemini CLI, Codex CLI — la arquitectura las soporta, faltan escribirse
 - CI/CD automatizado (tests corren manualmente, no hay pipeline)
 - Sistema de extensiones/presets al estilo Spec Kit (por ahora la única forma de customizar es editar `.charless/` directamente en el proyecto)
@@ -64,3 +67,4 @@ Desarrolladores individuales o equipos chicos que usan uno o más agentes de có
 | Fecha | Cambio | Commit |
 |-------|--------|--------|
 | 2026-08-31 | Spec inicial vía Modo Adopción — RF-1 a RF-5, US-1 a US-6, RNF-1 a RNF-5 | `b90cf74` |
+| 2026-08-31 | RF-5 redefinido: la instalación reproducible desde el repo (las tres plataformas) reemplaza a PyPI como requisito. PyPI pasa a RF-6/US-8, prioridad opcional. Nueva US-7 para la instalación multiplataforma | `HEAD` |
