@@ -6,6 +6,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-08-31
+
 ### Fixed
 - **README — instalación con `uv`/`pipx` daba error en la práctica**, por dos motivos que faltaba documentar: (1) el README asumía que `uv`/`pipx` ya estaban instalados, sin explicar cómo instalarlos; (2) después de `uv tool install`/`pipx install`, el ejecutable queda en una carpeta que no está en el PATH de la sesión actual hasta correr `uv tool update-shell`/`pipx ensurepath` y reabrir la terminal — el instalador no lo hace solo. Reproducido y verificado contra `v0.3.0` real antes de escribir la corrección.
 
