@@ -37,6 +37,8 @@ Si no existe `dev`, se crea en MA-6 al generar `AGENTS.md` (queda como tarea en 
 
 ### MA-1.5 · Health check — tamaño de archivos y code smells
 
+**Si `charless` está disponible** (`pip install spec-charless` o `uvx spec-charless`), correr `charless check code .` — es la versión determinista y probada de este mismo chequeo (ver `health_check.check_file_sizes`), evita repetir el heurístico de abajo a mano. **Si no está disponible**, aplicar el criterio manual:
+
 Correr un chequeo rápido de salud del código existente, sobre los archivos de código (ignorando `node_modules/`, `dist/`, `build/`, `.git/`):
 
 ```bash
@@ -56,6 +58,8 @@ Además, un grep rápido (no exhaustivo — esto es un chequeo conversacional, n
 Guardar la lista de archivos flaggeados — se muestra en MA-2 y se usa como semilla de deuda técnica en MA-7.
 
 ### MA-1.6 · Health check — seguridad
+
+**Si `charless` está disponible**, correr `charless check security .` — versión determinista de la parte `.env`/secrets/`npm audit` de este chequeo (`health_check.check_security`). La extensión de dependencias sin usar y licencias (más abajo) no está cubierta por ese comando todavía — sigue siendo heurística manual en cualquier caso. **Sin `charless`**, aplicar todo el criterio manual:
 
 Correr un chequeo rápido de seguridad sobre el código existente (heurístico, no reemplaza una auditoría — ver `.charless/reference/security.md`):
 
@@ -91,6 +95,8 @@ Guardar la lista de hallazgos — se muestra en MA-2 junto a la salud del códig
 **Nunca mostrar el valor del secret encontrado** en el reporte — solo el archivo y la línea. Mostrar el valor sería repetir el problema de seguridad que se está reportando.
 
 ### MA-1.7 · Health check — observabilidad
+
+**Si `charless` está disponible**, correr `charless check observability .` — versión determinista de este chequeo (`health_check.check_observability`). **Si no está disponible**, aplicar el criterio manual:
 
 Correr un chequeo rápido de observabilidad sobre el proyecto existente (heurístico — ver `.charless/reference/observability.md`):
 

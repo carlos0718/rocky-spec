@@ -9,6 +9,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 ### Fixed
 - **`charless check qa` no detectaba placeholders con sintaxis `{{NOMBRE, default: valor}}`** que sobrevivían sin rellenar en el archivo final — `qa_review.py` tenía su propio regex, separado y más simple que el de `render_template.py`, que solo reconocía `{{NOMBRE}}`. Unificado: ahora reusa `render_template.find_unresolved()`, la misma fuente de verdad para "qué es un placeholder sin resolver" en todo el proyecto.
 
+### Changed
+- **`mode-adopt.md` (MA-1.5/1.6/1.7) y `p7.5-qa-review.md` (Pasos 1 y 4) ahora prefieren los `charless check *` deterministas** en vez de duplicar la misma lógica en heurísticos de `find`/`grep`/`wc -l` como único camino — el heurístico en prosa queda como fallback explícito para cuando `charless` no está instalado. `health_check.py` ya se declaraba a sí mismo "equivalente determinista" de estos pasos en sus propios docstrings; faltaba conectarlo. Segundo paso de tres para cerrar la brecha entre los checks en código y las instrucciones que sigue el LLM.
+
 ## [0.4.0] - 2026-08-31
 
 ### Added
