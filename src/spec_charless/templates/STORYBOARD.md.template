@@ -1,0 +1,56 @@
+# Storyboard — {{PROJECT_NAME}}
+
+> {{DURATION}}s · {{ASPECT_RATIO}} · {{PLATFORM}}
+
+## Beat sheet
+
+| # | Tiempo | Visual | Audio | Notas |
+|---|---|---|---|---|
+| 1 | 0–1s | Hero shot del producto, fondo negro | Whoosh + bajo | Entrar con corte seco |
+| 2 | 1–3s | Producto inicia rotación, primeros ingredientes | Beat 1 | Cámara fija |
+| 3 | 3–5s | Burst completo, splash de líquido | Drop + impact | Punto máximo de energía |
+| 4 | 5–6s | Logo + CTA | Tail del drop | Frame final estático |
+
+## Frames clave
+
+### Frame 1 — Hero shot
+- Referencia visual: `04-raw-frames/hero/<file>.png`
+- Generado con: <tool> · prompt en `prompts.md` §1
+- Notas:
+
+### Frame 2 — Mid-spin
+- Referencia visual: `04-raw-frames/hero/<file>.png`
+- Generado con: <tool> · prompt en `prompts.md`
+- Notas:
+
+### Frame 3 — Burst final
+- Referencia visual: `04-raw-frames/hero/final-<file>.png`
+- Generado con: <tool> · prompt en `prompts.md` §2
+- Notas:
+
+### Frame 4 — Logo / CTA
+- Referencia visual:
+- Notas:
+
+## Transición principal
+
+De Frame 2 → Frame 3, usando img→video.
+Prompt en `prompts.md` §3.
+Clip elegido: `05-clips/selects/<file>.mp4`
+
+## Audio
+
+- **Música**: (link / nombre del track / archivo)
+- **SFX**:
+  - 0:00 whoosh
+  - 0:03 impact + drop
+  - 0:05 tail
+- **VO** (si aplica):
+
+## Exports planificados
+
+- [ ] 9:16 master (.mp4 H.264)
+- [ ] 9:16 sin sonido (subtítulos quemados)
+- [ ] 1:1 cut para feed
+- [ ] 16:9 cut para YouTube
+- [ ] Thumbnail (1 frame, .jpg)

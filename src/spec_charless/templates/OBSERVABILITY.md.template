@@ -1,0 +1,39 @@
+# Observability — {{PROJECT_NAME}}
+
+> Generado por skill `charless-ia` · Ver `.charless/reference/observability.md` de la skill para el detalle completo de cada decisión. Documento vivo — se actualiza cada vez que cambia una decisión de observabilidad, con su línea en "Historial de cambios".
+>
+> Seguridad (`SECURITY.md`) responde "¿alguien está atacando esto?". Este archivo responde **"¿esto está funcionando bien ahora mismo, y si no, por qué?"**.
+
+## Nivel de exigencia de este proyecto
+
+- **Escala**: {{OBSERVABILITY_SCALE}} <!-- Prototipo/demo | Producto real, pocos usuarios | Producto con SLA/crítico -->
+
+## Decisiones de este proyecto
+
+| Área | Decisión |
+|---|---|
+| **Error tracking** | {{ERROR_TRACKING_TOOL, default: Sentry}} |
+| **Logging** | {{LOGGING_LIBRARY}} — formato JSON, niveles debug/info/warn/error |
+| **Dónde van los logs** | {{LOGS_DESTINATION, default: stdout, capturado por la plataforma de deploy}} |
+| **Health check** | `{{HEALTH_ENDPOINT_PATH, default: /health}}` — chequea: {{HEALTH_CHECKS_LIST}} <!-- ej. conexión a DB --> |
+| **Uptime monitoring** | {{UPTIME_MONITOR_TOOL, default: no configurado}} |
+| **Métricas** | {{METRICS_APPROACH, default: dashboard nativo de la plataforma}} |
+
+## Setup
+
+- [ ] Variable de entorno `{{ERROR_TRACKING_DSN_VAR, default: SENTRY_DSN}}` configurada en `.env` y en la plataforma de deploy (ver `SECURITY.md` gestión de secrets)
+- [ ] Logger estructurado inicializado (`{{LOGGING_LIBRARY}}`)
+- [ ] Endpoint `{{HEALTH_ENDPOINT_PATH}}` respondiendo antes del primer deploy
+- [ ] Uptime monitor apuntando a `{{HEALTH_ENDPOINT_PATH}}` en producción (si aplica según nivel de exigencia)
+
+## Qué nunca loguear
+
+Passwords, tokens completos, números de tarjeta, cualquier secret — ver `.charless/reference/security.md` de la skill. Si hace falta debuggear la presencia de un valor sensible, loguear `Boolean(valor)`, nunca el valor.
+
+---
+
+## Historial de cambios
+
+| Fecha | Cambio | Commit |
+|-------|--------|--------|
+| {{DATE}} | Observability inicial (P5.7) | {{INITIAL_COMMIT}} |

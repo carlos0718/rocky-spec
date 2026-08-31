@@ -1,0 +1,41 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "spec-charless"
+version = "0.1.0"
+description = "Toolkit multi-agente para Spec-Driven Development — nivel Spec-Anchored. Bootstrapea proyectos con SPEC.md, CONSTITUTION.md, AGENTS.md y el resto del ciclo de vida, para el agente de código que elijas (Claude Code, Cursor, y más por venir)."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+authors = [{ name = "Charly" }]
+keywords = ["spec-driven-development", "sdd", "ai-agents", "claude", "cursor", "scaffolding"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Code Generators",
+]
+dependencies = [
+    "click>=8.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[project.urls]
+Homepage = "https://github.com/charly/spec-charless"
+Changelog = "https://github.com/charly/spec-charless/blob/main/CHANGELOG.md"
+
+[project.scripts]
+charless = "spec_charless.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/spec_charless"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"src/spec_charless/commands" = "spec_charless/commands"
+"src/spec_charless/reference" = "spec_charless/reference"
+"src/spec_charless/templates" = "spec_charless/templates"

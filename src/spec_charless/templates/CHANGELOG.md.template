@@ -1,0 +1,26 @@
+# Changelog
+
+Todos los cambios notables de {{PROJECT_NAME}} se documentan en este archivo.
+
+El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/) (ver `.charless/reference/versioning.md` de la skill `charless-ia` para el criterio completo de qué entra acá y cómo se decide cada bump de versión).
+
+## [Unreleased]
+
+<!-- Cada feat/fix/breaking change agrega su línea acá, en el mismo commit que el código — ver AGENTS.md sección "Workflow de Git". Se vacía (se mueve a una versión con fecha) al hacer un release. -->
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [0.1.0] - {{DATE}}
+
+### Added
+- Setup inicial del proyecto ({{PROJECT_NAME}}, generado con skill `charless-ia`)

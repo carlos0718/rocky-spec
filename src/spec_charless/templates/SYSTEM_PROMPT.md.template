@@ -1,0 +1,279 @@
+# System Prompt — {{PROJECT_NAME}}
+
+> Contexto completo del proyecto para cualquier agente de IA que trabaje en este codebase.
+> Cubre decisiones de UI/UX, arquitectura técnica, SEO y accesibilidad.
+> **Generado automáticamente al cierre del proyecto** con `/charless-ia`.
+> Si lo abrís en un proyecto nuevo similar, sirve como punto de partida — adaptá lo que cambie (paleta, copy, datos) y reusá las decisiones.
+
+---
+
+## Identidad del proyecto
+
+{{PROJECT_IDENTITY}}
+
+<!-- Ejemplo:
+**PawCare** es una landing page para una petshop ficticia en Buenos Aires, Argentina.
+Ofrece servicios de baño, grooming, veterinaria y tienda de productos.
+Tono: cálido, profesional, cercano — nunca frío ni corporativo.
+-->
+
+---
+
+## Stack técnico
+
+| Capa | Tecnología | Notas |
+|---|---|---|
+| Framework | {{FRAMEWORK}} | {{FRAMEWORK_NOTES}} |
+| Lenguaje | {{LANGUAGE}} | {{LANGUAGE_NOTES}} |
+| Estilos | {{STYLES}} | {{STYLES_NOTES}} |
+| Animaciones | {{ANIMATIONS}} | {{ANIMATIONS_NOTES}} |
+| Estado | {{STATE_MANAGEMENT}} | {{STATE_NOTES}} |
+| Data fetching | {{DATA_FETCHING}} | {{DATA_NOTES}} |
+| Forms | {{FORMS}} | {{FORMS_NOTES}} |
+| Auth | {{AUTH}} | {{AUTH_NOTES}} |
+| Backend / API | {{BACKEND}} | {{BACKEND_NOTES}} |
+| DB / ORM | {{DATABASE}} | {{DATABASE_NOTES}} |
+| Testing | {{TESTING}} | {{TESTING_NOTES}} |
+| Deploy | {{DEPLOY}} | {{DEPLOY_NOTES}} |
+
+### Comandos
+
+```bash
+{{DEV_COMMAND}}      # desarrollo local
+{{BUILD_COMMAND}}    # producción
+{{PREVIEW_COMMAND}}  # preview del build
+{{TEST_COMMAND}}     # tests
+{{LINT_COMMAND}}     # linter
+```
+
+---
+
+## Arquitectura de carpetas
+
+```
+{{FOLDER_TREE}}
+```
+
+**Decisiones clave de estructura**:
+
+- {{ARCH_DECISION_1}}
+- {{ARCH_DECISION_2}}
+- {{ARCH_DECISION_3}}
+
+---
+
+## Sistema de diseño
+
+### Paleta de colores
+
+| Token | Valor | Uso |
+|---|---|---|
+| `{{TOKEN_PRIMARY}}` | `{{COLOR_PRIMARY}}` | {{USE_PRIMARY}} |
+| `{{TOKEN_ACCENT}}` | `{{COLOR_ACCENT}}` | {{USE_ACCENT}} |
+| `{{TOKEN_BG}}` | `{{COLOR_BG}}` | {{USE_BG}} |
+| `{{TOKEN_DARK}}` | `{{COLOR_DARK}}` | {{USE_DARK}} |
+| `{{TOKEN_GRAY}}` | `{{COLOR_GRAY}}` | {{USE_GRAY}} |
+
+> {{COLOR_GOTCHAS}}
+<!-- ej. "Regla crítica — Tailwind v4: bg-[--color-X] no siempre resuelve var() en backgrounds.
+       Usar clases nativas para fondos críticos." -->
+
+### Tipografía
+
+- **Fuente**: {{FONT_FAMILY}} (fallback: {{FONT_FALLBACK}})
+- **Headings**: {{HEADING_STYLE}}
+- **Body**: {{BODY_STYLE}}
+- **Labels / overlines**: {{LABEL_STYLE}}
+
+### Jerarquía de botones
+
+| Nivel | Estilo | Uso |
+|---|---|---|
+| CTA principal | `{{BTN_PRIMARY_CLASS}}` | {{BTN_PRIMARY_USE}} |
+| Secundario | `{{BTN_SECONDARY_CLASS}}` | {{BTN_SECONDARY_USE}} |
+| Acción form | `{{BTN_FORM_CLASS}}` | {{BTN_FORM_USE}} |
+
+### Espaciado y layout
+
+- {{SPACING_NOTES}}
+- Breakpoints: {{BREAKPOINTS}}
+- {{LAYOUT_NOTES}}
+
+### Efectos / patrones visuales
+
+{{VISUAL_PATTERNS}}
+<!-- ej. "Efecto bookend: header y footer oscuros, contenido central claro.
+       Patitas decorativas bicolor distribuidas en arrays por sección." -->
+
+---
+
+## Secciones — descripción y decisiones
+
+{{SECTIONS_DETAIL}}
+
+<!-- Una sub-sección por cada sección del proyecto. Formato:
+
+### {{SECTION_NAME}}
+- Fondo: {{BG}}
+- Layout: {{LAYOUT}}
+- Componentes clave: {{COMPONENTS}}
+- Decisión particular: {{DECISION}}
+- Gotcha si aplica: {{GOTCHA}}
+-->
+
+---
+
+## Animaciones — reglas
+
+{{ANIMATION_RULES}}
+
+<!-- Ejemplos del patrón cinematic/PawCare:
+- Secciones: `whileInView` + `viewport={{ once: true }}` — no repetir al scroll back.
+- Hero: `animate` directo, no `whileInView`.
+- LCP element (h1): SIN animación (no bloquear paint).
+- Floats decorativos: `repeat: Infinity, ease: 'easeInOut'`.
+- Duraciones: 0.4–0.6s entradas, 3–4s floats.
+-->
+
+---
+
+## SEO
+
+| Elemento | Estado | Valor |
+|---|---|---|
+| `<title>` | {{SEO_TITLE_STATUS}} | {{SEO_TITLE_VALUE}} |
+| `<meta description>` | {{SEO_DESC_STATUS}} | {{SEO_DESC_VALUE}} |
+| `<html lang>` | {{SEO_LANG_STATUS}} | `{{SEO_LANG_VALUE}}` |
+| `<meta theme-color>` | {{SEO_THEME_STATUS}} | `{{SEO_THEME_VALUE}}` |
+| `robots.txt` | {{SEO_ROBOTS_STATUS}} | {{SEO_ROBOTS_VALUE}} |
+| `preconnect` / `preload` | {{SEO_PRECONNECT_STATUS}} | {{SEO_PRECONNECT_VALUE}} |
+| Sitemap | {{SEO_SITEMAP_STATUS}} | {{SEO_SITEMAP_VALUE}} |
+| Open Graph | {{SEO_OG_STATUS}} | {{SEO_OG_VALUE}} |
+| Schema.org | {{SEO_SCHEMA_STATUS}} | {{SEO_SCHEMA_VALUE}} |
+
+> {{SEO_PENDING_NOTES}}
+
+---
+
+## Accesibilidad — WCAG 2.1 AA
+
+| Elemento | Estado | Detalle |
+|---|---|---|
+| Labels de formulario | {{A11Y_LABELS}} | {{A11Y_LABELS_DETAIL}} |
+| Contraste de texto | {{A11Y_CONTRAST}} | {{A11Y_CONTRAST_DETAIL}} |
+| Focus visible | {{A11Y_FOCUS}} | {{A11Y_FOCUS_DETAIL}} |
+| Navegación por teclado | {{A11Y_KEYBOARD}} | {{A11Y_KEYBOARD_DETAIL}} |
+| `aria-label` en íconos | {{A11Y_ARIA_LABEL}} | {{A11Y_ARIA_LABEL_DETAIL}} |
+| `aria-hidden` en decorativos | {{A11Y_ARIA_HIDDEN}} | {{A11Y_ARIA_HIDDEN_DETAIL}} |
+| Viewport sin `user-scalable=no` | {{A11Y_VIEWPORT}} | {{A11Y_VIEWPORT_DETAIL}} |
+| Estructura semántica | {{A11Y_SEMANTIC}} | {{A11Y_SEMANTIC_DETAIL}} |
+
+**Score Lighthouse (último medido):**
+- Performance: {{LH_PERF}} | Accessibility: {{LH_A11Y}} | Best Practices: {{LH_BP}} | SEO: {{LH_SEO}}
+
+---
+
+## Performance
+
+### Bundles (estimado producción)
+
+| Bundle | Gzip |
+|---|---|
+| {{BUNDLE_MAIN}} | {{SIZE_MAIN}} |
+| {{BUNDLE_LAZY}} | {{SIZE_LAZY}} |
+| CSS total | {{CSS_SIZE}} |
+
+### Optimizaciones aplicadas
+
+- {{PERF_OPT_1}}
+- {{PERF_OPT_2}}
+- {{PERF_OPT_3}}
+
+---
+
+## Gotchas y decisiones no obvias
+
+Cosas que parecen raras pero son intencionales o aprendidas. **Documentar acá ahorra horas a futuros desarrolladores (incluyendo Claude en futuras sesiones).**
+
+1. {{GOTCHA_1}}
+2. {{GOTCHA_2}}
+3. {{GOTCHA_3}}
+4. {{GOTCHA_4}}
+5. {{GOTCHA_5}}
+
+---
+
+## Roles del agente para este proyecto
+
+Cuando trabajes en este codebase, activá estos perfiles según el área:
+
+- **Frontend**: {{ROLE_FRONTEND_NOTES}}
+- **Backend**: {{ROLE_BACKEND_NOTES}}
+- **UI / UX**: {{ROLE_UIUX_NOTES}}
+- **SEO**: {{ROLE_SEO_NOTES}}
+- **Accesibilidad**: {{ROLE_A11Y_NOTES}}
+- **Performance**: {{ROLE_PERF_NOTES}}
+- **UX writing**: {{ROLE_WRITING_NOTES}}
+- **Testing**: {{ROLE_TESTING_NOTES}}
+
+Ver `.charless/templates/CLAUDE.md.template` sección "Roles del asistente" para definiciones completas.
+
+---
+
+## Principios de código aplicados
+
+Heredados del perfil global del usuario. Activos para este proyecto:
+
+- Patrones: {{ACTIVE_PATTERNS}}
+- Principios: {{ACTIVE_PRINCIPLES}}
+- Reglas de estilo: NO inline styles ({{STYLE_TECH}}), early returns, tipado explícito, funciones cortas, logs estructurados.
+
+Overrides locales (si existen): {{LOCAL_OVERRIDES}}
+
+---
+
+## Personalización rápida (qué cambiar al reusar este template en otro proyecto)
+
+| Qué cambiar | Dónde |
+|---|---|
+| Colores de marca | {{PATH_COLORS}} |
+| Nombre / branding | {{PATH_BRANDING}} |
+| Servicios / productos / contenido core | {{PATH_CORE_CONTENT}} |
+| Datos de contacto | {{PATH_CONTACT}} |
+| Imágenes / assets | {{PATH_IMAGES}} |
+| Textos / copy | {{PATH_COPY}} |
+| Coordenadas / ubicación (si aplica) | {{PATH_LOCATION}} |
+| Tono y voz | Este archivo, sección "Identidad del proyecto" |
+
+---
+
+## Cómo usar este system prompt en un proyecto nuevo
+
+Si arrancás un proyecto similar a este:
+
+1. Copiá este archivo al proyecto nuevo como `SYSTEM_PROMPT.md`.
+2. Editá la sección **Identidad del proyecto** con el nombre y descripción nuevos.
+3. Cambiá los datos en **Personalización rápida**.
+4. El resto (stack, arquitectura, decisiones técnicas, gotchas) probablemente se mantiene — solo ajustá lo que cambie.
+5. Pasalo a Claude como contexto al arrancar. Reduce tokens y acelera el setup.
+
+---
+
+## Match criteria para reuso (auto-detectado)
+
+Este project-pattern se ofrece automáticamente en `/charless-ia` cuando la descripción del usuario incluye:
+
+- {{MATCH_KEYWORD_1}}
+- {{MATCH_KEYWORD_2}}
+- {{MATCH_KEYWORD_3}}
+- {{MATCH_KEYWORD_4}}
+
+Si matchea 2+ señales, la skill ofrece este patrón.
+
+---
+
+## Generado por
+
+- Fecha: {{GENERATION_DATE}}
+- Proyecto fuente: {{SOURCE_PROJECT_PATH}}
+- Versión del skill: {{SKILL_VERSION}}

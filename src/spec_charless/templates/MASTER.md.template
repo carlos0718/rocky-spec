@@ -1,0 +1,130 @@
+# Design System — {{PROJECT_NAME}}
+
+> Generado por skill `charless-ia` · Metodología: UI/UX Design System (P4.5)
+>
+> **Este documento es el área exclusiva de diseño del proyecto** — lo mismo que en un equipo real tendría su propio owner (Diseño) separado de Producto (`SPEC.md`) e Ingeniería (`AGENTS.md`). Ninguna decisión visual (color, tipografía, espaciado, componente, animación) se toma directamente en código sin que primero quede acá. Es un documento **vivo**: se actualiza cada vez que se agrega o cambia un patrón visual, con su línea en "Historial de cambios" al final.
+
+## Identidad del proyecto
+
+- **Tipo de producto**: {{PRODUCT_TYPE}} <!-- SaaS, e-commerce, landing, dashboard, portfolio, blog, consumer app, etc. -->
+- **Público objetivo**: {{TARGET_USERS}} <!-- mismo dato que SPEC.md "Usuarios objetivo", no volver a preguntar -->
+- **Personalidad de marca** (2-3 adjetivos): {{BRAND_ADJECTIVES}} <!-- ej. "confiable, directo, sin vueltas" -->
+- **Voz y tono**: {{BRAND_VOICE}} <!-- ej. "cercano pero profesional; nunca infantil ni corporativo-frío" -->
+
+## Estilo visual
+
+- **Estilo**: {{VISUAL_STYLE}} <!-- Minimal Clean, Dark Tech, Glassmorphism, Neumorphism, Claymorphism, Brutalist, Elegante/premium -->
+- **Tono**: {{VISUAL_TONE}}
+
+## Design tokens
+
+### Color
+
+| Token | Valor | Uso |
+|---|---|---|
+| `--color-primary` | {{COLOR_PRIMARY}} | CTAs, links, acciones principales |
+| `--color-accent` | {{COLOR_ACCENT}} | Highlights, iconos activos, badges |
+| `--color-bg` | {{COLOR_BG}} | Fondo de página |
+| `--color-surface` | {{COLOR_SURFACE}} | Cards, panels, inputs |
+| `--color-text` | {{COLOR_TEXT}} | Texto primario |
+| `--color-text-muted` | {{COLOR_TEXT_MUTED}} | Texto secundario |
+| `--color-border` | {{COLOR_BORDER}} | Bordes, divisores |
+| `--color-error` | {{COLOR_ERROR}} | Errores, validaciones (default `#EF4444`) |
+| `--color-success` | {{COLOR_SUCCESS}} | Confirmaciones, estados OK (default `#22C55E`) |
+
+### Tipografía
+
+| Rol | Fuente | Peso | Tamaño |
+|---|---|---|---|
+| H1 | {{FONT_HEADING}} | 700 | 48–64px |
+| H2 | {{FONT_HEADING}} | 600 | 32–40px |
+| H3 | {{FONT_HEADING}} | 600 | 24px |
+| Body | {{FONT_BODY}} | 400 | 16px / lh 1.6 |
+| Label / UI | {{FONT_BODY}} | 500 | 14px |
+| Mono / Código | {{FONT_MONO, default: JetBrains Mono}} | 400 | 14px |
+
+### Spacing (base-8)
+
+`4 · 8 · 12 · 16 · 24 · 32 · 48 · 64 · 96px` — todos los valores de margin/padding/gap deben ser múltiplos de 4. Detalle de uso de cada paso en `.charless/reference/ui-design-guidelines.md` de la skill.
+
+### Border radius
+
+| Token | Valor | Uso |
+|---|---|---|
+| `--radius-sm` | {{RADIUS_SM}} | Inputs, botones chicos, badges |
+| `--radius-md` | {{RADIUS_MD}} | Cards, botones |
+| `--radius-lg` | {{RADIUS_LG}} | Modales, paneles grandes |
+
+### Sombras / elevación
+
+```
+--shadow-sm:  {{SHADOW_SM}}     /* inputs, botones */
+--shadow-md:  {{SHADOW_MD}}     /* cards en reposo */
+--shadow-lg:  {{SHADOW_LG}}     /* cards en hover, dropdowns */
+--shadow-xl:  {{SHADOW_XL}}     /* modales, popovers */
+```
+
+### Breakpoints
+
+| Nombre | Ancho mínimo |
+|---|---|
+| `sm` | 640px |
+| `md` | 768px |
+| `lg` | 1024px |
+| `xl` | 1280px |
+| `2xl` | 1536px |
+
+## Iconografía
+
+- **Librería**: {{ICON_LIBRARY, default: Lucide}}
+- **Tamaño estándar**: 16px inline con texto · 20px en botones/inputs · 24px standalone/nav
+- **Peso (stroke-width)**: {{ICON_STROKE_WIDTH, default: 2}} — mantener consistente en todo el proyecto
+- Nunca emoji como ícono de UI.
+
+## Componentes — patrones y estados
+
+**Componentes clave de este producto:**
+- {{COMPONENT_1}} — {{COMPONENT_1_PATTERN}}
+- {{COMPONENT_2}} — {{COMPONENT_2_PATTERN}}
+- {{COMPONENT_3}} — {{COMPONENT_3_PATTERN}}
+
+**Estados que todo componente interactivo debe definir** (ver `.charless/reference/ui-design-guidelines.md` sección "Estados de componente" para el detalle de cada uno):
+
+| Componente | Default | Hover | Focus | Active | Disabled |
+|---|---|---|---|---|---|
+| {{COMPONENT_1}} | ✓ | {{...}} | {{...}} | {{...}} | {{...}} |
+
+## Motion — principios de animación
+
+- **Timing**: 150-250ms micro-interacciones · 300-500ms transiciones de elementos grandes
+- **Easing**: `ease-out` en entradas, `ease-in` en salidas
+- **Qué SÍ animar**: {{MOTION_DO}}
+- **Qué NO animar**: el elemento LCP de la página, absolutamente todo al hacer scroll
+- Respetar `prefers-reduced-motion` para animaciones decorativas
+
+## Anti-patrones — no hacer en este proyecto
+
+- {{ANTIPATTERN_1}}
+- {{ANTIPATTERN_2}}
+- {{ANTIPATTERN_3}}
+- Íconos emoji en lugar de SVG
+- Animaciones en todos los elementos al hacer scroll
+- Cards con `box-shadow` negra opaca
+
+## Accesibilidad — WCAG 2.1 AA
+
+- Contraste mínimo: 4.5:1 texto normal, 3:1 texto grande
+- Touch targets mínimos: 44×44px
+- Sin color como único indicador de estado
+- Focus rings visibles en todos los elementos interactivos
+- Estructura semántica (`<main>`, `<nav>`, `<article>`, headings jerárquicos sin saltos)
+
+---
+
+## Historial de cambios
+
+> Cada vez que se agrega un componente nuevo, se cambia un token, o se decide una excepción al sistema, se agrega una línea acá — es lo que hace que este documento sea la fuente de verdad viva del área de diseño, no una foto del día 1.
+
+| Fecha | Cambio | Commit |
+|-------|--------|--------|
+| {{DATE}} | Design system inicial (P4.5) | {{INITIAL_COMMIT}} |

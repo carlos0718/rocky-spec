@@ -1,0 +1,121 @@
+# Prompts — {{PROJECT_NAME}}
+
+> Plantilla estructurada por bloques. Funciona para Midjourney, Flux, Runway, Kling y similares.
+> Mantener los bloques con sus mayúsculas; los AI gen los respetan mejor.
+
+---
+
+## Paso 1 · Imagen inicial / Hero shot
+
+**Tool**:
+
+**Prompt**:
+
+```
+Create a high-quality {{PRODUCT_TYPE}} image using the uploaded product photo.
+Place the product floating in the center of the frame with a slight natural tilt.
+Use clean, soft studio lighting with subtle highlights and shadows.
+Keep all original label details sharp and readable.
+
+STYLE:
+• {{STYLE_REFERENCE}}
+• Clean color separation
+• Slight vignette but no gradients
+
+BACKGROUND:
+• {{BACKGROUND_COLOR}}
+• No reflections, no textures
+
+FRAMING:
+• {{ASPECT_RATIO}}
+• Product centered
+• Enough margins for later motion-tracking
+
+OUTPUT:
+• High-resolution still image
+• {{BACKGROUND_COLOR}} background for easy masking
+• Maintain the exact shape, colors, and proportions of the uploaded product image
+```
+
+**Variaciones probadas**:
+-
+-
+
+**Frame elegido**: `04-raw-frames/hero/<filename>.png`
+
+---
+
+## Paso 2 · Frame final / Ingredient burst
+
+**Tool**:
+
+**Prompt**:
+
+```
+Using the uploaded product image, generate the final frame of a product animation.
+The product should appear floating and tilted slightly forward, while multiple {{INGREDIENT}} elements burst dynamically around it.
+
+INGREDIENT BURST:
+• Surround the product with floating {{INGREDIENT}} pieces in a dynamic outward explosion
+• Include a high-energy liquid splash made from the product's flavor
+• Ingredients should look as if captured in high-speed photography: sharp, crisp, mid-air
+
+STYLE:
+• Clean, soft commercial studio lighting
+• Bright highlights on the metallic rim
+• Sharp ingredient details, no motion blur
+• Energetic composition similar to beverage advertising key visuals
+
+PRODUCT POSITION:
+• Center of the frame
+• Slight forward tilt for a dynamic, hero-shot angle
+
+BACKGROUND:
+• {{BACKGROUND_COLOR}}
+• Designed for clean masking and compositing
+
+OUTPUT:
+• High-resolution final frame
+• Product centered with bursting {{INGREDIENT}} effects
+• Preserve the exact colors and proportions of the uploaded product image
+```
+
+**Frame elegido**: `04-raw-frames/hero/final-<filename>.png`
+
+---
+
+## Paso 3 · Transición (img→video)
+
+**Tool**:
+
+**Prompt**:
+
+```
+Create a dynamic transition from the mid-spin frame to the final ingredient-burst frame.
+Begin with the product tilted left in mid-rotation on a {{BACKGROUND_COLOR}} background.
+As the rotation continues, introduce {{INGREDIENT}} pieces gradually entering the frame.
+Increase the number of floating {{INGREDIENT}} elements as the motion progresses.
+Add a high-energy liquid splash emerging from behind the product.
+All elements must look sharp and suspended in high-speed motion.
+Ensure the product stays well-lit, well-centered, and unobstructed.
+Background stays {{BACKGROUND_COLOR}} with no additional effects.
+End in the fully exploded ingredient-burst composition.
+```
+
+**Clip elegido**: `05-clips/selects/transition-<v>.mp4`
+
+---
+
+## Notas del operador
+
+- ¿Qué funcionó?:
+- ¿Qué no?:
+- Variables para la próxima:
+
+## Glosario de variables
+
+- `{{PRODUCT_TYPE}}`: ej. "beverage can", "bottle", "snack pack"
+- `{{INGREDIENT}}`: ej. "blueberries", "ice cubes", "mint leaves"
+- `{{STYLE_REFERENCE}}`: ej. "modern DTC beverage ads", "Apple product launch", "Y2K nostalgia"
+- `{{BACKGROUND_COLOR}}`: ej. "pure solid black (#000000)", "pastel pink (#FFD6E0)"
+- `{{ASPECT_RATIO}}`: "full vertical frame (9:16)", "square (1:1)", "horizontal (16:9)"

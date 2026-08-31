@@ -1,0 +1,22 @@
+# TODO — {{GROUP_NAME}}
+
+> Parte de `{{PROJECT_NAME}}`. Orquestador general en `../TODO.md` — ahí está el progreso agregado de todos los grupos.
+>
+> Misma convención de Git que el resto del proyecto: cada tarea completada se marca `- [x]` **en el mismo commit** que el código que la resuelve, con mensaje `<tipo>: <descripción> (TODO: <texto de la tarea>)`, seguido de push inmediato. Detalle completo en `AGENTS.md` sección "Workflow de Git".
+>
+> **Trazabilidad**: cada tarea que implementa una historia de usuario de `SPEC.md` termina con su ID entre paréntesis — `(US-1)`, y suma `(RNF-N)` si además cumple un requisito no funcional puntual. Tareas de infraestructura/setup sin historia asociada no llevan ID. Ver `AGENTS.md` sección "Trazabilidad de requisitos".
+>
+> Cuando se completa la **última tarea de este archivo**, actualizar la fila correspondiente en la tabla "Estado por grupo" de `../TODO.md` (y el README si aplica, ver `AGENTS.md` sección "README sync") en el mismo commit.
+
+## {{GROUP_NAME}}
+
+{{GROUP_TASKS}}
+<!-- ej. si este grupo es la capa "Dominio / Base de datos": -->
+<!-- - [ ] Crear migraciones de DB (tablas definidas en SPEC.md) (US-1) -->
+<!-- - [ ] Implementar modelos / entidades del dominio (US-1, US-2) -->
+<!-- - [ ] Configurar conexión a DB y ORM -->
+<!-- - [ ] Seed de datos básicos para desarrollo -->
+<!-- ej. si este grupo es la feature "Login" (modo por features): -->
+<!-- - [ ] Migración de tabla users (US-1) -->
+<!-- - [ ] Endpoint POST /login (US-1) -->
+<!-- - [ ] Formulario de login + validación (US-1) -->

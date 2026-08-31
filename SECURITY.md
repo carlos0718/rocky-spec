@@ -1,0 +1,67 @@
+# Security Policy — spec-charless
+
+> Generado por skill `charless-ia` · Metodología: OWASP Top 10 adaptado (ver `.charless/reference/security.md` de la skill)
+>
+> Este archivo sigue la convención de GitHub para `SECURITY.md` (política de reporte de vulnerabilidades) y además documenta las decisiones de seguridad concretas de este proyecto — es un documento **vivo**, igual que `SPEC.md` y `design-system/MASTER.md`: se actualiza cada vez que cambia una decisión de seguridad, con su línea en "Historial de cambios".
+
+## Reportar una vulnerabilidad
+
+Si encontrás una vulnerabilidad de seguridad en este proyecto, por favor:
+
+- **No** abras un issue público.
+- Reportala a: el email del mantenedor
+- Incluí: descripción del problema, pasos para reproducirlo, y el impacto potencial si lo conocés.
+
+Se confirma la recepción en un plazo razonable y se coordina la corrección antes de cualquier divulgación pública.
+
+## Nivel de exigencia de este proyecto
+
+- **Escala**: Producto real, pocos usuarios — herramienta de desarrollo de uso directo, sin backend expuesto <!-- Prototipo/demo | Producto real, pocos usuarios | Producto con datos sensibles -->
+- **Maneja datos de usuarios**: no — no recolecta datos de usuarios, solo lee/escribe archivos del proyecto destino <!-- sí/no -->
+- **Maneja datos sensibles/regulados** (salud, pagos, menores): no <!-- sí/no — si sí, recomendar auditoría profesional además de este checklist -->
+
+## Decisiones de seguridad de este proyecto
+
+| Área | Decisión |
+|---|---|
+| **Auth** | no aplica — sin autenticación, es un CLI local <!-- JWT stateless / Sessions + cookie / OAuth / API keys / no aplica -->
+| **Hasheo de passwords** | bcrypt |
+| **CORS — origin permitido (prod)** | no aplica |
+| **Rate limiting** | no aplica — sin backend expuesto <!-- solo endpoints de auth / API completa / no aplica --> |
+| **Dependency scanning** | Dependabot semanal |
+| **Secrets en producción** | no aplica hoy; al publicar en PyPI, usar trusted publishing (OIDC) en vez de tokens de API guardados en CI <!-- panel de la plataforma de deploy elegida en P5.5 --> |
+
+## Checklist OWASP aplicado a este proyecto
+
+Marcado según lo que aplica a este proyecto en particular (ver `.charless/reference/security.md` de la skill para el detalle de cada ítem):
+
+- [ ] A01 · Broken Access Control — autorización verificada en cada endpoint que toca datos de usuario, no solo autenticación
+- [ ] A02 · Cryptographic Failures — passwords hasheados, HTTPS forzado en producción
+- [ ] A03 · Injection — queries parametrizadas (ORM/query builder), validación de input en el borde
+- [ ] A04 · Insecure Design no aplica a este proyecto <!-- solo si el proyecto tiene lógica de negocio sensible -->
+- [ ] A05 · Security Misconfiguration — security headers configurados, `NODE_ENV=production` en prod
+- [ ] A06 · Vulnerable and Outdated Components — dependency scanning configurado en CI
+- [ ] A07 · Identification and Authentication Failures — rate limiting en auth, política mínima de password
+- [ ] A08 · Software and Data Integrity Failures — lockfile commiteado
+- [ ] A09 · Security Logging and Monitoring Failures — logs estructurados, sin datos sensibles en texto plano
+- [ ] A10 · SSRF no aplica a este proyecto <!-- solo si el proyecto hace requests salientes basados en input del usuario -->
+
+## Gestión de secrets
+
+- **Desarrollo**: `.env` (gitignorado) + `.env.example` (commiteado, sin valores reales)
+- **CI**: GitHub Actions Secrets
+- **Producción**: no aplica todavía <!-- panel de la plataforma elegida en P5.5 -->
+
+## Fuera de alcance de este documento
+
+Este checklist ayuda a que el proyecto arranque con buenas prácticas por default — **no reemplaza una auditoría de seguridad profesional** para proyectos que manejan datos sensibles o regulados (salud, pagos, datos de menores).
+
+---
+
+## Historial de cambios
+
+> Cada vez que cambia una decisión de seguridad (nuevo método de auth, cambio de política de CORS, etc.), se agrega una línea acá.
+
+| Fecha | Cambio | Commit |
+|-------|--------|--------|
+| 2026-08-31 | Security policy inicial (P5.6) | (pendiente del primer commit) |

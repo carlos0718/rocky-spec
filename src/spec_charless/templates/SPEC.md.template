@@ -1,0 +1,82 @@
+# Project Spec — {{PROJECT_NAME}}
+
+> **Nivel SDD: Spec-Anchored.** Este documento es la fuente de verdad del proyecto — no un artefacto de planificación que se abandona al empezar a codear. Se actualiza **cada vez que cambia el alcance**, antes de tocar código (ver `AGENTS.md` sección "Agregar o modificar features"). Historial de cambios al final del archivo.
+
+## Descripción
+
+{{PROJECT_DESCRIPTION}}
+
+## Usuarios objetivo
+
+{{TARGET_USERS}}
+
+## Features — MVP
+
+> Cada feature tiene un ID (`RF-1`, `RF-2`...) — Requisito Funcional. Las User Stories de abajo referencian de qué RF salen, así queda trazable la cadena completa: **RF → US → tarea del TODO**.
+
+| ID | Prioridad | Feature | Descripción breve |
+|----|-----------|---------|-------------------|
+| RF-1 | P0 (must) | {{FEATURE_P0}} | {{FEATURE_P0_DESC}} |
+| RF-2 | P1 (should) | {{FEATURE_P1}} | {{FEATURE_P1_DESC}} |
+| RF-3 | P2 (nice) | {{FEATURE_P2}} | {{FEATURE_P2_DESC}} |
+
+## User Stories clave
+
+> Cada historia tiene un ID (`US-1`, `US-2`...) y referencia el `RF-N` que implementa — una feature puede desglosarse en varias historias. Los IDs de historia se referencian a su vez desde `TODO.md` para trazar qué tareas la implementan. Ver `AGENTS.md` sección "Trazabilidad de requisitos".
+
+- **US-1** (implementa RF-1): Como {{USER_TYPE}}, quiero {{ACTION}}, para {{BENEFIT}}
+- **US-2** (implementa RF-1): {{USER_STORY_2}}
+- **US-3** (implementa RF-2): {{USER_STORY_3}}
+
+<!-- Las siguientes tres secciones solo aplican a proyectos con DDD (fullstack/backend con persistencia) — ver P1.7. Borrar si el proyecto no las necesita. -->
+
+## Dominio — Entidades y relaciones
+
+{{DOMAIN_ENTITIES}}
+<!-- Diagrama de entidades en texto + reglas de negocio críticas listadas -->
+
+## Schema de DB
+
+{{DB_SCHEMA}}
+<!-- Tablas con columnas, tipos y relaciones — SQL o descripción -->
+
+## API Contracts
+
+{{API_CONTRACTS}}
+<!-- Endpoints principales: método, path, request/response shape -->
+
+## Criterios de aceptación — MVP listo cuando:
+
+- [ ] {{ACCEPTANCE_CRITERION_1}}
+- [ ] {{ACCEPTANCE_CRITERION_2}}
+- [ ] {{ACCEPTANCE_CRITERION_3}}
+
+## Requisitos no funcionales
+
+> Los que ya tienen documento propio no se repiten acá — solo se referencian. Esta sección es para los que no tenían dónde vivir. Cada uno tiene un ID (`RNF-1`, `RNF-2`...) y un alcance: **Global** (aplica a todo el proyecto) o atado a un `RF-N`/`US-N` puntual si el requisito es específico de una feature (ej. "el buscador responde en <200ms" es de RF-2, no de todo el sistema).
+
+| ID | Categoría | Alcance | Requisito | Detalle |
+|---|---|---|---|---|
+| RNF-1 | Performance | {{PERF_SCOPE, default: Global}} | {{PERFORMANCE_TARGET, default: "sin objetivo estricto — proyecto chico/prototipo"}} | ej. "página carga en <2s", "API responde en <300ms p95" |
+| RNF-2 | Escalabilidad | Global | {{SCALABILITY_TARGET, default: "sin proyección — validar con uso real antes de optimizar"}} | ej. "soportar 500 usuarios concurrentes en el primer año" |
+| RNF-3 | Compatibilidad | Global | {{COMPATIBILITY_TARGET, default: "últimas 2 versiones de Chrome/Firefox/Safari, sin soporte IE"}} | navegadores, dispositivos, SO soportados |
+| RNF-4 | Localización / i18n | Global | {{I18N_TARGET, default: "un solo idioma, sin i18n por ahora"}} | idiomas soportados, si aplica |
+| RNF-5 | Retención de datos | Global | {{DATA_RETENTION, default: "sin política definida — revisar antes de manejar datos reales de usuarios"}} | cuánto se guardan los datos, si hay borrado de cuenta, compliance si aplica |
+| — | Seguridad | — | Ver `SECURITY.md` | no se duplica acá, no lleva RNF propio |
+| — | Accesibilidad | — | Ver `design-system/MASTER.md` sección "Accesibilidad" | no se duplica acá, solo si el proyecto tiene interfaz visual |
+| — | Disponibilidad / monitoreo | — | Ver `OBSERVABILITY.md` | no se duplica acá |
+
+## Fuera del alcance (v1)
+
+- {{OUT_OF_SCOPE_1}}
+- {{OUT_OF_SCOPE_2}}
+
+---
+
+## Historial de cambios
+
+> Cada vez que se agrega, quita o modifica algo del alcance, se agrega una línea acá — es lo que hace que este spec sea "vivo" (Spec-Anchored) en vez de una foto del día 1. Si el cambio agrega una feature (`RF-N`), historia (`US-N`), o requisito no funcional (`RNF-N`) nuevo, sigue la numeración correspondiente — un ID **nunca se reutiliza**, ni siquiera si ese ítem se termina eliminando del alcance.
+
+| Fecha | Cambio | Commit |
+|-------|--------|--------|
+| {{DATE}} | Spec inicial (P1.7) — RF-1 a RF-{{N}}, US-1 a US-{{N}}, RNF-1 a RNF-5 | {{INITIAL_COMMIT}} |
