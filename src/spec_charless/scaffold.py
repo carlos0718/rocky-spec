@@ -6,7 +6,7 @@ from pathlib import Path
 
 from .integrations import CommandDefinition, SHARED_DIR_NAME
 
-CHARLESS_VERSION = "0.1.0"
+CHARLESS_VERSION = "0.2.0"
 
 # key -> (título legible, nombre de archivo dentro de commands/)
 # El orden acá es el orden real del flujo de creación (P0 -> P8.5).

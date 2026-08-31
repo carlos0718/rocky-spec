@@ -6,16 +6,16 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-31
+
 ### Added
 - Interfaz de bienvenida (`welcome.py`, con `rich`) — banner al correr `charless` sin argumentos, con estado del proyecto (agentes activos) si ya tiene `.charless/`, o la lista de agentes disponibles si es la primera vez. Banner corto antes de `init`.
 - Banner ampliado: "CHARLESS" ahora tiene el mismo arte ASCII (fuente `ansi_shadow`) que "SPEC", con "by Carlos Jesus" como autoría. Sumada una reseña de features del kit y un glosario de siglas propias (RF, US, RNF, MA, P) antes de la tabla de integraciones.
+- `SPEC.md`, `CONSTITUTION.md`, `AGENTS.md`, `SECURITY.md`, `OBSERVABILITY.md`, `TODO.md` generados vía Modo Adopción — el framework aplicado sobre sí mismo.
 
 ### Changed
 - Instalación: el README documenta `uv tool install` / `pipx install` / `pip install` desde el repo (`git+https://...`) para Windows, Linux y macOS, con verificación, actualización y desinstalación. PyPI deja de ser requisito de uso y pasa a mejora opcional (RF-6/US-8).
 - Rename del paquete: `charless-cli` → `spec-charless` (el comando sigue siendo `charless`, corto para tipear).
-
-### Added
-- `SPEC.md`, `CONSTITUTION.md`, `AGENTS.md`, `SECURITY.md`, `OBSERVABILITY.md`, `TODO.md` generados vía Modo Adopción — el framework aplicado sobre sí mismo.
 
 ### Fixed
 - El wheel no se podía construir: `tool.hatch.build.targets.wheel.force-include` volvía a agregar `commands/`, `reference/` y `templates/`, que `packages` ya incluye por vivir dentro de `src/spec_charless/`, y hatchling abortaba con "A second file is being added to the wheel archive at the same path". Esto rompía `pip install git+...` y cualquier build para PyPI; `pip install -e .` no lo exponía porque el modo editable no construye el wheel.

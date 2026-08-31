@@ -33,7 +33,7 @@
 - [ ] Integración con Windsurf
 
 ## Calidad
-- [x] Suite de tests (30 tests — render_template, health_check, qa_review, integrations)
+- [x] Suite de tests (33 tests — render_template, health_check, qa_review, integrations)
 - [ ] CI/CD (correr tests automáticamente en cada push)
 - [ ] Coverage report
 
