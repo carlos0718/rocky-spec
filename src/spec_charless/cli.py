@@ -8,12 +8,17 @@ import click
 from . import scaffold
 from .integrations import INTEGRATION_REGISTRY, SHARED_DIR_NAME
 from .scripts import health_check, qa_review
+from .welcome import show_init_banner, show_welcome
 
 
-@click.group()
+@click.group(invoke_without_command=True)
 @click.version_option(scaffold.CHARLESS_VERSION, prog_name="charless")
-def main() -> None:
+@click.pass_context
+def main(ctx: click.Context) -> None:
     """charless — toolkit multi-agente de Spec-Driven Development (nivel Spec-Anchored)."""
+    if ctx.invoked_subcommand is None:
+        show_welcome(Path("."))
+        click.echo(ctx.get_help())
 
 
 @main.command()
@@ -29,6 +34,7 @@ def main() -> None:
 @click.option("--force", is_flag=True, help="Sobrescribir .charless/ si ya existe.")
 def init(path: Path, agents: tuple[str, ...], force: bool) -> None:
     """Inicializa el proyecto en PATH con el/los agente(s) elegidos."""
+    show_init_banner(agents)
     project_root = path.resolve()
     project_root.mkdir(parents=True, exist_ok=True)
 
