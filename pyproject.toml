@@ -36,7 +36,3 @@ charless = "spec_charless.cli:main"
 [tool.hatch.build.targets.wheel]
 packages = ["src/spec_charless"]
 
-[tool.hatch.build.targets.wheel.force-include]
-"src/spec_charless/commands" = "spec_charless/commands"
-"src/spec_charless/reference" = "spec_charless/reference"
-"src/spec_charless/templates" = "spec_charless/templates"

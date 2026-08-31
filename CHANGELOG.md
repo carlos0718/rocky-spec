@@ -17,6 +17,7 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 - `SPEC.md`, `CONSTITUTION.md`, `AGENTS.md`, `SECURITY.md`, `OBSERVABILITY.md`, `TODO.md` generados vía Modo Adopción — el framework aplicado sobre sí mismo.
 
 ### Fixed
+- El wheel no se podía construir: `tool.hatch.build.targets.wheel.force-include` volvía a agregar `commands/`, `reference/` y `templates/`, que `packages` ya incluye por vivir dentro de `src/spec_charless/`, y hatchling abortaba con "A second file is being added to the wheel archive at the same path". Esto rompía `pip install git+...` y cualquier build para PyPI; `pip install -e .` no lo exponía porque el modo editable no construye el wheel.
 - URLs del proyecto en `pyproject.toml` — apuntaban a `github.com/charly` (usuario inexistente) y a la rama `main`; el repo publicado es `carlos0718/spec-charless` en `master`.
 - `qa_review.check_traceability`: una mención suelta de un `RNF-N` fuera de su fila de definición (ej. en el Historial de cambios) generaba un falso positivo de "sin plan de trabajo", ignorando el marcador de default de la fila real.
 - Agregado el marcador `"no aplica"` a los reconocidos como default en NFRs — antes solo se reconocían las frases exactas del template.
