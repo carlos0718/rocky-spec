@@ -14,12 +14,12 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from rich.console import Console
+from rich.console import Console, Group
 from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 
-from . import scaffold
+from . import __version__
 from .integrations import INTEGRATION_REGISTRY, SHARED_DIR_NAME
 
 console = Console()
@@ -27,11 +27,11 @@ console = Console()
 BANNER = r"""
 ███████╗██████╗ ███████╗ ██████╗    ██████╗██╗  ██╗ █████╗ ██████╗ ██╗     ███████╗███████╗███████╗
 ██╔════╝██╔══██╗██╔════╝██╔════╝    ██╔════╝██║  ██║██╔══██╗██╔══██╗██║     ██╔════╝██╔════╝██╔════╝
-███████╗██████╔╝█████╗  ██║         ██║     ███████║███████║██████╔╝██║     █████╗  ███████╗███████╗      
+███████╗██████╔╝█████╗  ██║         ██║     ███████║███████║██████╔╝██║     █████╗  ███████╗███████╗
 ╚════██║██╔═══╝ ██╔══╝  ██║         ██║     ██╔══██║██╔══██║██╔══██╗██║     ██╔══╝  ╚════██║╚════██║
 ███████║██║     ███████╗╚██████╗    ╚██████╗██║  ██║██║  ██║██║  ██║███████╗███████╗███████║███████║
 ╚══════╝╚═╝     ╚══════╝ ╚═════╝     ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚══════╝
-"""
+""".strip("\n")
 
 AUTHOR = "by Carlos Jesus"
 
@@ -57,15 +57,42 @@ GLOSSARY = [
     ("P0…P8.5", "Pasos del flujo de creación (P = Paso), ver commands/ en orden"),
 ]
 
+# Cómo se invoca la skill/los comandos que cada integración genera dentro
+# del proyecto destino -- NO es el comando `charless` (eso es la CLI, corre
+# en cualquier terminal); esto es lo que se escribe DENTRO del agente
+# correspondiente, después de un `charless init --agent <x>`.
+INVOCATION_HINT = {
+    "claude": "/spec-charless (Claude Code)",
+    "cursor": "/charless-* — 14 comandos en .cursor/commands/ (Cursor)",
+}
+
+# Espejo exacto de la tabla "Comandos disponibles" del README -- misma
+# fuente de verdad en prosa, acá en datos para poder renderizarla con rich
+# vía `charless commands` en vez de mandar a leer el README.
+COMMANDS = [
+    ("charless", "Sin subcomando: banner de bienvenida + ayuda."),
+    ("charless --version", "Imprime la versión instalada."),
+    ("charless commands", "Esta tabla."),
+    ("charless init [PATH] --agent <agente>", "Instala .charless/ y genera la integración de cada --agent (repetible)."),
+    ("charless init [PATH] --agent <agente> --force", "Igual que arriba, pero regenera .charless/ aunque ya exista."),
+    ("charless list-integrations", "Lista los agentes soportados por esta versión."),
+    ("charless check code [PATH]", "Health-check: tamaño de archivo y code smells estructurales."),
+    ("charless check security [PATH]", "Health-check: secrets hardcodeados, .env commiteado, vulnerabilidades."),
+    ("charless check observability [PATH]", "Health-check: error tracking, health endpoint, logging estructurado."),
+    ("charless check qa [PATH]", "Trazabilidad RF → US → RNF → tarea y placeholders sin rellenar."),
+    ("charless check version [PATH]", "Bump de SemVer sugerido desde el último tag + aviso de fixes acumulados."),
+]
+
 
 def _integrations_table(active: set[str] | None = None) -> Table:
     table = Table(show_header=True, header_style="bold", box=None, padding=(0, 2, 0, 0))
     table.add_column("Agente")
     table.add_column("Comando")
+    table.add_column("Se invoca con")
     table.add_column("Estado")
     for key, integration in sorted(INTEGRATION_REGISTRY.items()):
         status = "[green]✓ activo[/green]" if active and key in active else "[dim]disponible[/dim]"
-        table.add_row(integration.display_name, f"--agent {key}", status)
+        table.add_row(integration.display_name, f"--agent {key}", INVOCATION_HINT.get(key, "—"), status)
     return table
 
 
@@ -78,23 +105,48 @@ def _glossary_table() -> Table:
     return table
 
 
+def _commands_table() -> Table:
+    table = Table(show_header=True, header_style="bold", box=None, padding=(0, 2, 0, 0))
+    table.add_column("Comando", style="cyan", no_wrap=True)
+    table.add_column("Qué hace")
+    for command, description in COMMANDS:
+        table.add_row(command, description)
+    return table
+
+
+def show_commands() -> None:
+    """``charless commands`` -- la tabla completa, con descripción, de todo
+    lo que la CLI sabe hacer. Espejo del README, no de la skill/agente."""
+    console.print(
+        Panel(
+            _commands_table(),
+            title="[bold]charless — comandos disponibles[/bold]",
+            border_style="cyan",
+            expand=False,
+        )
+    )
+
+
 def show_welcome(project_root: Path | None = None) -> None:
     """Pantalla de bienvenida. Si ``project_root`` ya tiene ``.charless/``,
     muestra el estado actual del proyecto en vez del onboarding genérico."""
-    console.print(Text(BANNER, style="bold cyan"))
-    console.print(Text(AUTHOR, style="dim italic"))
-    console.print(Text(TAGLINE, style="italic"))
-    console.print()
+    header = Group(
+        Text(BANNER, style="bold cyan", justify="center"),
+        Text(f"{AUTHOR}  ·  v{__version__}", style="dim italic", justify="center"),
+        Text(TAGLINE, style="italic", justify="center"),
+    )
 
-    console.print(Text("Qué hace este kit", style="bold"))
+    body: list = [header, ""]
+
+    body.append(Text("Qué hace este kit", style="bold"))
     for line in FEATURES:
-        console.print(f"  • {line}")
-    console.print()
+        body.append(f"  • {line}")
+    body.append("")
 
-    console.print(
+    body.append(
         Panel(_glossary_table(), title="[bold]Glosario[/bold]", border_style="dim", expand=False)
     )
-    console.print()
+    body.append("")
 
     shared = (project_root or Path(".")) / SHARED_DIR_NAME
     manifest_path = shared / "install-manifest.json"
@@ -105,7 +157,7 @@ def show_welcome(project_root: Path | None = None) -> None:
         if manifest_path.exists():
             active = set(json.loads(manifest_path.read_text()).keys())
 
-        console.print(
+        body.append(
             Panel(
                 _integrations_table(active),
                 title=f"[bold]Este proyecto ya usa spec-charless[/bold] (.charless/ v{version})",
@@ -113,12 +165,13 @@ def show_welcome(project_root: Path | None = None) -> None:
                 expand=False,
             )
         )
-        console.print(
+        body.append(
             "\nPróximos pasos: [cyan]charless check qa .[/cyan] · "
-            "[cyan]charless init --agent <otro>[/cyan] para sumar un agente más\n"
+            "[cyan]charless init --agent <otro>[/cyan] para sumar un agente más · "
+            "[cyan]charless commands[/cyan] para ver todos los comandos"
         )
     else:
-        console.print(
+        body.append(
             Panel(
                 _integrations_table(),
                 title="[bold]Agentes soportados[/bold]",
@@ -126,10 +179,13 @@ def show_welcome(project_root: Path | None = None) -> None:
                 expand=False,
             )
         )
-        console.print(
+        body.append(
             "\nEmpezar: [cyan]charless init . --agent claude[/cyan] "
-            "(repetí --agent para instalar más de uno)\n"
+            "(repetí --agent para instalar más de uno) · "
+            "[cyan]charless commands[/cyan] para ver todos los comandos"
         )
+
+    console.print(Panel(Group(*body), border_style="cyan", padding=(1, 2)))
 
 
 def show_init_banner(agents: tuple[str, ...]) -> None:

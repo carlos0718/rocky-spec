@@ -26,7 +26,8 @@
 - [x] Compatibilidad Python 3.9+, declarada en pyproject.toml (RNF-3)
 - [x] Documentación y templates generados en español (RNF-4)
 - [x] Tracking por hash de instalación — `uninstall` no pisa ediciones manuales (US-6)
-- [x] Interfaz de bienvenida con rich (banner SPEC+CHARLESS, autoría, features, glosario, estado del proyecto)
+- [x] Interfaz de bienvenida con rich (banner SPEC+CHARLESS, autoría, versión, features, glosario, estado del proyecto, borde único con todo centrado)
+- [x] `charless commands` — tabla de comandos con descripción, espejo del README
 - [x] Documentar la instalación desde el repo para Windows, Linux y macOS (US-7)
 - [x] `charless check version` — sugerencia determinista de bump de SemVer + aviso de fixes acumulados en una feature (US-9)
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)

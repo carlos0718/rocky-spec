@@ -18,3 +18,15 @@ def test_show_welcome_runs_without_error_on_initialized_project(tmp_path):
 
 def test_show_init_banner_runs_without_error():
     welcome.show_init_banner(("claude", "cursor"))
+
+
+def test_show_commands_runs_without_error():
+    welcome.show_commands()
+
+
+def test_commands_table_matches_registered_integrations_keys_used_in_invocation_hint():
+    # INVOCATION_HINT es un diccionario a mano -- si se agrega una integración
+    # nueva (Windsurf, Copilot) y nadie suma su entrada, mejor fallar acá que
+    # mostrar "—" en silencio en la pantalla de bienvenida.
+    for key in INTEGRATION_REGISTRY:
+        assert key in welcome.INVOCATION_HINT, f"falta INVOCATION_HINT para '{key}'"
