@@ -20,6 +20,7 @@ Desarrolladores individuales o equipos chicos que usan uno o más agentes de có
 | RF-4 | P1 (should) | Instalación no destructiva | Tracking por hash de instalación — desinstalar nunca pisa archivos editados a mano por el usuario |
 | RF-5 | P1 (should) | Instalación reproducible desde el repo | `pip install git+https://github.com/carlos0718/spec-charless.git` en Windows, Linux y macOS, sin clonar ni compilar |
 | RF-6 | P3 (opcional) | Publicación en registry público | Distribución vía PyPI (`pip install spec-charless`). No bloquea el uso: RF-5 ya cubre la instalación en las tres plataformas |
+| RF-7 | P1 (should) | Sugerencia determinista de versión | `charless check version` — clasifica los commits desde el último tag por Conventional Commits, aplica la regla "el más alto gana" (MAJOR > MINOR > PATCH, nunca se apilan varios bumps) y calcula el próximo `X.Y.Z` exacto con el reset de componentes correspondiente, en vez de depender de que el agente "se acuerde" |
 
 ## User Stories clave
 
@@ -31,15 +32,17 @@ Desarrolladores individuales o equipos chicos que usan uno o más agentes de có
 - **US-6** (implementa RF-4): Como desarrollador, quiero desinstalar una integración sin perder los archivos que edité a mano después de instalarla
 - **US-7** (implementa RF-5): Como desarrollador en Windows, Linux o macOS, quiero instalar la herramienta con un solo comando apuntando al repo, para usarla sin clonarlo ni configurar un entorno de desarrollo
 - **US-8** (implementa RF-6): Como mantenedor, quiero publicar el paquete en PyPI, para que se instale con `pip install spec-charless` con un nombre corto y versiones fijadas
+- **US-9** (implementa RF-7): Como desarrollador, quiero correr `charless check version` antes de mergear una rama `feature/*`/`fix/*` a `dev`/`master`, para saber el bump de SemVer exacto que corresponde (y recibir un aviso si la rama acumuló muchos `fix` dentro de una misma feature) sin llevar la cuenta manualmente
 
 ## Criterios de aceptación — MVP listo cuando:
 
 - [x] `charless init` genera correctamente las integraciones de Claude y Cursor sin duplicar el conocimiento compartido
-- [x] Los tests automatizados (33) pasan
+- [x] Los tests automatizados (45) pasan
 - [x] Los tres health-checks (`code`, `security`, `observability`) corren sin depender de que un LLM interprete bash
 - [ ] El chequeo de trazabilidad (`qa`) corre sobre un proyecto real generado por la propia herramienta
 - [ ] Al menos una integración adicional (Gemini o Codex) funcionando de punta a punta
 - [x] El README documenta la instalación desde el repo para Windows, Linux y macOS (US-7)
+- [x] `charless check version` calcula el bump de SemVer correcto sobre un historial de commits real, con mezcla de tipos (US-9)
 
 ## Requisitos no funcionales
 
@@ -68,3 +71,4 @@ Desarrolladores individuales o equipos chicos que usan uno o más agentes de có
 |-------|--------|--------|
 | 2026-08-31 | Spec inicial vía Modo Adopción — RF-1 a RF-5, US-1 a US-6, RNF-1 a RNF-5 | `b90cf74` |
 | 2026-08-31 | RF-5 redefinido: la instalación reproducible desde el repo (las tres plataformas) reemplaza a PyPI como requisito. PyPI pasa a RF-6/US-8, prioridad opcional. Nueva US-7 para la instalación multiplataforma | `HEAD` |
+| 2026-08-31 | Nueva RF-7/US-9: `charless check version`, pedido explícito del usuario al notar que el recordatorio de bump de versión del Workflow de Git era prosa vaga en vez de un cálculo real sobre los commits | (este commit) |

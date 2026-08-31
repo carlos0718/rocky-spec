@@ -28,13 +28,14 @@
 - [x] Tracking por hash de instalación — `uninstall` no pisa ediciones manuales (US-6)
 - [x] Interfaz de bienvenida con rich (banner SPEC+CHARLESS, autoría, features, glosario, estado del proyecto)
 - [x] Documentar la instalación desde el repo para Windows, Linux y macOS (US-7)
+- [x] `charless check version` — sugerencia determinista de bump de SemVer + aviso de fixes acumulados en una feature (US-9)
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
 - [ ] Integración con Gemini CLI
 - [ ] Integración con Codex CLI
 - [ ] Integración con Windsurf
 
 ## Calidad
-- [x] Suite de tests (33 tests — render_template, health_check, qa_review, integrations)
+- [x] Suite de tests (45 tests — render_template, health_check, qa_review, integrations, version_check)
 - [ ] CI/CD (correr tests automáticamente en cada push)
 - [ ] Coverage report
 

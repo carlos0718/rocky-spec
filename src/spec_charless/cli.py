@@ -7,7 +7,7 @@ import click
 
 from . import scaffold
 from .integrations import INTEGRATION_REGISTRY, SHARED_DIR_NAME
-from .scripts import health_check, qa_review
+from .scripts import health_check, qa_review, version_check
 from .welcome import show_init_banner, show_welcome
 
 
@@ -111,6 +111,36 @@ def check_qa(path: Path) -> None:
         click.echo(f"⚠️  {us} no tiene ninguna tarea en el TODO")
     for rnf in report.unplanned_rnf:
         click.echo(f"⚠️  {rnf} tiene un objetivo concreto pero ninguna tarea que lo aborde")
+
+
+@check.command(name="version")
+@click.argument("path", type=click.Path(exists=True, file_okay=False, path_type=Path), default=".")
+def check_version(path: Path) -> None:
+    """Calcula el bump de SemVer que corresponde según los commits desde el último tag."""
+    report = version_check.check_version(path.resolve())
+
+    if report.current_tag:
+        click.echo(f"📦 Última versión taggeada: {report.current_tag}")
+    else:
+        click.echo("📦 Sin tags todavía — baseline 0.0.0")
+
+    c = report.classification
+    click.echo(
+        f"🔍 Commits en rama '{report.branch}' desde ahí: "
+        f"{len(c.breaking)} breaking, {len(c.feat)} feat, {len(c.fix)} fix, "
+        f"{len(c.other)} sin impacto en changelog"
+    )
+
+    if report.bump == "none":
+        click.echo("✅ Sin cambios que ameriten un bump de versión.")
+    else:
+        click.echo(f"⬆️  Bump sugerido: {report.bump.upper()} → {report.suggested_version}")
+
+    if report.pre_1_0_note:
+        click.echo(f"ℹ️  {report.pre_1_0_note}")
+
+    if report.fix_budget_warning:
+        click.echo(report.fix_budget_warning)
 
 
 def _print_report(report: health_check.HealthCheckReport) -> None:

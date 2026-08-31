@@ -109,6 +109,7 @@ charless check qa .
 | `charless check security [PATH]` | Health-check: `.env` commiteado, secrets hardcodeados, vulnerabilidades conocidas. |
 | `charless check observability [PATH]` | Health-check: error tracking, health endpoint, logging estructurado. |
 | `charless check qa [PATH]` | Trazabilidad RF → US → RNF → tarea y placeholders sin rellenar. |
+| `charless check version [PATH]` | Calcula el bump de SemVer exacto desde el último tag (Conventional Commits, "el más alto gana") y avisa si una rama `feature/*` acumuló demasiados `fix`. |
 
 `PATH` es opcional en todos los `check` — por default corre sobre el directorio actual (`.`).
 

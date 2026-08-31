@@ -322,14 +322,11 @@ git push
 
 **Esto es insistente a propósito** — es común que esta convención quede escrita pero en la práctica todo se siga commiteando directo a `master`/`dev`. Por eso el Branch Discipline Check (paso 0-ter del Workflow de Git, arriba) no es solo una mención pasiva: antes de cada commit no trivial, si la rama actual es `master` o `dev`, avisar explícitamente y ofrecer crear la rama correspondiente ahí mismo — no asumir que "ya se sabe" y dejarlo pasar.
 
-**Recordatorio de versión al mergear a `dev` o `master`** (ver `.charless/reference/versioning.md` de la skill para el detalle completo): al mergear una rama `feature/*` o `fix/*`, recordar — no ejecutar solo, es una decisión del usuario — que corresponde bumpear la versión según el tipo de cambio:
-- Se mergeó al menos un `fix` → PATCH
-- Se mergeó al menos un `feat` → MINOR
-- Se mergeó algo con `!` o `BREAKING CHANGE` → MAJOR
+**Sugerencia de versión al mergear `feature/*`/`fix/*` → `dev`** (o `fix/*` → `master` en un hotfix — ver `.charless/reference/versioning.md` de la skill para el detalle completo): antes de ese merge, correr `charless check version .` — calcula el bump exacto a partir de los commits reales desde el último tag (Conventional Commits, regla "el más alto gana": MAJOR > MINOR > PATCH, nunca se apilan varios bumps), en vez de que el agente tenga que "acordarse" en prosa. Mostrar el resultado al usuario y preguntar si se taguea ahora o se deja para cuando se junten más cambios — **nunca taguear solo**, es una decisión del usuario.
 
-> "Antes de mergear a `dev`, recordatorio: esta rama trae [feat/fix/breaking], así que al taguear el próximo release correspondería subir la versión [MINOR/PATCH/MAJOR] (`{{version_actual}}` → `{{version_sugerida}}`). ¿Lo hacemos ahora o lo dejamos para cuando se junten más cambios?"
+**Esto NO se dispara al mergear `dev` → `master` para hacer un release.** Ahí `master` simplemente hereda la versión que `dev` ya trae acumulada de sus merges anteriores — no se vuelve a calcular ni a bumpear un número distinto. El cálculo pasa una sola vez, en el merge hacia `dev` (o en el hotfix directo a `master`), nunca en el merge de integración `dev` → `master`.
 
-No bumpear la versión en cada merge automáticamente — el recordatorio es para que la decisión de taguear un release no se pierda, no para reemplazar el criterio de "release es un hito, no cada commit" (ver "Versionado y releases" abajo).
+`charless check version` también avisa si una rama `feature/*` acumuló demasiados `fix` además del feature en sí (comparado contra `dev`) — mismo patrón de umbrales escalonados que el TODO Size Check: 3-5 fixes es una señal 🟡 de que el plan (RF-N/US-N) subestimó la complejidad, 6+ es 🔴 y sugiere partir la feature en dos.
 
 ## Versionado y releases — Semantic Versioning
 
