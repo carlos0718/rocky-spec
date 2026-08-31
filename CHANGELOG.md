@@ -8,6 +8,7 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ### Added
 - Interfaz de bienvenida (`welcome.py`, con `rich`) — banner al correr `charless` sin argumentos, con estado del proyecto (agentes activos) si ya tiene `.charless/`, o la lista de agentes disponibles si es la primera vez. Banner corto antes de `init`.
+- Banner ampliado: "CHARLESS" ahora tiene el mismo arte ASCII (fuente `ansi_shadow`) que "SPEC", con "by Carlos Jesus" como autoría. Sumada una reseña de features del kit y un glosario de siglas propias (RF, US, RNF, MA, P) antes de la tabla de integraciones.
 
 ### Changed
 - Rename del paquete: `charless-cli` → `spec-charless` (el comando sigue siendo `charless`, corto para tipear).
