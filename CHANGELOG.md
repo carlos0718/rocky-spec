@@ -11,8 +11,6 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ### Added
 - Tests de regresión para la fuente única de verdad de la versión (`test_versioning.py`).
-
-### Added
 - **Branching GitFlow simplificado**, portado desde la skill original (`~/.claude/skills/charless-ia`) a los templates de este paquete: nueva sección "Branching" en `AGENTS.md.template` (`main`/`dev`/`feature/*`/`fix/*`, con el recordatorio de bump de versión al mergear a `dev`/`main`), un **Branch Discipline Check** como paso 0-ter del Workflow de Git, dos artículos nuevos en `CONSTITUTION.md.template` (Boundaries y Versionado), una fila de detección de estado de branching en el scan de `mode-adopt.md` (MA-1), y la tarea "Crear rama `dev` desde `main`" en `TODO.md.template`.
 - **Flujo de iteración Plan → Confirmar → Implementar**, también portado desde la skill original: reemplaza el flujo "Agregar o modificar features (Spec-Anchored)" de `AGENTS.md.template`, que solo cubría cambios de alcance. Ahora cualquier pedido de cambio (feature o corrección) pasa primero por un plan breve y espera confirmación explícita antes de tocar código — Paso 1 decide si afecta `SPEC.md` (Paso 2a) o no (Paso 2b), y el Paso 3 implementa recién con el ok del usuario.
 
