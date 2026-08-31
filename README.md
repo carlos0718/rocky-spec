@@ -18,6 +18,16 @@ uv tool install git+https://github.com/carlos0718/spec-charless.git
 pipx install git+https://github.com/carlos0718/spec-charless.git
 ```
 
+### Fijar una versión
+
+Sin sufijo, los comandos de arriba instalan la punta de `master`, que puede moverse entre una instalación y otra. Para reproducibilidad, agregá `@` y el tag de la versión:
+
+```bash
+uv tool install "git+https://github.com/carlos0718/spec-charless.git@v0.2.0"
+```
+
+Las versiones publicadas están en [Releases](https://github.com/carlos0718/spec-charless/releases), con sus notas en el [CHANGELOG](CHANGELOG.md).
+
 ### Alternativa — con `pip` en un entorno virtual
 
 <details>
