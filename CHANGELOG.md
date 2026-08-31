@@ -6,6 +6,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-08-31
+
 ### Fixed
 - **La versión estaba hardcodeada en tres lugares** (`pyproject.toml`, `scaffold.CHARLESS_VERSION`, `__init__.__version__` — este último ni se usaba en ningún lado) — ahora `__init__.py` la lee de los metadatos del paquete instalado, una sola fuente de verdad. Bug real encontrado al usar la skill en un IDE separado y notar que la versión no había cambiado tras un fix.
 
