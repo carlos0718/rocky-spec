@@ -210,6 +210,8 @@ flowchart TD
 
 **Cómo leerlo**: el conocimiento (`commands/`, `reference/`, `templates/`) vive una sola vez, en este repo. `charless init` lo copia a `.charless/` dentro del proyecto destino y genera un puntero delgado por cada agente elegido — el agente (Claude Code, Cursor) lee ese puntero y de ahí sigue hacia `.charless/`, que es la fuente real de instrucciones. Los `charless check` son código Python determinista que audita los archivos generados (`SPEC.md`, `SECURITY.md`, etc.) directamente, sin pasar por el agente.
 
+Este diagrama es la mitad "empaquetado/instalación" del sistema. La otra mitad — qué pasos sigue el agente *dentro* de la conversación, con sus condicionales (¿tiene interfaz visual? ¿tiene backend? ¿es prototipo?) — está en [`src/spec_charless/reference/flow-diagram.md`](src/spec_charless/reference/flow-diagram.md): un diagrama por modo (Creación, Adopción, Reanudación) más el router que decide cuál de los tres corre.
+
 ## Cómo está armado
 
 ```
