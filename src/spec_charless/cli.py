@@ -7,6 +7,7 @@ import click
 
 from . import scaffold
 from .integrations import INTEGRATION_REGISTRY, SHARED_DIR_NAME
+from .scripts import accessibility_check
 from .scripts import build as build_script
 from .scripts import health_check, qa_review, version_check
 from .welcome import show_commands, show_init_banner, show_welcome
@@ -133,6 +134,13 @@ def check_security(path: Path) -> None:
 def check_observability(path: Path) -> None:
     """Error tracking, health endpoint, logging estructurado."""
     _print_report(health_check.check_observability(path.resolve()))
+
+
+@check.command(name="accessibility")
+@click.argument("path", type=click.Path(exists=True, file_okay=False, path_type=Path), default=".")
+def check_accessibility(path: Path) -> None:
+    """alt text, lang, div clickeable sin rol, botón solo-ícono, contraste WCAG básico."""
+    _print_report(accessibility_check.check_accessibility(path.resolve()))
 
 
 @check.command(name="qa")
