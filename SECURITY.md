@@ -64,4 +64,4 @@ Este checklist ayuda a que el proyecto arranque con buenas prácticas por defaul
 
 | Fecha | Cambio | Commit |
 |-------|--------|--------|
-| 2026-08-31 | Security policy inicial (P5.6) | (pendiente del primer commit) |
+| 2026-08-31 | Security policy inicial (P5.6) | `a855f64` |

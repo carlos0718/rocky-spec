@@ -36,4 +36,4 @@ Passwords, tokens completos, números de tarjeta, cualquier secret — ver `.cha
 
 | Fecha | Cambio | Commit |
 |-------|--------|--------|
-| 2026-08-31 | Observability inicial (P5.7) | (pendiente del primer commit) |
+| 2026-08-31 | Observability inicial (P5.7) | `a855f64` |

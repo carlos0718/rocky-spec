@@ -75,8 +75,8 @@ Desarrolladores individuales o equipos chicos que usan uno o más agentes de có
 
 | Fecha | Cambio | Commit |
 |-------|--------|--------|
-| 2026-08-31 | Spec inicial vía Modo Adopción — RF-1 a RF-5, US-1 a US-6, RNF-1 a RNF-5 | `b90cf74` |
-| 2026-08-31 | RF-5 redefinido: la instalación reproducible desde el repo (las tres plataformas) reemplaza a PyPI como requisito. PyPI pasa a RF-6/US-8, prioridad opcional. Nueva US-7 para la instalación multiplataforma | `HEAD` |
-| 2026-08-31 | Nueva RF-7/US-9: `charless check version`, pedido explícito del usuario al notar que el recordatorio de bump de versión del Workflow de Git era prosa vaga en vez de un cálculo real sobre los commits | `0b8c761` |
+| 2026-08-31 | Spec inicial vía Modo Adopción — RF-1 a RF-5, US-1 a US-6, RNF-1 a RNF-5 | `a855f64` |
+| 2026-08-31 | RF-5 redefinido: la instalación reproducible desde el repo (las tres plataformas) reemplaza a PyPI como requisito. PyPI pasa a RF-6/US-8, prioridad opcional. Nueva US-7 para la instalación multiplataforma | `88db0fa` |
+| 2026-08-31 | Nueva RF-7/US-9: `charless check version`, pedido explícito del usuario al notar que el recordatorio de bump de versión del Workflow de Git era prosa vaga en vez de un cálculo real sobre los commits | `8da96ec` |
 | 2026-08-31 | Nueva RF-8/US-10: `charless build`, conecta `render_template.py` (existía, código huérfano) al flujo real — el usuario preguntó por qué `init` no rellenaba los templates y quién lo hacía; la respuesta fue "el LLM a mano, sin usar el renderer determinista que ya está escrito" | `c045465` |
-| 2026-08-31 | Nueva RF-9/US-11: `charless check accessibility`, pedido explícito del usuario al notar que no existía ningún chequeo determinista de accesibilidad — solo prosa en `ui-design-guidelines.md`/`coding-principles.md` | (este commit) |
+| 2026-08-31 | Nueva RF-9/US-11: `charless check accessibility`, pedido explícito del usuario al notar que no existía ningún chequeo determinista de accesibilidad — solo prosa en `ui-design-guidelines.md`/`coding-principles.md` | `c47b505` |

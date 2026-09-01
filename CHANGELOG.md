@@ -6,6 +6,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Fixed
+- **Hashes de commit rotos en el "Historial de cambios" de `SPEC.md`/`SECURITY.md`/`OBSERVABILITY.md`** — la reescritura de identidad de git (`git-filter-repo`, ver `v0.3.1`) cambió el SHA de todos los commits del repo; las referencias sueltas en prosa que se habían escrito antes de esa reescritura (`b90cf74`, `0b8c761`, `HEAD` literal, `(pendiente del primer commit)`) quedaron apuntando a revisiones inexistentes o ambiguas. Reemplazadas por los hashes reales actuales (`a855f64`, `88db0fa`, `8da96ec`, `c045465`, `c47b505`), verificados uno por uno contra `git log`. Encontrado por el usuario al revisar `SECURITY.md`.
 ## [0.6.1] - 2026-09-01
 
 ### Added
