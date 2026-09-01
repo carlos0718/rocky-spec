@@ -327,6 +327,7 @@ Este proyecto sigue [SemVer](https://semver.org/lang/es/) (`MAJOR.MINOR.PATCH`) 
   1. Mover `[Unreleased]` a `## [X.Y.Z] - {{fecha}}` en `CHANGELOG.md`, dejando un `[Unreleased]` vacío arriba.
   2. `git commit -m "chore(release): vX.Y.Z"`
   3. `git tag -a vX.Y.Z -m "Release vX.Y.Z"` y `git push origin vX.Y.Z`
+  4. Después de mergear a la rama principal: listar `git branch --merged dev` (menos `dev`/`main`) y preguntarle al usuario cuáles borrar (local + remoto) — nunca borrar sin confirmar, y nunca ofrecer una rama que no esté 100% mergeada.
 - **Qué bump corresponde**: `fix` → PATCH · `feat` → MINOR · breaking change → MAJOR. Mientras el proyecto está en `0.x.y` (antes del primer release estable), un breaking change puede seguir bumpeando MINOR en vez de saltar a `1.0.0` — pasar a `1.0.0` es decisión del usuario, no automática.
 - **Nivel de exigencia**: un prototipo descartable no necesita nada de esto. Si este proyecto es una librería o paquete publicado (npm, PyPI), el versionado es estricto y romper compatibilidad es siempre MAJOR — ver `.charless/reference/versioning.md` sección "Nivel de exigencia" para el detalle completo.
 

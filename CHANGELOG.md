@@ -6,6 +6,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Changed
+- **Limpieza de ramas después de cada release** (`AGENTS.md` sección "Versionado y releases", y su template): tras mergear a la rama principal, el flujo ahora incluye listar las ramas ya mergeadas y preguntarle al usuario cuáles borrar (local + remoto) — nunca automático, nunca ofrecer una rama que no esté 100% mergeada.
+
 ## [0.6.0] - 2026-08-31
 
 ### Added
