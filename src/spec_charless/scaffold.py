@@ -21,6 +21,7 @@ COMMAND_CATALOG: list[tuple[str, str, str]] = [
     ("deploy", "P5.5 · Infraestructura de deploy", "p5.5-deploy.md"),
     ("security", "P5.6 · Seguridad", "p5.6-security.md"),
     ("observability", "P5.7 · Observabilidad", "p5.7-observability.md"),
+    ("accessibility", "P5.8 · Accesibilidad", "p5.8-accessibility.md"),
     ("build", "P6 y P7 · Archivos base y TODO", "p6-p7-files-todo.md"),
     ("review", "P7.5 · Revisión funcional y de QA (Three Amigos)", "p7.5-qa-review.md"),
     ("validate", "P8 · Reporte de validación", "p8-p8.5-validation-systemprompt.md"),

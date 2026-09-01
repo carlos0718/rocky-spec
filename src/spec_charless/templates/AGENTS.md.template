@@ -9,7 +9,7 @@
 - **Nombre**: {{PROJECT_NAME}}
 - **Tipo**: {{PROJECT_TYPE}} (código | creativo | híbrido)
 - **Descripción**: {{PROJECT_DESCRIPTION}}
-- **Generado por**: skill `charless-ia` — ver `CONSTITUTION.md` (reglas que no se negocian), `SPEC.md` (qué se construye), `TODO.md` (qué falta), `SECURITY.md` (decisiones y checklist de seguridad), `OBSERVABILITY.md` (cómo saber si esto está funcionando en producción)
+- **Generado por**: skill `charless-ia` — ver `CONSTITUTION.md` (reglas que no se negocian), `SPEC.md` (qué se construye), `TODO.md` (qué falta), `SECURITY.md` (decisiones y checklist de seguridad), `OBSERVABILITY.md` (cómo saber si esto está funcionando en producción), `ACCESSIBILITY.md` (checklist mínimo de accesibilidad, si el proyecto tiene interfaz visual)
 
 ## Stack
 

@@ -33,6 +33,7 @@
 - [x] `charless build` — conecta render_template.py al flujo real, genera los 10 archivos base desde un JSON de valores (US-10)
 - [x] `charless check accessibility` — 5 heurísticos (alt, lang, div clickeable, botón solo-ícono, contraste WCAG básico) sobre HTML/JSX/TSX (US-11)
 - [x] `charless build --template/--output` — modo single-file para templates condicionales (arregla MASTER.md, habilita ACCESSIBILITY.md)
+- [x] `ACCESSIBILITY.md.template` + `p5.8-accessibility.md` — tercera pieza: template condicional (solo interfaz visual), generado via `charless build` single-file, wireado en `scaffold.py`/`qa_review.py`/`AGENTS.md.template`
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
 - [ ] Integración con Gemini CLI
 - [ ] Integración con Codex CLI
