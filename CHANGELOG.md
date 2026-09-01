@@ -6,6 +6,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Added
+- **`MA-1.8` en `mode-adopt.md`** — wiring de `charless check accessibility` en Modo Adopción, simétrico a `MA-1.5`/`MA-1.6`/`MA-1.7`: si el proyecto detectado tiene interfaz visual, corre el chequeo determinista (o un heurístico manual reducido de fallback, con nota explícita de que 3 de los 5 heurísticos no tienen aproximación confiable en bash). Nueva fila `ACCESSIBILITY.md` en la tabla `MA-6`, condicional como `design-system/MASTER.md`. Cierra la pieza de "testear código ya escrito" que faltaba — `P5.8` (creación) genera el documento de decisiones, `MA-1.8` (adopción) audita código real, misma distinción que ya existe entre `P5.6`/`P5.7` y `MA-1.6`/`MA-1.7`. El resto del wiring diferido (`TODO.md.template`, `p7.5-qa-review.md`, `p8-p8.5-validation-systemprompt.md`) sigue pendiente.
+
 ### Changed
 - **Limpieza de ramas después de cada release** (`AGENTS.md` sección "Versionado y releases", y su template): tras mergear a la rama principal, el flujo ahora incluye listar las ramas ya mergeadas y preguntarle al usuario cuáles borrar (local + remoto) — nunca automático, nunca ofrecer una rama que no esté 100% mergeada.
 

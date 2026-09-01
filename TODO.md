@@ -34,6 +34,7 @@
 - [x] `charless check accessibility` — 5 heurísticos (alt, lang, div clickeable, botón solo-ícono, contraste WCAG básico) sobre HTML/JSX/TSX (US-11)
 - [x] `charless build --template/--output` — modo single-file para templates condicionales (arregla MASTER.md, habilita ACCESSIBILITY.md)
 - [x] `ACCESSIBILITY.md.template` + `p5.8-accessibility.md` — tercera pieza: template condicional (solo interfaz visual), generado via `charless build` single-file, wireado en `scaffold.py`/`qa_review.py`/`AGENTS.md.template`
+- [x] `MA-1.8` en `mode-adopt.md` — wiring de `charless check accessibility` en Modo Adopción, simétrico a MA-1.5/1.6/1.7 (piezas restantes de wiring — `TODO.md.template`, `p7.5-qa-review.md`, `p8-p8.5-validation-systemprompt.md` — siguen diferidas)
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
 - [ ] Integración con Gemini CLI
 - [ ] Integración con Codex CLI

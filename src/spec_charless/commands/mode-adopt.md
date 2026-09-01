@@ -120,6 +120,30 @@ Clasificar hallazgos:
 
 Guardar la lista de hallazgos — se muestra en MA-2 junto a los de seguridad, y alimenta las tareas pendientes de `OBSERVABILITY.md` en MA-6.
 
+### MA-1.8 · Health check — accesibilidad
+
+**Saltear si el proyecto detectado no tiene interfaz visual** (ej. una API pura, un script CLI) — mismo criterio que P5.8.
+
+**Si `charless` está disponible**, correr `charless check accessibility .` — versión determinista de este chequeo (`accessibility_check.check_accessibility`): `<img>` sin `alt`, `<html>` sin `lang`, `<div onClick>` sin `role`/`tabIndex`, `<button>` solo-ícono sin `aria-label`, y contraste WCAG AA básico sobre pares `color`/`background` hardcodeados. **Si no está disponible**, aplicar un criterio manual reducido (los dos heurísticos que se pueden aproximar razonablemente en bash — los otros tres dependen de lógica que un grep suelto no puede replicar de forma confiable, mejor no fingir cobertura que no hay):
+
+```bash
+# Imágenes sin alt (heurístico simple, con falsos positivos posibles si alt viene de props/spread)
+grep -rnE "<img\b[^>]*>" --include="*.html" --include="*.jsx" --include="*.tsx" \
+  --exclude-dir=node_modules --exclude-dir=.git . | grep -vE "alt\s*="
+
+# <html> sin lang
+grep -rlE "<html\b[^>]*>" --include="*.html" --include="*.jsx" --include="*.tsx" \
+  --exclude-dir=node_modules --exclude-dir=.git . | xargs grep -L "lang\s*=" 2>/dev/null
+```
+
+> Div clickeable sin rol, botón solo-ícono sin `aria-label`, y contraste WCAG requieren parsear el tag completo o calcular luminancia — no hay un heurístico manual confiable para esos tres sin `charless` instalado. Si no está disponible, avisar al usuario que esos tres quedan sin auditar en este chequeo.
+
+Clasificar hallazgos:
+- 🟡 **Revisar** — cualquier resultado de los heurísticos de arriba (o de `charless check accessibility` si está disponible).
+- Sin flag — sin hallazgos.
+
+Guardar la lista de hallazgos — se muestra en MA-2 junto a los de seguridad/observabilidad, y alimenta el checklist de `ACCESSIBILITY.md` en MA-6 (los ítems con hallazgo 🟡 arrancan sin marcar, no asumidos como resueltos — mismo criterio que `SECURITY.md`).
+
 ### MA-2 · Presentar hallazgos + pedir descripción
 
 Mostrar al usuario lo encontrado y pedir los datos que no se pueden inferir del código:
@@ -147,6 +171,10 @@ Observabilidad:
   🟡 No encontré error tracking configurado (Sentry u otro)
   🟡 No encontré un endpoint de health check
   🟡 47 apariciones de console.log — sin logging estructurado
+
+Accesibilidad (proyecto con interfaz visual):
+  🟡 3 <img> sin alt (src/pages/Home.tsx, src/components/Card.tsx)
+  🟡 2 <button> solo-ícono sin aria-label
 
 Archivos de la skill que ya existen:
   [v] README.md
@@ -231,6 +259,7 @@ Para cada archivo que el audit de MA-1 marcó con `[x]` (no existe), generarlo u
 | `CLAUDE.md` | `.charless/templates/CLAUDE.md.template` | Importa `AGENTS.md` + roles del asistente |
 | `SECURITY.md` | `.charless/templates/SECURITY.md.template` | Stack y auth detectados en MA-1, hallazgos de MA-1.6 (los ítems OWASP con hallazgo 🔴/🟡 arrancan sin marcar, no asumidos como resueltos) |
 | `OBSERVABILITY.md` | `.charless/templates/OBSERVABILITY.md.template` | Stack detectado en MA-1, hallazgos de MA-1.7 (si ya hay error tracking/health check, documentarlos tal cual están en vez de asumir que no existen) |
+| `ACCESSIBILITY.md` | `.charless/templates/ACCESSIBILITY.md.template` | **Solo si el proyecto detectado en MA-1 tiene interfaz visual.** Hallazgos de MA-1.8 (los ítems del checklist con hallazgo 🟡 arrancan sin marcar). Condicional como `design-system/MASTER.md` — no pisar si el proyecto no tiene UI |
 | `CHANGELOG.md` | `.charless/templates/CHANGELOG.md.template` | Si hay tags de git existentes, usarlos para reconstruir versiones pasadas (ver caso especial abajo); si no hay historial de versiones, arranca en `[Unreleased]` |
 | `LICENSE` | `.charless/templates/LICENSE-*.template` | Solo si no existe ya (ver caso especial abajo) — nunca inventar una licencia sin preguntar |
 | `TODO.md` | `.charless/templates/TODO.md.template` | Features del SPEC.md (las ✅ ya marcadas como hecho, las pendientes como `- [ ]`) |
