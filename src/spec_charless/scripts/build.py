@@ -65,22 +65,35 @@ def _license_entry(values: dict[str, str]) -> tuple[str, str] | None:
     return (f"LICENSE-{choice}.template", "LICENSE")
 
 
-def build(project_root: Path, values: dict[str, str], force: bool = False) -> BuildResult:
+def build(
+    project_root: Path,
+    values: dict[str, str],
+    force: bool = False,
+    only: tuple[str, str] | None = None,
+) -> BuildResult:
     """Renderiza los archivos base del proyecto desde ``.charless/templates/``
     usando ``values``. No pisa un archivo que ya exista salvo ``force=True``
-    — mismo criterio de instalación no destructiva que ``charless init``."""
+    — mismo criterio de instalación no destructiva que ``charless init``.
+
+    ``only=(template_name, output_relative)`` renderiza un solo template en
+    vez del set fijo de ``BASE_FILES`` — para templates condicionales que no
+    aplican a todo proyecto (``MASTER.md.template``, ``ACCESSIBILITY.md.template``),
+    que antes quedaban afuera de este mecanismo determinista por completo."""
     templates_dir = project_root / SHARED_DIR_NAME / TEMPLATES_DIR_NAME
     result = BuildResult()
 
-    entries = list(BASE_FILES)
-
-    choice = values.get(LICENSE_VALUES_KEY)
-    if choice and choice not in LICENSE_CHOICES:
-        result.invalid_license_choice = choice
+    if only:
+        entries = [only]
     else:
-        license_entry = _license_entry(values)
-        if license_entry:
-            entries.append(license_entry)
+        entries = list(BASE_FILES)
+
+        choice = values.get(LICENSE_VALUES_KEY)
+        if choice and choice not in LICENSE_CHOICES:
+            result.invalid_license_choice = choice
+        else:
+            license_entry = _license_entry(values)
+            if license_entry:
+                entries.append(license_entry)
 
     for template_name, output_relative in entries:
         template_path = templates_dir / template_name

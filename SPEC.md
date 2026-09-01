@@ -41,7 +41,7 @@ Desarrolladores individuales o equipos chicos que usan uno o más agentes de có
 ## Criterios de aceptación — MVP listo cuando:
 
 - [x] `charless init` genera correctamente las integraciones de Claude y Cursor sin duplicar el conocimiento compartido
-- [x] Los tests automatizados (84) pasan
+- [x] Los tests automatizados (89) pasan
 - [x] Los tres health-checks (`code`, `security`, `observability`) corren sin depender de que un LLM interprete bash
 - [ ] El chequeo de trazabilidad (`qa`) corre sobre un proyecto real generado por la propia herramienta
 - [ ] Al menos una integración adicional (Gemini o Codex) funcionando de punta a punta

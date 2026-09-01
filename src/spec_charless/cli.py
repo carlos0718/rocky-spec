@@ -75,11 +75,29 @@ def init(path: Path, agents: tuple[str, ...], force: bool) -> None:
     "LICENSE_CHOICE (mit/apache2/proprietary) para generar LICENSE.",
 )
 @click.option("--force", is_flag=True, help="Sobrescribir archivos que ya existan en el proyecto.")
-def build(path: Path, values_path: Path, force: bool) -> None:
+@click.option(
+    "--template",
+    "template_name",
+    type=str,
+    default=None,
+    help="Renderizar un solo template (ej. MASTER.md.template) en vez del set fijo de archivos base. Usar junto con --output.",
+)
+@click.option(
+    "--output",
+    "output_relative",
+    type=str,
+    default=None,
+    help="Ruta relativa de salida para --template (ej. design-system/MASTER.md).",
+)
+def build(path: Path, values_path: Path, force: bool, template_name: str | None, output_relative: str | None) -> None:
     """Renderiza los archivos base (SPEC.md, CONSTITUTION.md, AGENTS.md...) desde .charless/templates/."""
+    if bool(template_name) != bool(output_relative):
+        raise click.UsageError("--template y --output tienen que usarse juntos.")
+
     project_root = path.resolve()
     values = json.loads(values_path.read_text(encoding="utf-8"))
-    result = build_script.build(project_root, values, force=force)
+    only = (template_name, output_relative) if template_name else None
+    result = build_script.build(project_root, values, force=force, only=only)
 
     for f in result.generated:
         click.echo(f"✓ {f}")

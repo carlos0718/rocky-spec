@@ -32,13 +32,14 @@
 - [x] `charless check version` — sugerencia determinista de bump de SemVer + aviso de fixes acumulados en una feature (US-9)
 - [x] `charless build` — conecta render_template.py al flujo real, genera los 10 archivos base desde un JSON de valores (US-10)
 - [x] `charless check accessibility` — 5 heurísticos (alt, lang, div clickeable, botón solo-ícono, contraste WCAG básico) sobre HTML/JSX/TSX (US-11)
+- [x] `charless build --template/--output` — modo single-file para templates condicionales (arregla MASTER.md, habilita ACCESSIBILITY.md)
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
 - [ ] Integración con Gemini CLI
 - [ ] Integración con Codex CLI
 - [ ] Integración con Windsurf
 
 ## Calidad
-- [x] Suite de tests (84 tests — render_template, health_check, qa_review, integrations, version_check, build, welcome, accessibility_check)
+- [x] Suite de tests (89 tests — render_template, health_check, qa_review, integrations, version_check, build, welcome, accessibility_check)
 - [ ] CI/CD (correr tests automáticamente en cada push)
 - [ ] Coverage report
 

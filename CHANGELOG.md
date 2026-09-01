@@ -8,6 +8,7 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ### Added
 - **`charless check accessibility`** (RF-9/US-11) — health-check determinista de accesibilidad web, primera pieza de tres para cerrar el gap encontrado en conversación (no existía ningún chequeo automático, solo prosa en `ui-design-guidelines.md`/`coding-principles.md`). Corre sobre `.html`/`.jsx`/`.tsx` (y `.css` para contraste): `<img>` sin `alt`, `<html>` sin `lang`, `<div onClick>` sin `role`/`tabIndex`, `<button>` solo-ícono sin `aria-label`, y contraste WCAG AA básico (4.5:1) sobre pares `color`/`background` hardcodeados. Puramente diagnóstico, como el resto de los `check` — nunca edita código. Cada heurístico documenta explícitamente sus límites conocidos (spread props, `var(--x)`, Tailwind, texto oculto con `display:none`) en vez de esconderlos.
+- **`charless build --template/--output`** — segunda pieza: modo de un solo archivo, para templates condicionales que no aplican a todo proyecto. Cierra un gap real encontrado al diseñar `ACCESSIBILITY.md.template`: `MASTER.md.template` (design system, P4.5) se generaba a mano por el LLM, fuera del mecanismo determinista de `build()` — mismo problema no-determinista que `build()` ya había resuelto para los otros 9 archivos, sin conectar. `p4.5-design-system.md` ahora prefiere `charless build . --template MASTER.md.template --output design-system/MASTER.md` en vez de reescribir el archivo a mano.
 
 ## [0.5.1] - 2026-08-31
 
