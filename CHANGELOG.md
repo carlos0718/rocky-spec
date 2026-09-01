@@ -6,6 +6,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Added
+- **`reference/flow-diagram.md`** — 4 diagramas Mermaid (router de detección de modo, Modo Creación P0→P8.5, Modo Adopción MA-1→MA-8, Modo Reanudación) con los condicionales reales de cada paso (`**Saltear si:**` de cada `commands/*.md`), para entender de un vistazo cómo itera la skill sin leer los 14 archivos de comandos. Enlazado desde `README.md`.
+
 ### Changed
 - **Limpieza de ramas después de cada release** (`AGENTS.md` sección "Versionado y releases", y su template): tras mergear a la rama principal, el flujo ahora incluye listar las ramas ya mergeadas y preguntarle al usuario cuáles borrar (local + remoto) — nunca automático, nunca ofrecer una rama que no esté 100% mergeada.
 
