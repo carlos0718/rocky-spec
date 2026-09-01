@@ -6,6 +6,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-09-01
+
 ### Added
 - **`MA-1.8` en `mode-adopt.md`** — wiring de `charless check accessibility` en Modo Adopción, simétrico a `MA-1.5`/`MA-1.6`/`MA-1.7`: si el proyecto detectado tiene interfaz visual, corre el chequeo determinista (o un heurístico manual reducido de fallback, con nota explícita de que 3 de los 5 heurísticos no tienen aproximación confiable en bash). Nueva fila `ACCESSIBILITY.md` en la tabla `MA-6`, condicional como `design-system/MASTER.md`. Cierra la pieza de "testear código ya escrito" que faltaba — `P5.8` (creación) genera el documento de decisiones, `MA-1.8` (adopción) audita código real, misma distinción que ya existe entre `P5.6`/`P5.7` y `MA-1.6`/`MA-1.7`. El resto del wiring diferido (`TODO.md.template`, `p7.5-qa-review.md`, `p8-p8.5-validation-systemprompt.md`) sigue pendiente.
 - **`reference/flow-diagram.md`** — 4 diagramas Mermaid (router de detección de modo, Modo Creación P0→P8.5, Modo Adopción MA-1→MA-8, Modo Reanudación) con los condicionales reales de cada paso (`**Saltear si:**` de cada `commands/*.md`), para entender de un vistazo cómo itera la skill sin leer los 14 archivos de comandos. Enlazado desde `README.md`.
