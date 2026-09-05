@@ -26,7 +26,7 @@ from .integrations import INTEGRATION_REGISTRY, SHARED_DIR_NAME
 
 console = Console()
 
-BANNER = r"""
+_BANNER_RAW = r"""
 ██████╗  ██████╗  ██████╗██╗  ██╗██╗   ██╗    ███████╗██████╗ ███████╗ ██████╗
 ██╔══██╗██╔═══██╗██╔════╝██║ ██╔╝╚██╗ ██╔╝    ██╔════╝██╔══██╗██╔════╝██╔════╝
 ██████╔╝██║   ██║██║     █████╔╝  ╚████╔╝     ███████╗██████╔╝█████╗  ██║
@@ -37,7 +37,15 @@ BANNER = r"""
 
 # Ancho natural del arte ASCII -- si la terminal no entra, se muestra un
 # título compacto en vez de romper el arte a la mitad (ver _banner_renderable).
-BANNER_WIDTH = max(len(line) for line in BANNER.splitlines())
+BANNER_WIDTH = max(len(line) for line in _BANNER_RAW.splitlines())
+
+# Cada línea se rellena con espacios hasta BANNER_WIDTH -- pyfiglet genera
+# todas las líneas con el mismo ancho, pero un editor que recorta espacios
+# finales al guardar puede perder ese padding en alguna línea sin que se
+# note en el código; con justify="center" eso descuadra el arte entera
+# (cada línea se centra por separado). Se recalcula acá en vez de confiar
+# en que el string hardcodeado nunca pierda espacios de nuevo.
+BANNER = "\n".join(line.ljust(BANNER_WIDTH) for line in _BANNER_RAW.splitlines())
 COMPACT_TITLE = "ROCKY SPEC"
 
 # Borde (1 char c/lado) + padding=(1, 2) (2 chars c/lado) del Panel exterior
