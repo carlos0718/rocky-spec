@@ -1,0 +1,48 @@
+# Accessibility — {{PROJECT_NAME}}
+
+> Generado por skill `rocky-spec` · Ver `.rocky-spec/reference/ui-design-guidelines.md` de la skill para el detalle completo de cada regla. Documento vivo — se actualiza cada vez que cambia una decisión de accesibilidad, con su línea en "Historial de cambios".
+>
+> Seguridad (`SECURITY.md`) responde "¿nos atacan?". Observabilidad (`OBSERVABILITY.md`) responde "¿funciona?". Este archivo responde **"¿lo puede usar cualquiera?"**.
+
+## Nivel de exigencia de este proyecto
+
+- **Escala**: {{ACCESSIBILITY_SCALE}} <!-- Prototipo/demo | Producto real, público general | Producto con requisito legal de accesibilidad -->
+
+## Decisiones de este proyecto
+
+| Área | Decisión |
+|---|---|
+| **Idioma declarado** | {{HTML_LANG, default: es}} |
+| **Sistema de foco visible** | {{FOCUS_RING_APPROACH, default: outline nativo del navegador, no removido}} |
+| **Paleta verificada contra WCAG AA** | {{CONTRAST_VERIFIED}} <!-- sí/no — ver design-system/MASTER.md para los tokens de color --> |
+
+## Checklist — mínimo indispensable
+
+Marcado según lo que ya cumple este proyecto (ver `.rocky-spec/reference/ui-design-guidelines.md` de la skill, sección "Reglas de accesibilidad — mínimo indispensable", para el detalle de cada ítem):
+
+- [ ] Contraste de texto normal ≥ 4.5:1, texto grande/UI ≥ 3:1
+- [ ] `lang` correcto en el `<html>` raíz
+- [ ] `alt` en todas las imágenes que transmiten información
+- [ ] `aria-label` en botones que solo tienen ícono
+- [ ] Elementos clickeables no nativos (`<div onClick>`) tienen `role` y `tabIndex`
+- [ ] Touch targets ≥ 44×44px
+- [ ] Focus ring visible en todos los elementos interactivos
+- [ ] Color nunca es el único indicador de estado (agregar ícono o texto)
+
+## Chequeo automático
+
+`rocky check accessibility .` corre varios de estos ítems de forma determinista sobre el código (`alt`, `lang`, `div` clickeable sin rol, botón solo-ícono, contraste hardcodeado en CSS/inline). **No reemplaza** una auditoría manual: no ve clases de utilidades (Tailwind), variables CSS (`var(--x)`), ni nada que dependa de probar con un lector de pantalla real.
+
+## Fuera de alcance de este documento
+
+Este checklist ayuda a que el proyecto arranque con las prácticas mínimas de accesibilidad — **no reemplaza una auditoría profesional** (usuarios reales, herramientas especializadas como axe/Lighthouse, lectores de pantalla) para proyectos con requisito legal o de compliance (ej. Section 508, European Accessibility Act).
+
+---
+
+## Historial de cambios
+
+> Cada vez que cambia una decisión de accesibilidad (nuevo criterio de contraste, cambio de sistema de foco, etc.), se agrega una línea acá.
+
+| Fecha | Cambio | Commit |
+|-------|--------|--------|
+| {{DATE}} | Accessibility inicial (P5.8) | {{INITIAL_COMMIT}} |

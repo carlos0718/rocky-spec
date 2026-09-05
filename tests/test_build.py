@@ -1,8 +1,8 @@
-from spec_charless.scripts import build
+from rocky_spec.scripts import build
 
 
 def _make_templates(tmp_path):
-    templates_dir = tmp_path / ".charless" / "templates"
+    templates_dir = tmp_path / ".rocky-spec" / "templates"
     templates_dir.mkdir(parents=True)
     (templates_dir / "SPEC.md.template").write_text("# {{PROJECT_NAME}}\n{{DESCRIPTION, default: sin descripción}}\n")
     (templates_dir / "CONSTITUTION.md.template").write_text("Reglas de {{PROJECT_NAME}}\n")
@@ -77,7 +77,7 @@ def test_build_reports_invalid_license_choice(tmp_path):
 
 
 def test_build_on_empty_templates_dir_generates_nothing(tmp_path):
-    (tmp_path / ".charless" / "templates").mkdir(parents=True)
+    (tmp_path / ".rocky-spec" / "templates").mkdir(parents=True)
     result = build.build(tmp_path, {})
 
     assert result.generated == []

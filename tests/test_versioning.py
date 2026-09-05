@@ -1,12 +1,12 @@
 import re
 from pathlib import Path
 
-SRC_ROOT = Path(__file__).parent.parent / "src" / "spec_charless"
+SRC_ROOT = Path(__file__).parent.parent / "src" / "rocky_spec"
 
 
 def test_version_is_declared_in_exactly_one_place():
     """Regresión: hasta hace poco la versión estaba hardcodeada en tres
-    lugares (pyproject.toml, scaffold.CHARLESS_VERSION, __init__.__version__)
+    lugares (pyproject.toml, scaffold.ROCKY_SPEC_VERSION, __init__.__version__)
     que había que acordarse de mover juntos en cada release — y no se movían.
     Ahora `__init__.py` la lee de los metadatos del paquete (que a su vez
     vienen de pyproject.toml) — este test falla si alguien vuelve a
@@ -27,7 +27,7 @@ def test_version_is_declared_in_exactly_one_place():
 
 
 def test_scaffold_version_matches_package_metadata():
-    from spec_charless import __version__
-    from spec_charless.scaffold import CHARLESS_VERSION
+    from rocky_spec import __version__
+    from rocky_spec.scaffold import ROCKY_SPEC_VERSION
 
-    assert CHARLESS_VERSION == __version__
+    assert ROCKY_SPEC_VERSION == __version__

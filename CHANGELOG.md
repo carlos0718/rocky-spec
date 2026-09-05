@@ -1,10 +1,23 @@
 # Changelog
 
-Todos los cambios notables de `spec-charless` se documentan en este archivo.
+Todos los cambios notables de `rocky-spec` (antes `spec-charless`) se documentan en este archivo.
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ## [Unreleased]
+
+### Changed
+- **Rename completo: `spec-charless`/`charless` → `rocky-spec`/`rocky`** — pedido explícito del usuario. Toca prácticamente todo el repo:
+  - Paquete pip: `spec-charless` → `rocky-spec`. Módulo Python: `src/spec_charless/` → `src/rocky_spec/` (`git mv`, historial de archivos preservado).
+  - Comando de terminal: `charless` → `rocky` (sin alias de compatibilidad — corte limpio, decisión explícita dado que el proyecto está en `0.x.y` sin usuarios externos conocidos).
+  - Carpeta compartida en cada proyecto destino: `.charless/` → `.rocky-spec/`.
+  - Skill de Claude Code generada: `.claude/skills/spec-charless/` → `.claude/skills/rocky-spec/` (`/rocky-spec`). Comandos de Cursor: `.cursor/commands/charless-*.md` → `.cursor/commands/rocky-*.md`, `.cursor/rules/charless.mdc` → `.cursor/rules/rocky.mdc`.
+  - Repo de GitHub: `carlos0718/spec-charless` → `carlos0718/rocky-spec` (GitHub redirige la URL vieja).
+  - Banner de bienvenida regenerado con `pyfiglet` (fuente `ansi_shadow`): "ROCKY" + "SPEC" en vez de "SPEC" + "CHARLESS". Título compacto (terminales angostas) → "ROCKY SPEC".
+  - Las 68 referencias en `commands/*.md`/`reference/*.md`/`templates/*.template` (incluida la skill fuente, ya renombrada externamente de `charless-ia` a `rocky-spec`) actualizadas para que el paquete generado quede en sync con la skill que lo produce.
+  - `SPEC.md`/`SECURITY.md`/`OBSERVABILITY.md` de este mismo repo: contenido vivo actualizado; la sección "Historial de cambios" de `SPEC.md` **no se reescribió** — sigue describiendo los nombres reales que existían en cada momento pasado, con sus hashes de commit sin tocar.
+  - De paso, dos gaps reales encontrados haciendo el audit de consistencia (no relacionados al rename en sí, pero corregidos de una): `rocky check accessibility` y el modo single-file de `rocky build` (`--template`/`--output`) nunca se habían agregado a la tabla de comandos del README ni a `welcome.py`.
+  - Sin alias `charless` de compatibilidad — quien ya lo tenía instalado necesita reinstalar (`uv tool uninstall spec-charless && uv tool install git+https://github.com/carlos0718/rocky-spec.git`).
 
 ### Fixed
 - **Hashes de commit rotos en el "Historial de cambios" de `SPEC.md`/`SECURITY.md`/`OBSERVABILITY.md`** — la reescritura de identidad de git (`git-filter-repo`, ver `v0.3.1`) cambió el SHA de todos los commits del repo; las referencias sueltas en prosa que se habían escrito antes de esa reescritura (`b90cf74`, `0b8c761`, `HEAD` literal, `(pendiente del primer commit)`) quedaron apuntando a revisiones inexistentes o ambiguas. Reemplazadas por los hashes reales actuales (`a855f64`, `88db0fa`, `8da96ec`, `c045465`, `c47b505`), verificados uno por uno contra `git log`. Encontrado por el usuario al revisar `SECURITY.md`.

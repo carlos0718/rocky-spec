@@ -2,7 +2,7 @@ import subprocess
 
 import pytest
 
-from spec_charless.scripts import health_check
+from rocky_spec.scripts import health_check
 
 
 @pytest.fixture

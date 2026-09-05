@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from spec_charless.scripts import version_check
+from rocky_spec.scripts import version_check
 
 
 def _git(args: list[str], cwd: Path) -> None:

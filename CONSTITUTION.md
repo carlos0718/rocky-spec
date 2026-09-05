@@ -1,4 +1,4 @@
-# Constitution — spec-charless
+# Constitution — rocky-spec
 
 > Concepto tomado de GitHub Spec Kit: la constitution es el conjunto de principios **inmutables** que gobiernan cómo las specs se convierten en código — la diferencia con `SPEC.md` es la frecuencia de cambio. `SPEC.md` cambia con cada feature (Spec-Anchored, vivo). Esta Constitution casi no cambia — enmendarla es un acto deliberado y explícito, nunca un efecto colateral de resolver una tarea.
 >
@@ -10,7 +10,7 @@
 - **Fecha de ratificación**: 2026-08-31
 - **Última enmienda**: 2026-08-31
 
-**Regla de enmienda** (versionado propio, independiente del SemVer del software — ver `.charless/reference/versioning.md` de la skill):
+**Regla de enmienda** (versionado propio, independiente del SemVer del software — ver `.rocky-spec/reference/versioning.md` de la skill):
 - **MAJOR**: se elimina o redefine un artículo existente (ej. dejar de aplicar SOLID).
 - **MINOR**: se agrega un artículo nuevo (ej. sumar un requisito de accesibilidad que antes no estaba).
 - **PATCH**: aclaración de redacción sin cambio de fondo.
@@ -27,7 +27,7 @@
 | **YAGNI** | No implementar lo que no se necesita hoy. |
 | **Clean Code** | Nombres que se explican solos. Funciones < 30 líneas. Early returns. Logs estructurados, nunca `console.log("texto")` — ver `OBSERVABILITY.md` para la librería y el formato exacto de este proyecto. |
 
-Detalle completo, ejemplos y contraejemplos en `.charless/reference/coding-principles.md`.
+Detalle completo, ejemplos y contraejemplos en `.rocky-spec/reference/coding-principles.md`.
 
 ## Artículo 2 — Tamaño y estructura de archivos
 
@@ -81,12 +81,12 @@ Estos patrones son la forma concreta en que este proyecto aplica el Artículo 1 
 - El trabajo del día a día se hace en `feature/*`/`fix/*`, nunca directo sobre `master`/`dev` — ver `AGENTS.md` sección "Branching". Al mergear a `dev` o `master`, recordar (no ejecutar solo) si corresponde bumpear versión.
 - **El merge nunca es automático** — después de commitear y pushear una rama, parar y mostrar un resumen del cambio antes de ejecutar `git merge`, esperando confirmación explícita. Nunca encadenar commit → push → merge sin que el usuario vea qué se integra a `dev`/`master`.
 
-Detalle completo, ejemplos y la relación con los snapshots de `specs/` en `.charless/reference/versioning.md` de la skill.
+Detalle completo, ejemplos y la relación con los snapshots de `specs/` en `.rocky-spec/reference/versioning.md` de la skill.
 
 ## Artículo 8 — Gestión de dependencias
 
 - El lockfile (`no aplica todavía (sin dependencias fijadas por lockfile — pyproject.toml declara rangos)`) se commitea **siempre** — nunca en `.gitignore`. Es lo único que garantiza que todos instalen exactamente la misma versión.
-- Dependency scanning corre en CI (Dependabot u equivalente, ver Artículo 3) — esto es seguridad. Mantener las dependencias actualizadas en el tiempo (no solo parchear vulnerabilidades) es mantenimiento — ver `.charless/reference/dependencies.md` para pinning, cadencia de actualización, y compliance de licencias de terceros.
+- Dependency scanning corre en CI (Dependabot u equivalente, ver Artículo 3) — esto es seguridad. Mantener las dependencias actualizadas en el tiempo (no solo parchear vulnerabilidades) es mantenimiento — ver `.rocky-spec/reference/dependencies.md` para pinning, cadencia de actualización, y compliance de licencias de terceros.
 - Si este proyecto se redistribuye o es open source: compliance de licencias de terceros es obligatorio, no opcional — una sola dependencia con licencia copyleft fuerte (GPL/AGPL) mal usada puede obligar a relicenciar el proyecto completo.
 
 ## Overrides ratificados

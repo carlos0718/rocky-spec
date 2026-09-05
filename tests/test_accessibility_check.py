@@ -1,4 +1,4 @@
-from spec_charless.scripts import accessibility_check as a11y
+from rocky_spec.scripts import accessibility_check as a11y
 
 
 def _write(tmp_path, name, content):

@@ -1,4 +1,4 @@
-from spec_charless.scripts.render_template import find_unresolved, render
+from rocky_spec.scripts.render_template import find_unresolved, render
 
 
 def test_render_replaces_provided_values():

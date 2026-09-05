@@ -1,0 +1,124 @@
+# TODO — {{PROJECT_NAME}}
+
+> Generado por `/rocky-spec` el {{DATE}}.
+> Modo elegido: {{TODO_MODE}} (A manual | B colaborativo | C auto | D skip) · Organización: {{BUILD_ORDER, default: por capas}} (por capas | por features)
+>
+> **Convención de Git:** cada tarea completada se marca `- [x]` **en el mismo commit** que el código que la resuelve, con mensaje `<tipo>: <descripción> (TODO: <texto de la tarea>)`, seguido de push inmediato. El checkbox y el código siempre viajan juntos — nunca por separado. Detalle completo en `AGENTS.md` sección "Workflow de Git".
+>
+> **Trazabilidad**: las tareas que implementan una historia de `SPEC.md` terminan con su ID — `(US-1)`, y suman `(RNF-N)` si además cumplen un requisito no funcional puntual. Ver `AGENTS.md` sección "Trazabilidad de requisitos".
+>
+> **README sync:** al completar el **último ítem de cada sección**, actualizar la sección correspondiente del `README.md` e incluirlo en el mismo commit. Ver tabla de mapeo en `AGENTS.md` sección "README sync".
+
+<!-- ══════════════════════════════════════════════════════════════════
+     P7 elige UNO de los dos modos de abajo y borra el otro bloque
+     completo — ver criterio en .rocky-spec/commands/p6-p7-files-todo.md
+     sección "¿TODO único o dividido — y por qué eje?". Dentro de
+     cualquiera de los dos, "Features iniciales" (único) o los archivos
+     de todos/ (orquestador) se organizan por capas o por features,
+     ver sección "Organización de 'Features iniciales'" del mismo archivo.
+     ══════════════════════════════════════════════════════════════════ -->
+
+<!-- ═══ MODO ÚNICO (sin carpeta todos/) — proyecto Mini/Chico o de una sola capa ═══ -->
+
+## Setup
+<!-- 📄 README sync → verificar scripts, pasos de instalación y variables de entorno -->
+
+- [ ] Verificar que el dev server arranca
+- [ ] Configurar variables de entorno (.env)
+- [ ] Inicializar repo git y primer commit
+- [ ] Conectar a GitHub / GitLab
+- [ ] Crear rama `dev` desde `main` (ver `AGENTS.md` sección "Branching — GitFlow simplificado")
+- [ ] Configurar CI básico
+
+## Features iniciales
+<!-- 📄 README sync → agregar / actualizar sección "Features" con lo que se construyó -->
+<!-- Si el proyecto es fullstack, organizar por capas (Dominio/DB → Backend → Frontend) o por features (una historia = un grupo de tareas), según lo decidido en P7 -->
+<!-- Cada tarea que implementa una historia de SPEC.md termina con su ID: (US-1). Tareas de infra/setup no llevan ID. -->
+
+- [ ] {{FEATURE_1}}
+- [ ] {{FEATURE_2}}
+- [ ] {{FEATURE_3}}
+
+## Infraestructura / Deploy
+<!-- 📄 README sync → agregar URL de producción, plataforma, variables de entorno de prod y badge de CI si aplica -->
+
+<!-- Docker (descomentar si se eligió dockerizar en P5.5) -->
+<!-- - [ ] Verificar que `docker build` y `docker-compose up` funcionan en local -->
+<!-- - [ ] Probar imagen en modo producción: `docker-compose -f docker-compose.prod.yml up` -->
+
+<!-- CI/CD (descomentar según lo configurado en P5.5) -->
+<!-- - [ ] Verificar que el workflow de CI pasa en el primer push -->
+<!-- - [ ] Configurar secrets en GitHub / GitLab (JWT_SECRET, DATABASE_URL, etc.) -->
+<!-- - [ ] Confirmar que los badges de CI aparecen en el README -->
+
+- [ ] Completar `.env.example` con todas las variables necesarias
+- [ ] Configurar variables de entorno en la plataforma de deploy
+- [ ] Conectar el repo a la plataforma ({{DEPLOY_PLATFORM}})
+- [ ] Configurar dominio / URL de producción
+- [ ] Primer deploy exitoso
+- [ ] Verificar que la app funciona en producción (smoke test manual)
+
+## Seguridad
+<!-- 📄 README sync → no suele necesitar sección propia en el README, salvo que el proyecto sea open source -->
+<!-- Poblado en P5.6 con los ítems del checklist OWASP de SECURITY.md que quedaron sin marcar -->
+
+{{SECURITY_TODO_ITEMS}}
+<!-- ej.: -->
+<!-- - [ ] A04 · Definir rate limiting en endpoints de auth -->
+<!-- - [ ] A07 · Revisar política de expiración de tokens -->
+
+## Observabilidad
+<!-- 📄 README sync → no suele necesitar sección propia en el README -->
+<!-- Poblado en P5.7 (ver .rocky-spec/commands/p5.7-observability.md Paso 5) con lo que quedó pendiente de configurar manualmente -->
+
+{{OBSERVABILITY_TODO_ITEMS}}
+<!-- ej.: -->
+<!-- - [ ] Crear cuenta en Sentry y pegar el DSN real en la plataforma de deploy -->
+<!-- - [ ] Conectar UptimeRobot (o equivalente) a la URL de /health una vez deployado -->
+
+<!-- ═══ FIN MODO ÚNICO ═══ -->
+
+<!-- ═══ MODO ORQUESTADOR (con carpeta todos/) — proyecto fullstack o arquitectura Grande ═══ -->
+<!-- P7 elige UNO de los dos formatos de tabla de abajo (por capas o por features) según lo decidido con el usuario -->
+
+## Estado por grupo
+
+<!-- Formato "por capas" — omitir las filas de capas que el proyecto no tiene -->
+| Grupo | Progreso | Archivo |
+|---|---|---|
+| Dominio / Base de datos | {{DOMAIN_DONE}}/{{DOMAIN_TOTAL}} | `todos/dominio-db.md` |
+| API / Backend | {{BACKEND_DONE}}/{{BACKEND_TOTAL}} | `todos/api-backend.md` |
+| Frontend / UI | {{FRONTEND_DONE}}/{{FRONTEND_TOTAL}} | `todos/frontend-ui.md` |
+| Infraestructura / Deploy | {{DEPLOY_DONE}}/{{DEPLOY_TOTAL}} | `todos/infraestructura-deploy.md` |
+| Seguridad | {{SECURITY_DONE}}/{{SECURITY_TOTAL}} | `todos/seguridad.md` |
+| Observabilidad | {{OBS_DONE}}/{{OBS_TOTAL}} | `todos/observabilidad.md` |
+| Deuda técnica | {{DEBT_DONE}}/{{DEBT_TOTAL}} | `todos/deuda-tecnica.md` |
+
+<!-- Formato "por features" — una fila por historia de usuario o grupo de historias relacionadas -->
+| Grupo | Historias | Progreso | Archivo |
+|---|---|---|---|
+| {{FEATURE_GROUP_1}} | {{US_IDS_1}} | {{DONE_1}}/{{TOTAL_1}} | `todos/{{feature-slug-1}}.md` |
+| {{FEATURE_GROUP_2}} | {{US_IDS_2}} | {{DONE_2}}/{{TOTAL_2}} | `todos/{{feature-slug-2}}.md` |
+| Infraestructura / Deploy | — | {{DEPLOY_DONE}}/{{DEPLOY_TOTAL}} | `todos/infraestructura-deploy.md` |
+| Seguridad | — | {{SECURITY_DONE}}/{{SECURITY_TOTAL}} | `todos/seguridad.md` |
+| Observabilidad | — | {{OBS_DONE}}/{{OBS_TOTAL}} | `todos/observabilidad.md` |
+| Deuda técnica | — | {{DEBT_DONE}}/{{DEBT_TOTAL}} | `todos/deuda-tecnica.md` |
+
+> Esta tabla se actualiza cuando se completa la **última tarea de un grupo entero**, no en cada commit individual (ver `AGENTS.md` sección "Workflow de Git").
+
+<!-- ═══ FIN MODO ORQUESTADOR — el resto de las secciones (Setup, Calidad, Documentación) son comunes a ambos modos, ver abajo ═══ -->
+
+## Calidad
+<!-- 📄 README sync → actualizar comando de lint/coverage, agregar badge si aplica -->
+
+- [ ] Configurar reglas de linter
+- [ ] Configurar Prettier / formatter
+- [ ] Escribir primer smoke test
+- [ ] Coverage objetivo definido
+
+## Documentación
+<!-- 📄 README sync → completar secciones vacías, agregar links a docs o diagramas -->
+
+- [ ] Completar README.md
+- [ ] Documentar decisiones clave en AGENTS.md
+- [ ] Agregar diagramas si aplica

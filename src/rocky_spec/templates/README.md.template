@@ -1,0 +1,79 @@
+# {{PROJECT_NAME}}
+
+{{PROJECT_DESCRIPTION}}
+
+## Stack
+
+{{STACK_SUMMARY}}
+
+## Setup
+
+```bash
+# Clonar
+git clone <repo-url>
+cd {{PROJECT_NAME}}
+
+# Instalar dependencias
+{{INSTALL_COMMAND}}
+
+# Variables de entorno
+cp .env.example .env
+# Editar .env con tus valores
+```
+
+## Scripts disponibles
+
+- `{{DEV_COMMAND}}` — levanta el entorno de desarrollo
+- `{{BUILD_COMMAND}}` — build de producción
+- `{{TEST_COMMAND}}` — corre los tests
+- `{{LINT_COMMAND}}` — chequea el linter
+
+## Estructura
+
+```
+{{FOLDER_TREE}}
+```
+
+## Contribuir
+
+1. Hacer fork
+2. Crear branch: `git checkout -b {{BRANCH_STYLE}}/<nombre>`
+3. Commits siguiendo: {{COMMIT_STYLE}}
+4. Abrir PR
+
+## Development Methodologies
+
+Este proyecto fue creado siguiendo metodologías complementarias. Para más detalles ver [`.rocky-spec/reference/methodologies.md`](../.rocky-spec/reference/methodologies.md) en la skill `/rocky-spec`.
+
+### Specification-Driven Development (SDD)
+El `SPEC.md` en la raíz define el alcance del proyecto antes de cualquier línea de código. Toda feature nueva debe tener su spec antes de ser implementada.
+
+### Domain-Driven Design (DDD) _(proyectos fullstack/backend)_
+El diseño parte del dominio del negocio: entidades → DB schema → servicios → API → frontend. La estructura de carpetas refleja esta separación en capas (`domain/`, `application/`, `infrastructure/`, `presentation/`).
+
+### Test-Driven Development (TDD)
+Ciclo: **Red → Green → Refactor**. Escribir el test antes de la implementación.
+
+```bash
+{{TEST_COMMAND}}           # correr tests
+{{TEST_COMMAND}} --watch   # modo watch para TDD activo
+```
+
+### Behavior-Driven Development (BDD) — Para iteraciones futuras
+Antes de implementar una feature nueva, definir su comportamiento en lenguaje natural:
+
+```gherkin
+Feature: [Nombre de la feature]
+  Scenario: [Caso de uso]
+    Given [estado inicial]
+    When  [acción del usuario]
+    Then  [resultado esperado]
+```
+
+Convertir los scenarios en tests E2E (Playwright) o de integración (Vitest) antes de implementar.
+
+---
+
+## Licencia
+
+{{LICENSE}}
