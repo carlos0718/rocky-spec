@@ -6,6 +6,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-09-04
+
 ### Changed
 - **Rename completo: `spec-charless`/`charless` → `rocky-spec`/`rocky`** — pedido explícito del usuario. Toca prácticamente todo el repo:
   - Paquete pip: `spec-charless` → `rocky-spec`. Módulo Python: `src/spec_charless/` → `src/rocky_spec/` (`git mv`, historial de archivos preservado).
