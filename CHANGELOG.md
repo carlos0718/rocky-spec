@@ -6,6 +6,12 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Changed
+- **Color de marca del CLI**: reemplazado `cyan` por `#D97959` (terracota/salmón, `hsla(15, 63%, 60%, 1)`, elegido por el usuario) en el banner, bordes de paneles y acentos de tablas/hints de `welcome.py`. Los colores con significado semántico (`green` = agente activo, `dim` = secundario) quedan sin cambios.
+
+### Fixed
+- **El banner "ROCKY SPEC" del welcome se veía descuadrado/"derretido" en Warp y en la terminal nativa de Windows** — dos de las seis líneas del arte ASCII perdieron el padding con espacios al final (probablemente un editor recortó espacios en blanco al guardar durante el rename manual del banner), quedando 5 caracteres más cortas que el resto. Como `Text(BANNER, justify="center")` centra cada línea por separado, esa diferencia de ancho desalineaba las filas entre sí. `BANNER` ahora se rellena con `ljust(BANNER_WIDTH)` calculado en código en vez de depender de que el string hardcodeado nunca pierda espacios — no vuelve a pasar aunque un editor recorte trailing whitespace de nuevo. Test de regresión: todas las líneas de `BANNER` deben medir lo mismo.
+
 ## [0.7.0] - 2026-09-04
 
 ### Changed

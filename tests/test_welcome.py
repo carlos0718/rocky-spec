@@ -24,6 +24,16 @@ def test_show_commands_runs_without_error():
     welcome.show_commands()
 
 
+def test_banner_lines_all_have_the_same_width():
+    # Con justify="center" cada línea del banner se centra por separado --
+    # si una línea pierde el padding con espacios al final (ej. un editor
+    # que recorta espacios en blanco al guardar), el arte ASCII queda
+    # descuadrado entre filas sin que salte ningún error. Bug real
+    # encontrado por el usuario en Warp/Windows Terminal tras el rename.
+    widths = {len(line) for line in welcome.BANNER.splitlines()}
+    assert len(widths) == 1, f"líneas de BANNER con anchos distintos: {widths}"
+
+
 def test_commands_table_matches_registered_integrations_keys_used_in_invocation_hint():
     # INVOCATION_HINT es un diccionario a mano -- si se agrega una integración
     # nueva (Windsurf, Copilot) y nadie suma su entrada, mejor fallar acá que
