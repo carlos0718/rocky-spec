@@ -6,7 +6,7 @@
 
 ## Gobernanza
 
-- **Versión de esta Constitution**: 1.3.0
+- **Versión de esta Constitution**: 1.4.0
 - **Fecha de ratificación**: 2026-08-31
 - **Última enmienda**: 2026-09-04
 
@@ -80,7 +80,7 @@ Estos patrones son la forma concreta en que este proyecto aplica el Artículo 1 
 - Un release (tag de versión) es una decisión explícita, nunca automática por acumulación de commits.
 - El trabajo del día a día se hace en `feature/*`/`fix/*`, nunca directo sobre `master`/`dev` — ver `AGENTS.md` sección "Branching". Al mergear a `dev` o `master`, recordar (no ejecutar solo) si corresponde bumpear versión.
 - **El merge nunca es automático** — después de commitear y pushear una rama, parar y mostrar un resumen del cambio antes de ejecutar `git merge`, esperando confirmación explícita. Nunca encadenar commit → push → merge sin que el usuario vea qué se integra a `dev`/`master`.
-- **El push tampoco es automático para cambios breaking o de alcance grande** (`BREAKING CHANGE:` en el footer, o un rename/refactor que toca la mayoría de los archivos del proyecto): commitear localmente, parar ahí, mostrar el mismo resumen que se usaría antes del merge, y esperar confirmación explícita antes de `git push`. Para cambios de alcance normal, el push sigue sin pausa (solo el merge se detiene). Si hay más de una rama lista para pushear a la vez, presentar el resumen de cada una vía `AskUserQuestion` — una pregunta por rama, con el nombre de la rama y su resumen, y opciones Sí/No — para capturar por separado cuáles pushear.
+- **El push tampoco es automático — nunca, sin importar el impacto del cambio**: commitear localmente, parar ahí, mostrar un resumen del cambio, y esperar confirmación explícita vía `AskUserQuestion` (pregunta con el nombre de la rama y el resumen, opciones Sí/No) antes de ejecutar `git push`. Si hay más de una rama lista para pushear a la vez, una pregunta por rama — nunca una sola confirmación en texto libre para todas juntas.
 
 Detalle completo, ejemplos y la relación con los snapshots de `specs/` en `.rocky-spec/reference/versioning.md` de la skill.
 
@@ -107,3 +107,4 @@ Excepciones explícitas a algún artículo de arriba, acordadas para este proyec
 | 2026-08-31 | 1.1.0 | Artículo 6: regla de Plan → Confirmar → Implementar. Artículo 7: adopción de branching GitFlow simplificado (`master`/`dev`/`feature`/`fix`) | Pedido explícito del usuario de empezar a aplicar la metodología GitFlow de ahora en adelante |
 | 2026-08-31 | 1.2.0 | Artículo 7: el merge nunca es automático — parar y mostrar un resumen antes de ejecutar `git merge`, esperar confirmación explícita | Pedido explícito del usuario tras notar que los merges a `dev`/`master` se venían ejecutando en cadena sin pausa |
 | 2026-09-04 | 1.3.0 | Artículo 7: el push tampoco es automático para cambios breaking o de alcance grande — pausa y resumen antes de `git push`, igual que ya regía para `git merge`. Con varias ramas listas, usar `AskUserQuestion` (una pregunta por rama, Sí/No) para capturar cuáles pushear | Pedido explícito del usuario tras notar que la rama `refactor/rename-to-rocky-spec` (un rename completo del framework, marcado `BREAKING CHANGE:`) se pusheó sin pedir su aprobación primero |
+| 2026-09-04 | 1.4.0 | Artículo 7: la pausa antes de `git push` deja de depender del impacto del cambio — aplica siempre, para cualquier commit, vía `AskUserQuestion` | Pedido explícito del usuario para simplificar la regla de 1.3.0: en vez de juzgar caso a caso si un cambio es "breaking o de alcance grande", preguntar siempre |
