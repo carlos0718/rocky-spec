@@ -1,5 +1,5 @@
-from spec_charless import scaffold, welcome
-from spec_charless.integrations import INTEGRATION_REGISTRY
+from rocky_spec import scaffold, welcome
+from rocky_spec.integrations import INTEGRATION_REGISTRY
 
 
 def test_show_welcome_runs_without_error_on_empty_dir(tmp_path):

@@ -1,4 +1,4 @@
-from spec_charless.scripts import qa_review
+from rocky_spec.scripts import qa_review
 
 
 def test_check_placeholder_completeness_finds_unresolved(tmp_path):

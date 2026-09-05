@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "spec-charless"
+name = "rocky-spec"
 version = "0.6.1"
 description = "Toolkit multi-agente para Spec-Driven Development — nivel Spec-Anchored. Bootstrapea proyectos con SPEC.md, CONSTITUTION.md, AGENTS.md y el resto del ciclo de vida, para el agente de código que elijas (Claude Code, Cursor, y más por venir)."
 readme = "README.md"
@@ -27,11 +27,11 @@ dependencies = [
 dev = ["pytest>=7.0"]
 
 [project.urls]
-Homepage = "https://github.com/carlos0718/spec-charless"
-Changelog = "https://github.com/carlos0718/spec-charless/blob/master/CHANGELOG.md"
+Homepage = "https://github.com/carlos0718/rocky-spec"
+Changelog = "https://github.com/carlos0718/rocky-spec/blob/master/CHANGELOG.md"
 
 [project.scripts]
-charless = "spec_charless.cli:main"
+rocky = "rocky_spec.cli:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/spec_charless"]
+packages = ["src/rocky_spec"]

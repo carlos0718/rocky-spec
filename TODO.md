@@ -35,6 +35,7 @@
 - [x] `charless build --template/--output` — modo single-file para templates condicionales (arregla MASTER.md, habilita ACCESSIBILITY.md)
 - [x] `ACCESSIBILITY.md.template` + `p5.8-accessibility.md` — tercera pieza: template condicional (solo interfaz visual), generado via `charless build` single-file, wireado en `scaffold.py`/`qa_review.py`/`AGENTS.md.template`
 - [x] `MA-1.8` en `mode-adopt.md` — wiring de `charless check accessibility` en Modo Adopción, simétrico a MA-1.5/1.6/1.7 (piezas restantes de wiring — `TODO.md.template`, `p7.5-qa-review.md`, `p8-p8.5-validation-systemprompt.md` — siguen diferidas)
+- [x] Rename completo del framework: `charless`/`spec-charless` → `rocky`/`rocky-spec` (paquete, módulo Python, comando CLI, skill generada, carpeta compartida `.rocky-spec/`, repo de GitHub) — pedido explícito del usuario, corte limpio sin alias de compatibilidad
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
 - [ ] Integración con Gemini CLI
 - [ ] Integración con Codex CLI

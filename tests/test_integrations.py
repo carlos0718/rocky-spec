@@ -1,7 +1,7 @@
 import json
 
-from spec_charless import scaffold
-from spec_charless.integrations import INTEGRATION_REGISTRY, SHARED_DIR_NAME
+from rocky_spec import scaffold
+from rocky_spec.integrations import INTEGRATION_REGISTRY, SHARED_DIR_NAME
 
 
 def test_registry_has_claude_and_cursor():
@@ -13,10 +13,10 @@ def test_claude_integration_generates_skill_md(tmp_path):
     commands = scaffold.all_commands()
     entries = INTEGRATION_REGISTRY["claude"].install(tmp_path, commands)
     paths = [e.path for e in entries]
-    assert ".claude/skills/spec-charless/SKILL.md" in paths
-    skill_file = tmp_path / ".claude/skills/spec-charless/SKILL.md"
+    assert ".claude/skills/rocky-spec/SKILL.md" in paths
+    skill_file = tmp_path / ".claude/skills/rocky-spec/SKILL.md"
     assert skill_file.exists()
-    assert "name: spec-charless" in skill_file.read_text()
+    assert "name: rocky-spec" in skill_file.read_text()
 
 
 def test_cursor_integration_generates_one_command_per_step_plus_rule(tmp_path):
@@ -24,7 +24,7 @@ def test_cursor_integration_generates_one_command_per_step_plus_rule(tmp_path):
     commands = scaffold.all_commands()
     entries = INTEGRATION_REGISTRY["cursor"].install(tmp_path, commands)
     paths = [e.path for e in entries]
-    assert ".cursor/rules/charless.mdc" in paths
+    assert ".cursor/rules/rocky.mdc" in paths
     assert len([p for p in paths if p.startswith(".cursor/commands/")]) == len(commands)
 
 
@@ -52,7 +52,7 @@ def test_uninstall_removes_only_untouched_files(tmp_path):
     integration = INTEGRATION_REGISTRY["claude"]
     entries = integration.install(tmp_path, scaffold.all_commands())
 
-    skill_file = tmp_path / ".claude/skills/spec-charless/SKILL.md"
+    skill_file = tmp_path / ".claude/skills/rocky-spec/SKILL.md"
     skill_file.write_text(skill_file.read_text() + "\n<!-- edición manual -->")
 
     removed = integration.uninstall(tmp_path, entries)

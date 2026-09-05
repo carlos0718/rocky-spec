@@ -1,6 +1,6 @@
-# Observability — spec-charless
+# Observability — rocky-spec
 
-> Generado por skill `charless-ia` · Ver `.charless/reference/observability.md` de la skill para el detalle completo de cada decisión. Documento vivo — se actualiza cada vez que cambia una decisión de observabilidad, con su línea en "Historial de cambios".
+> Generado por skill `rocky-spec` · Ver `.rocky-spec/reference/observability.md` de la skill para el detalle completo de cada decisión. Documento vivo — se actualiza cada vez que cambia una decisión de observabilidad, con su línea en "Historial de cambios".
 >
 > Seguridad (`SECURITY.md`) responde "¿alguien está atacando esto?". Este archivo responde **"¿esto está funcionando bien ahora mismo, y si no, por qué?"**.
 
@@ -28,7 +28,7 @@
 
 ## Qué nunca loguear
 
-Passwords, tokens completos, números de tarjeta, cualquier secret — ver `.charless/reference/security.md` de la skill. Si hace falta debuggear la presencia de un valor sensible, loguear `Boolean(valor)`, nunca el valor.
+Passwords, tokens completos, números de tarjeta, cualquier secret — ver `.rocky-spec/reference/security.md` de la skill. Si hace falta debuggear la presencia de un valor sensible, loguear `Boolean(valor)`, nunca el valor.
 
 ---
 

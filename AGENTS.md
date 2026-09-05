@@ -1,4 +1,4 @@
-# spec-charless
+# rocky-spec
 
 > Este archivo sigue el estándar abierto [AGENTS.md](https://agents.md/) — instrucciones agnósticas de herramienta para cualquier agente de código (Codex, Cursor, Copilot, Gemini CLI, Windsurf, OpenCode, Claude Code, etc.). Es la fuente de verdad para stack, comandos, convenciones y el flujo de spec de este proyecto.
 >
@@ -6,10 +6,10 @@
 
 ## Overview del proyecto
 
-- **Nombre**: spec-charless
+- **Nombre**: rocky-spec
 - **Tipo**: Código — CLI / herramienta de desarrollo (sin frontend, sin persistencia) (código | creativo | híbrido)
 - **Descripción**: Toolkit multi-agente de Spec-Driven Development, nivel Spec-Anchored. Ver SPEC.md.
-- **Generado por**: skill `charless-ia` — ver `CONSTITUTION.md` (reglas que no se negocian), `SPEC.md` (qué se construye), `TODO.md` (qué falta), `SECURITY.md` (decisiones y checklist de seguridad), `OBSERVABILITY.md` (cómo saber si esto está funcionando en producción)
+- **Generado por**: skill `rocky-spec` — ver `CONSTITUTION.md` (reglas que no se negocian), `SPEC.md` (qué se construye), `TODO.md` (qué falta), `SECURITY.md` (decisiones y checklist de seguridad), `OBSERVABILITY.md` (cómo saber si esto está funcionando en producción)
 
 ## Stack
 
@@ -37,12 +37,12 @@ Plugin registry (Mediano — feature-based)
 Resumen de la estructura:
 
 ```
-spec-charless/
+rocky-spec/
 ├── pyproject.toml
 ├── README.md / LICENSE / CHANGELOG.md
-├── src/spec_charless/
+├── src/rocky_spec/
 │   ├── cli.py                (comandos: init, check, list-integrations)
-│   ├── scaffold.py            (copia el conocimiento a .charless/)
+│   ├── scaffold.py            (copia el conocimiento a .rocky-spec/)
 │   ├── integrations/          (base.py, claude.py, cursor.py, registry)
 │   ├── scripts/                (render_template, health_check, qa_review)
 │   ├── commands/                (14 pasos del ciclo de vida, agnósticos de agente)
@@ -57,7 +57,7 @@ spec-charless/
 
 - **Arquitectura**: Registry de plugins para que agregar un agente nuevo (Windsurf, Copilot, Gemini, Codex) no requiera tocar el conocimiento compartido ni las integraciones existentes — mismo principio que separar SPEC.md/AGENTS.md/CONSTITUTION.md por audiencia. <!-- por qué esta y no otra — mismas razones mostradas en P4, no repetir la explicación completa, solo la síntesis -->
 - **TDD**: "No — tests se escriben después de implementar, ver Testing en CLAUDE.md" <!-- decisión explícita de P3, nunca inferida -->
-- El conocimiento (commands/reference/templates) vive en .charless/ DENTRO del proyecto destino, no en el paquete del CLI — así viaja versionado con el código del usuario, no solo en su instalación global. <!-- cualquier otra decisión no trivial tomada en el setup — ej. por qué esta plataforma de deploy y no otra, si hubo alternativas descartadas -->
+- El conocimiento (commands/reference/templates) vive en .rocky-spec/ DENTRO del proyecto destino, no en el paquete del CLI — así viaja versionado con el código del usuario, no solo en su instalación global. <!-- cualquier otra decisión no trivial tomada en el setup — ej. por qué esta plataforma de deploy y no otra, si hubo alternativas descartadas -->
 
 ## Convenciones específicas de este repo
 
@@ -77,7 +77,7 @@ Los principios de código, seguridad, tamaño de archivo, y las reglas de "pregu
 
 ```bash
 # Dev
-pip install -e . && charless --help
+pip install -e . && rocky --help
 
 # Test
 python3 -m pytest tests/ -v
@@ -95,7 +95,7 @@ python3 -m build
 
 ## Agregar o modificar código — flujo de iteración (Plan → Confirmar → Implementar)
 
-> **Spec-Anchored** es uno de los niveles reconocidos de Spec-Driven Development (junto a Spec-First y Spec-as-Source — ver `.charless/reference/methodologies.md` de la skill para el detalle). Significa que `SPEC.md` es un documento **vivo**: se actualiza en cada cambio de alcance, no solo una vez al principio del proyecto.
+> **Spec-Anchored** es uno de los niveles reconocidos de Spec-Driven Development (junto a Spec-First y Spec-as-Source — ver `.rocky-spec/reference/methodologies.md` de la skill para el detalle). Significa que `SPEC.md` es un documento **vivo**: se actualiza en cada cambio de alcance, no solo una vez al principio del proyecto.
 
 **Regla ampliada — no negociable:** ante **cualquier** pedido de cambio (feature nueva o corrección), el código nunca se toca en el mismo paso en que se recibe el pedido. Primero se decide si afecta el alcance de `SPEC.md`, después se muestra un plan breve, y recién con **confirmación explícita del usuario** se implementa. Nunca "aprovechar" que ya se entendió el pedido para adelantar el código — eso es exactamente lo que este flujo existe para evitar.
 
@@ -212,7 +212,7 @@ Las tareas del TODO que implementan una historia terminan con su ID: `- [ ] Endp
 
 **Regla obligatoria para cualquier sesión de Claude Code en este proyecto:**
 
-El `<tipo>` de cada commit sigue [Conventional Commits](https://www.conventionalcommits.org/) — no es una etiqueta libre, determina si el cambio entra al changelog y qué tan grande es para SemVer (ver `.charless/reference/versioning.md` de la skill y la sección "Versionado y releases" más abajo):
+El `<tipo>` de cada commit sigue [Conventional Commits](https://www.conventionalcommits.org/) — no es una etiqueta libre, determina si el cambio entra al changelog y qué tan grande es para SemVer (ver `.rocky-spec/reference/versioning.md` de la skill y la sección "Versionado y releases" más abajo):
 
 | Tipo | Cuándo | ¿Changelog? |
 |---|---|---|
@@ -254,7 +254,7 @@ Cada ítem del `TODO.md` (o del archivo de grupo correspondiente en `todos/`, si
 
 **Por qué existe:** el flujo Spec-Anchored de más arriba se dispara cuando alguien *anuncia* una feature nueva en el chat ("quiero agregar X"). Pero no todo cambio de alcance se anuncia así — a veces el código simplemente crece un poco de más al resolver una tarea. Este chequeo es la red de seguridad para ese caso: corre **antes de cada commit**, no depende de que alguien se acuerde de avisar.
 
-**Qué chequear** — los dos primeros comandos están armados para el backend y ORM elegidos en el setup de este proyecto (Python 3.9+ (click para el CLI) / no aplica — no hay persistencia), tomados de la tabla de patrones en `.charless/reference/stacks-code.md` de la skill. Son heurísticos por sintaxis (buscan cómo se escribe una ruta o un modelo en *este* framework puntual), no un analizador exhaustivo — el objetivo es levantar la mano en los casos obvios, no bloquear el commit:
+**Qué chequear** — los dos primeros comandos están armados para el backend y ORM elegidos en el setup de este proyecto (Python 3.9+ (click para el CLI) / no aplica — no hay persistencia), tomados de la tabla de patrones en `.rocky-spec/reference/stacks-code.md` de la skill. Son heurísticos por sintaxis (buscan cómo se escribe una ruta o un modelo en *este* framework puntual), no un analizador exhaustivo — el objetivo es levantar la mano en los casos obvios, no bloquear el commit:
 
 ```bash
 # Endpoints/rutas nuevos en el diff que se va a commitear
@@ -280,7 +280,7 @@ Si alguno de estos comandos devuelve resultados:
 
 ### TODO Size Check — el paso 0-bis en detalle
 
-**Por qué existe:** un `TODO.md` único (sin carpeta `todos/`) es el mismo tipo de God File que ya se evita en código (ver `.charless/reference/coding-principles.md` de la skill, sección "Tamaño de archivo") — solo que en la documentación. Este proyecto arrancó con el modo único (único / orquestador con `todos/`), organizado por capas (por capas / por features). Si es único, este chequeo evita que crezca sin límite.
+**Por qué existe:** un `TODO.md` único (sin carpeta `todos/`) es el mismo tipo de God File que ya se evita en código (ver `.rocky-spec/reference/coding-principles.md` de la skill, sección "Tamaño de archivo") — solo que en la documentación. Este proyecto arrancó con el modo único (único / orquestador con `todos/`), organizado por capas (por capas / por features). Si es único, este chequeo evita que crezca sin límite.
 
 **Solo aplica si este proyecto usa el modo único.** Si ya tiene carpeta `todos/`, no hace falta — cada archivo de grupo es chico por diseño.
 
@@ -290,7 +290,7 @@ wc -l TODO.md
 
 - **< 300 líneas**: sin acción.
 - **300-500 líneas**: avisar una vez, sin bloquear: *"`TODO.md` tiene [N] líneas y va camino a superar el límite recomendado — cuando quieras lo migramos a `todos/` (un archivo por capa o por feature, según cómo prefieras organizarlo). No hace falta ahora."*
-- **500+ líneas**: proponer la migración activamente antes de seguir agregando tareas nuevas: *"`TODO.md` ya superó las 500 líneas. Te propongo migrarlo a `todos/` ahora, antes de seguir sumando — muevo las tareas existentes por grupo, no se pierde nada, y `TODO.md` queda como orquestador. ¿Lo hacemos, y por capas o por features?"* Si el usuario confirma, aplicar el mecanismo de split de `.charless/commands/p6-p7-files-todo.md` sección "¿TODO único o dividido — y por qué eje?" usando las tareas ya existentes en vez de generar desde cero.
+- **500+ líneas**: proponer la migración activamente antes de seguir agregando tareas nuevas: *"`TODO.md` ya superó las 500 líneas. Te propongo migrarlo a `todos/` ahora, antes de seguir sumando — muevo las tareas existentes por grupo, no se pierde nada, y `TODO.md` queda como orquestador. ¿Lo hacemos, y por capas o por features?"* Si el usuario confirma, aplicar el mecanismo de split de `.rocky-spec/commands/p6-p7-files-todo.md` sección "¿TODO único o dividido — y por qué eje?" usando las tareas ya existentes en vez de generar desde cero.
 
 ## Branching — GitFlow simplificado
 
@@ -326,15 +326,15 @@ git push
 
 **Esto es insistente a propósito** — es común que esta convención quede escrita pero en la práctica todo se siga commiteando directo a `master`/`dev`. Por eso el Branch Discipline Check (paso 0-ter del Workflow de Git, arriba) no es solo una mención pasiva: antes de cada commit no trivial, si la rama actual es `master` o `dev`, avisar explícitamente y ofrecer crear la rama correspondiente ahí mismo — no asumir que "ya se sabe" y dejarlo pasar.
 
-**Sugerencia de versión al mergear `feature/*`/`fix/*` → `dev`** (o `fix/*` → `master` en un hotfix — ver `.charless/reference/versioning.md` de la skill para el detalle completo): antes de ese merge, correr `charless check version .` — calcula el bump exacto a partir de los commits reales desde el último tag (Conventional Commits, regla "el más alto gana": MAJOR > MINOR > PATCH, nunca se apilan varios bumps), en vez de que el agente tenga que "acordarse" en prosa. Mostrar el resultado al usuario y preguntar si se taguea ahora o se deja para cuando se junten más cambios — **nunca taguear solo**, es una decisión del usuario.
+**Sugerencia de versión al mergear `feature/*`/`fix/*` → `dev`** (o `fix/*` → `master` en un hotfix — ver `.rocky-spec/reference/versioning.md` de la skill para el detalle completo): antes de ese merge, correr `rocky check version .` — calcula el bump exacto a partir de los commits reales desde el último tag (Conventional Commits, regla "el más alto gana": MAJOR > MINOR > PATCH, nunca se apilan varios bumps), en vez de que el agente tenga que "acordarse" en prosa. Mostrar el resultado al usuario y preguntar si se taguea ahora o se deja para cuando se junten más cambios — **nunca taguear solo**, es una decisión del usuario.
 
 **Esto NO se dispara al mergear `dev` → `master` para hacer un release.** Ahí `master` simplemente hereda la versión que `dev` ya trae acumulada de sus merges anteriores — no se vuelve a calcular ni a bumpear un número distinto. El cálculo pasa una sola vez, en el merge hacia `dev` (o en el hotfix directo a `master`), nunca en el merge de integración `dev` → `master`.
 
-`charless check version` también avisa si una rama `feature/*` acumuló demasiados `fix` además del feature en sí (comparado contra `dev`) — mismo patrón de umbrales escalonados que el TODO Size Check: 3-5 fixes es una señal 🟡 de que el plan (RF-N/US-N) subestimó la complejidad, 6+ es 🔴 y sugiere partir la feature en dos.
+`rocky check version` también avisa si una rama `feature/*` acumuló demasiados `fix` además del feature en sí (comparado contra `dev`) — mismo patrón de umbrales escalonados que el TODO Size Check: 3-5 fixes es una señal 🟡 de que el plan (RF-N/US-N) subestimó la complejidad, 6+ es 🔴 y sugiere partir la feature en dos.
 
 ## Versionado y releases — Semantic Versioning
 
-Este proyecto sigue [SemVer](https://semver.org/lang/es/) (`MAJOR.MINOR.PATCH`) y mantiene `CHANGELOG.md` en formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) — ver `.charless/reference/versioning.md` de la skill para el detalle completo. Resumen operativo:
+Este proyecto sigue [SemVer](https://semver.org/lang/es/) (`MAJOR.MINOR.PATCH`) y mantiene `CHANGELOG.md` en formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) — ver `.rocky-spec/reference/versioning.md` de la skill para el detalle completo. Resumen operativo:
 
 - **`[Unreleased]` de `CHANGELOG.md`** se va llenando commit a commit (paso 1-bis del Workflow de Git de arriba) — no es una tarea aparte, ya está integrada al flujo normal.
 - **No se taguea en cada commit.** Un release es una decisión explícita, en un hito real: primer deploy a producción, antes de un cambio grande, o cuando el usuario lo pide.
@@ -344,11 +344,11 @@ Este proyecto sigue [SemVer](https://semver.org/lang/es/) (`MAJOR.MINOR.PATCH`) 
   3. `git tag -a vX.Y.Z -m "Release vX.Y.Z"` y `git push origin vX.Y.Z`
   4. Después de mergear a la rama principal: listar `git branch --merged dev` (menos `dev`/`master`) y preguntarle al usuario cuáles borrar (local + remoto) — nunca borrar sin confirmar, y nunca ofrecer una rama que no esté 100% mergeada.
 - **Qué bump corresponde**: `fix` → PATCH · `feat` → MINOR · breaking change → MAJOR. Mientras el proyecto está en `0.x.y` (antes del primer release estable), un breaking change puede seguir bumpeando MINOR en vez de saltar a `1.0.0` — pasar a `1.0.0` es decisión del usuario, no automática.
-- **Nivel de exigencia**: un prototipo descartable no necesita nada de esto. Si este proyecto es una librería o paquete publicado (npm, PyPI), el versionado es estricto y romper compatibilidad es siempre MAJOR — ver `.charless/reference/versioning.md` sección "Nivel de exigencia" para el detalle completo.
+- **Nivel de exigencia**: un prototipo descartable no necesita nada de esto. Si este proyecto es una librería o paquete publicado (npm, PyPI), el versionado es estricto y romper compatibilidad es siempre MAJOR — ver `.rocky-spec/reference/versioning.md` sección "Nivel de exigencia" para el detalle completo.
 
 ## Gestión de dependencias
 
-El escaneo de vulnerabilidades ya está en `SECURITY.md`. Acá va la política de **mantenimiento** — ver `.charless/reference/dependencies.md` de la skill para el detalle completo:
+El escaneo de vulnerabilidades ya está en `SECURITY.md`. Acá va la política de **mantenimiento** — ver `.rocky-spec/reference/dependencies.md` de la skill para el detalle completo:
 
 - **Pinning**: dependencias de aplicación con rango caret (`^1.2.3`), herramientas de build críticas con versión exacta. El lockfile (no aplica todavía — pyproject.toml declara rangos, sin lockfile) siempre commiteado — nunca en `.gitignore`.
 - **Cadencia**: "Dependabot semanal — patches se auto-mergean si CI pasa, minors se revisan agrupados, majors se revisan uno por uno".

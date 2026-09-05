@@ -1,6 +1,6 @@
-# Security Policy — spec-charless
+# Security Policy — rocky-spec
 
-> Generado por skill `charless-ia` · Metodología: OWASP Top 10 adaptado (ver `.charless/reference/security.md` de la skill)
+> Generado por skill `rocky-spec` · Metodología: OWASP Top 10 adaptado (ver `.rocky-spec/reference/security.md` de la skill)
 >
 > Este archivo sigue la convención de GitHub para `SECURITY.md` (política de reporte de vulnerabilidades) y además documenta las decisiones de seguridad concretas de este proyecto — es un documento **vivo**, igual que `SPEC.md` y `design-system/MASTER.md`: se actualiza cada vez que cambia una decisión de seguridad, con su línea en "Historial de cambios".
 
@@ -33,7 +33,7 @@ Se confirma la recepción en un plazo razonable y se coordina la corrección ant
 
 ## Checklist OWASP aplicado a este proyecto
 
-Marcado según lo que aplica a este proyecto en particular (ver `.charless/reference/security.md` de la skill para el detalle de cada ítem):
+Marcado según lo que aplica a este proyecto en particular (ver `.rocky-spec/reference/security.md` de la skill para el detalle de cada ítem):
 
 - [ ] A01 · Broken Access Control — autorización verificada en cada endpoint que toca datos de usuario, no solo autenticación
 - [ ] A02 · Cryptographic Failures — passwords hasheados, HTTPS forzado en producción
