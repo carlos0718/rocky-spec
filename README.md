@@ -85,6 +85,11 @@ uv tool install "git+https://github.com/carlos0718/rocky-spec.git@v0.7.0"
 Las versiones publicadas están en [Releases](https://github.com/carlos0718/rocky-spec/releases), con sus notas en el [CHANGELOG](CHANGELOG.md).
 
 > **Ojo con los tags anteriores a `v0.7.0`**: este proyecto se llamó `spec-charless` (comando `charless`) hasta esa versión. Fijar un tag más viejo (`@v0.6.1` o anterior) instala el paquete con el nombre viejo, no `rocky-spec` — ver el [CHANGELOG](CHANGELOG.md) para el detalle del rename.
+>
+> **¿Ya tenías `spec-charless` instalado?** No hay alias de compatibilidad — desinstalá el paquete viejo antes de instalar el nuevo, si no vas a terminar con `charless` y `rocky` conviviendo:
+> ```bash
+> uv tool uninstall spec-charless    # o: pipx uninstall spec-charless
+> ```
 
 ### Alternativa — con `pip` en un entorno virtual
 
