@@ -6,6 +6,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-09-04
+
 ### Changed
 - **Color de marca del CLI**: reemplazado `cyan` por `#D97959` (terracota/salmón, `hsla(15, 63%, 60%, 1)`, elegido por el usuario) en el banner, bordes de paneles y acentos de tablas/hints de `welcome.py`. Los colores con significado semántico (`green` = agente activo, `dim` = secundario) quedan sin cambios.
 
