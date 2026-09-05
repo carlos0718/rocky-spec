@@ -26,6 +26,11 @@ from .integrations import INTEGRATION_REGISTRY, SHARED_DIR_NAME
 
 console = Console()
 
+# Color de marca -- hsla(15, 63%, 60%, 1), elegido por el usuario. Reemplaza
+# "cyan" en todo el CLI (banner, bordes, acentos) menos los colores con
+# significado propio (verde = activo/éxito, dim = secundario).
+BRAND = "#D97959"
+
 _BANNER_RAW = r"""
 ██████╗  ██████╗  ██████╗██╗  ██╗██╗   ██╗    ███████╗██████╗ ███████╗ ██████╗
 ██╔══██╗██╔═══██╗██╔════╝██║ ██╔╝╚██╗ ██╔╝    ██╔════╝██╔══██╗██╔════╝██╔════╝
@@ -121,7 +126,7 @@ def _integrations_table(active: set[str] | None = None) -> Table:
 
 def _glossary_table() -> Table:
     table = Table(show_header=False, box=None, padding=(0, 2, 0, 0))
-    table.add_column(style="bold cyan", no_wrap=True)
+    table.add_column(style=f"bold {BRAND}", no_wrap=True)
     table.add_column()
     for abbr, meaning in GLOSSARY:
         table.add_row(abbr, meaning)
@@ -130,7 +135,7 @@ def _glossary_table() -> Table:
 
 def _commands_table() -> Table:
     table = Table(show_header=True, header_style="bold", box=None, padding=(0, 2, 0, 0))
-    table.add_column("Comando", style="cyan", no_wrap=True)
+    table.add_column("Comando", style=BRAND, no_wrap=True)
     table.add_column("Qué hace")
     for command, description in COMMANDS:
         table.add_row(command, description)
@@ -142,8 +147,8 @@ def _banner_renderable(available_width: int) -> Text:
     dejar que Rich reparta cada línea a la mitad (lo que rompía el diseño
     al angostar la terminal por debajo de BANNER_WIDTH)."""
     if available_width >= BANNER_WIDTH:
-        return Text(BANNER, style="bold cyan", justify="center", no_wrap=True, overflow="crop")
-    return Text(COMPACT_TITLE, style="bold cyan", justify="center")
+        return Text(BANNER, style=f"bold {BRAND}", justify="center", no_wrap=True, overflow="crop")
+    return Text(COMPACT_TITLE, style=f"bold {BRAND}", justify="center")
 
 
 def _centered_panels(available_width: int, *panels: Panel) -> RenderableType:
@@ -172,7 +177,7 @@ def show_commands() -> None:
         Panel(
             _commands_table(),
             title="[bold]rocky — comandos disponibles[/bold]",
-            border_style="cyan",
+            border_style=BRAND,
             expand=False,
         )
     )
@@ -220,29 +225,29 @@ def show_welcome(project_root: Path | None = None) -> None:
         )
         body.append(_centered_panels(available_width, glossary_panel, integrations_panel))
         body.append(
-            "\nPróximos pasos: [cyan]rocky check qa .[/cyan] · "
-            "[cyan]rocky init --agent <otro>[/cyan] para sumar un agente más · "
-            "[cyan]rocky commands[/cyan] para ver todos los comandos"
+            f"\nPróximos pasos: [{BRAND}]rocky check qa .[/{BRAND}] · "
+            f"[{BRAND}]rocky init --agent <otro>[/{BRAND}] para sumar un agente más · "
+            f"[{BRAND}]rocky commands[/{BRAND}] para ver todos los comandos"
         )
     else:
         integrations_panel = Panel(
             _integrations_table(),
             title="[bold]Agentes soportados[/bold]",
-            border_style="cyan",
+            border_style=BRAND,
             expand=False,
         )
         body.append(_centered_panels(available_width, glossary_panel, integrations_panel))
         body.append(
-            "\nEmpezar: [cyan]rocky init . --agent claude[/cyan] "
-            "(repetí --agent para instalar más de uno) · "
-            "[cyan]rocky commands[/cyan] para ver todos los comandos"
+            f"\nEmpezar: [{BRAND}]rocky init . --agent claude[/{BRAND}] "
+            f"(repetí --agent para instalar más de uno) · "
+            f"[{BRAND}]rocky commands[/{BRAND}] para ver todos los comandos"
         )
 
-    console.print(Panel(Group(*body), border_style="cyan", padding=(1, 2)))
+    console.print(Panel(Group(*body), border_style=BRAND, padding=(1, 2)))
 
 
 def show_init_banner(agents: tuple[str, ...]) -> None:
     """Banner corto antes de escribir archivos — no repite todo el onboarding,
     solo confirma qué se está por instalar."""
     names = ", ".join(INTEGRATION_REGISTRY[a].display_name for a in agents)
-    console.print(Panel.fit(f"[bold cyan]rocky-spec[/bold cyan] → instalando: {names}", border_style="cyan"))
+    console.print(Panel.fit(f"[bold {BRAND}]rocky-spec[/bold {BRAND}] → instalando: {names}", border_style=BRAND))
