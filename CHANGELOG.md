@@ -6,8 +6,12 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Fixed
+- **Encontrada la causa real del banner descuadrado que se venía arrastrando desde v0.8.0** — no era el renderizado de la terminal del usuario (diagnóstico equivocado que motivó cinco cambios de fuente y dos de librería): **Rich descarta los espacios finales al medir cada línea de un `Text` con `justify="center"`**, así que el relleno de `ljust(BANNER_WIDTH)` se ignoraba y cada fila del arte ASCII terminaba centrada según su contenido visible — las filas que terminan antes (por la forma de las letras) quedaban corridas a la derecha la mitad de la diferencia. Reproducido determinísticamente capturando el render de `show_welcome()` (márgenes `21, 21, 23, 21, 21` en la versión con el bug). Arreglado centrando el bloque entero con `Align.center` en vez de justificar línea por línea. Nuevo test `test_banner_lines_are_vertically_aligned_when_rendered`, que verifica el **render completo** en vez del string — el test anterior (`test_banner_lines_all_have_the_same_width`) pasaba en verde con el bug presente, porque el string efectivamente tenía las líneas parejas; el problema aparecía recién al renderizar.
+
 ### Changed
-- **Banner cambiado de la librería `art`/`colossal` a `pyfiglet`/`standard`** — `colossal` mostraba líneas corridas horizontalmente en la terminal del usuario sin ningún problema real en el string (`rich.cells.cell_len` daba igual en las 8 líneas); la causa quedaba del lado del renderizado del terminal/fuente del usuario. `art` y `pyfiglet` leen los mismos archivos de fuente FIGlet (`.flf`) — para el mismo nombre de fuente generan el contenido idéntico carácter por carácter, así que cambiar de librería por sí solo no iba a cambiar nada; lo que resolvió el problema fue la fuente puntual: `standard` (la misma que ya se había usado hardcodeada en v0.8.1, ahora generada en runtime), confirmada por el usuario en su propia terminal sin distorsión. `art` se saca de las dependencias del paquete (`pyproject.toml`), `pyfiglet` entra en su lugar.
+- **Banner cambiado de la librería `art`/`colossal` a `pyfiglet`/`standard`** — `art` y `pyfiglet` leen los mismos archivos de fuente FIGlet (`.flf`), así que para el mismo nombre de fuente generan contenido idéntico carácter por carácter; el cambio de librería no fue lo que resolvió el descuadre (ver `Fixed` arriba), es una elección estética confirmada por el usuario en su propia terminal. `art` se saca de las dependencias del paquete (`pyproject.toml`), `pyfiglet` entra en su lugar.
+
 ## [0.10.0] - 2026-09-04
 
 ### Changed

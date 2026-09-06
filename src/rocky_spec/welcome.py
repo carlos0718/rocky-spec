@@ -10,20 +10,21 @@ renderiza con ``rich.Text`` -- centrado, con el color de marca
 ``BRAND``, y con fallback a ``COMPACT_TITLE`` (texto plano) si la
 terminal es más angosta que ``BANNER_WIDTH`` (ver ``_banner_renderable``).
 
-Se probaron muchas fuentes antes de esta, todas vía la librería ``art``
-(más contexto en CHANGELOG.md, entradas v0.8.0 a v0.10.0): ``ansi_shadow``,
-``epic`` y ``banner3`` salían distorsionados en Warp; ``colossal``
-mostraba líneas corridas horizontalmente sin ningún problema real en el
-string (verificado con ``rich.cells.cell_len``). Se probó bajar la
-ambición a texto simple de una línea (sin arte ASCII), pero el usuario
-confirmó en su propia terminal que ``pyfiglet`` con la fuente
-``standard`` -- la misma fuente que ya se había usado hardcodeada en
-v0.8.1, esta vez generada en runtime -- se renderiza limpia. ``art`` y
-``pyfiglet`` leen los mismos archivos de fuente FIGlet (``.flf``): para
-un mismo nombre de fuente el contenido generado es idéntico carácter
-por carácter entre ambas librerías -- lo que resolvió el problema no
-fue cambiar de librería, fue la fuente puntual (``standard``, sin
-bloques Unicode ni trazos finos densos).
+**Causa de los descuadres que se arrastraron desde v0.8.0**: Rich
+descarta los espacios finales al medir cada línea de un ``Text`` con
+``justify="center"``, así que el relleno de ``ljust`` se ignoraba y cada
+fila terminaba centrada según su contenido visible -- las filas que
+terminan antes (por la forma de las letras) quedaban corridas a la
+derecha la mitad de la diferencia. Se diagnosticó erróneamente como un
+problema de renderizado de la terminal del usuario durante varias
+iteraciones de cambio de fuente y de librería (``ansi_shadow``,
+``epic``, ``chunky``, ``colossal``, ``banner3``; ``pyfiglet`` y ``art``
+-- que además generan contenido idéntico carácter por carácter para el
+mismo nombre de fuente, porque leen los mismos archivos ``.flf``). El
+arreglo real es centrar el bloque entero con ``Align.center`` en vez de
+justificar línea por línea. ``test_banner_lines_are_vertically_aligned_when_rendered``
+es la guarda: verifica el render completo, no el string (el test viejo
+solo miraba el string y pasaba en verde con el bug presente).
 """
 from __future__ import annotations
 
@@ -51,11 +52,12 @@ BRAND = "#D97959"
 BANNER_TEXT = "ROCKY SPEC"
 BANNER_FONT = "standard"
 
-# Cada línea se rellena con espacios hasta el ancho máximo, y se descartan
-# las líneas finales en blanco (pyfiglet deja una fila de espacios al final,
-# no vacía) -- ver CHANGELOG.md v0.10.0 para el bug real que esto evita:
-# con justify="center", una línea más corta que el resto se centra distinto
-# y descuadra el arte entera.
+# Se descartan las líneas finales en blanco (pyfiglet deja una fila de
+# espacios al final, no vacía: .rstrip("\n") no la saca porque no termina
+# en "\n" puro) y se rellena cada línea hasta el ancho máximo. El ljust
+# NO alcanza para el alineado del render -- Rich descarta los espacios
+# finales al justificar; eso se resuelve en _banner_renderable con
+# Align.center sobre el bloque entero.
 _raw_banner_lines = figlet_format(BANNER_TEXT, font=BANNER_FONT, width=200).splitlines()
 while _raw_banner_lines and not _raw_banner_lines[-1].strip():
     _raw_banner_lines.pop()
@@ -152,12 +154,21 @@ def _commands_table() -> Table:
     return table
 
 
-def _banner_renderable(available_width: int) -> Text:
+def _banner_renderable(available_width: int) -> RenderableType:
     """Arte ASCII completo si entra; si no, un título compacto en vez de
     dejar que Rich reparta cada línea a la mitad (lo que rompía el diseño
-    al angostar la terminal por debajo de BANNER_WIDTH)."""
+    al angostar la terminal por debajo de BANNER_WIDTH).
+
+    El arte se centra con ``Align.center`` sobre el bloque entero, **no**
+    con ``justify="center"`` en el ``Text``: Rich descarta los espacios
+    finales al medir cada línea para justificarla, así que el relleno de
+    ``ljust`` se ignora y cada fila termina centrada según su contenido
+    visible -- las filas que terminan antes quedan corridas a la derecha
+    la mitad de la diferencia, descuadrando el arte. ``Align.center``
+    centra el bloque como una unidad y preserva el alineado relativo
+    entre filas."""
     if available_width >= BANNER_WIDTH:
-        return Text(BANNER, style=f"bold {BRAND}", justify="center", no_wrap=True, overflow="crop")
+        return Align.center(Text(BANNER, style=f"bold {BRAND}", no_wrap=True, overflow="crop"))
     return Text(COMPACT_TITLE, style=f"bold {BRAND}", justify="center")
 
 
