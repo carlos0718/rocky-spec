@@ -93,6 +93,27 @@ python3 -m build
 
 - (vacío al inicio, agregar acá problemas conocidos y workarounds)
 
+## Cuando un arreglo no funciona dos veces seguidas — protocolo anti-loop
+
+**El síntoma:** se aplica un fix, el usuario reporta que el problema sigue, se aplica otro fix de la misma familia, sigue. Cada intento se siente razonable por separado, pero el conjunto es un loop: se está variando un parámetro (una fuente, una librería, un valor) sin haber verificado nunca la hipótesis de fondo.
+
+**Umbrales escalonados** (mismo patrón que el TODO Size Check y el aviso de fixes acumulados de `rocky check version`):
+
+- **1 intento fallido**: normal, seguir.
+- **2 intentos fallidos sobre el mismo síntoma** 🟡: parar de aplicar variantes. El tercer paso **no** es otro fix — es un experimento diseñado para *observar* el fenómeno.
+- **3+ intentos fallidos** 🔴: la hipótesis de trabajo está mal, no incompleta. Decirlo explícitamente al usuario, listar qué se probó y qué se descartó, y proponer cambiar el método de diagnóstico (no la solución).
+
+**Reglas concretas:**
+
+1. **Prohibido cerrar el diagnóstico en algo que no se puede medir.** "Es el renderizado de la terminal", "es la fuente del usuario", "es un tema del entorno" son **hipótesis sin verificar**, no conclusiones. Antes de aceptar una causa externa, hay que construir una forma de observar el fenómeno desde el código (capturar la salida real a un buffer, escribir a un archivo, medir posiciones/bytes). Si no se puede observar, no se puede afirmar.
+2. **Verificar la capa correcta.** Si un test pasa en verde mientras el bug está presente, el test está mirando la capa equivocada — típicamente la **entrada** (el string que se construyó) en vez de la **salida** (lo que realmente se renderizó/escribió/devolvió). El bug vive entre las dos.
+3. **Un test de regresión no vale nada hasta verlo fallar.** Antes de dar por bueno el fix, aplicar temporalmente el código con el bug y confirmar que el test nuevo falla. Si nunca falló, no prueba nada.
+4. **Aislar variables de a una.** Cambiar fuente + librería + mecanismo en la misma iteración hace imposible saber qué movió la aguja. Si ya se cambiaron varias cosas, volver atrás a una base conocida antes de seguir.
+5. **La contra-hipótesis del usuario es dato, no ruido.** Si el usuario insiste en que la causa es otra ("probá alineado a la izquierda", "eso no tiene que ver"), tratarlo como una hipótesis a testear explícitamente, no como algo a refutar con más argumentos. Suele conocer su entorno mejor que el agente.
+6. **Documentar la causa real, no la secuencia de intentos.** En `CHANGELOG.md` va qué era y cómo se arregló; el ida y vuelta queda en el historial de commits.
+
+> **Caso de referencia** (v0.8.0 → v0.10.x, banner del welcome): cinco cambios de fuente y dos de librería, con el diagnóstico cerrado en "es el renderizado de Warp". La causa real era que Rich descarta los espacios finales al centrar cada línea de un `Text` con `justify="center"`, ignorando el `ljust` de relleno. Se destrabó capturando el render a un buffer y midiendo el margen de cada fila — un experimento de observación, no otro fix.
+
 ## Agregar o modificar código — flujo de iteración (Plan → Confirmar → Implementar)
 
 > **Spec-Anchored** es uno de los niveles reconocidos de Spec-Driven Development (junto a Spec-First y Spec-as-Source — ver `.rocky-spec/reference/methodologies.md` de la skill para el detalle). Significa que `SPEC.md` es un documento **vivo**: se actualiza en cada cambio de alcance, no solo una vez al principio del proyecto.
