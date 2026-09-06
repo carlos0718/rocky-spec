@@ -5,10 +5,17 @@ escribir archivos. Usa `rich` para algo prolijo en vez de texto plano
 suelto — mismo espíritu que la pantalla inicial de ``specify init``.
 
 El arte ASCII "ROCKY SPEC" se genera en runtime con ``pyfiglet``
-(fuente ``standard``, la fuente por default de la librería) y se
-renderiza con ``rich.Text`` -- centrado, con el color de marca
-``BRAND``, y con fallback a ``COMPACT_TITLE`` (texto plano) si la
-terminal es más angosta que ``BANNER_WIDTH`` (ver ``_banner_renderable``).
+(fuente ``ansi_shadow``: letras macizas con sombra 3D) y se renderiza con
+``rich.Text`` -- centrado, con la cara de las letras en ``BRAND`` y la
+sombra en ``BRAND_SHADOW`` (ver ``_banner_text``), y con fallback a
+``COMPACT_TITLE`` (texto plano) si la terminal es más angosta que
+``BANNER_WIDTH`` (ver ``_banner_renderable``).
+
+``BANNER_WIDTH`` pasó de 56 a 78 al dejar ``standard`` -- una fuente de
+bloque necesita más columnas para el mismo texto. Sumado a
+``OUTER_PANEL_OVERHEAD``, el arte pide una terminal de ~84 columnas; por
+debajo de eso se cae al título compacto, que es el comportamiento
+deseado (antes el umbral era ~62).
 
 **Causa de los descuadres que se arrastraron desde v0.8.0**: Rich
 descarta los espacios finales al medir cada línea de un ``Text`` con
@@ -20,7 +27,9 @@ problema de renderizado de la terminal del usuario durante varias
 iteraciones de cambio de fuente y de librería (``ansi_shadow``,
 ``epic``, ``chunky``, ``colossal``, ``banner3``; ``pyfiglet`` y ``art``
 -- que además generan contenido idéntico carácter por carácter para el
-mismo nombre de fuente, porque leen los mismos archivos ``.flf``). El
+mismo nombre de fuente, porque leen los mismos archivos ``.flf``).
+Ninguna de esas fuentes era la culpable: ``ansi_shadow`` volvió después,
+ya elegida por su aspecto y no como intento de arreglo. El
 arreglo real es centrar el bloque entero con ``Align.center`` en vez de
 justificar línea por línea. ``test_banner_lines_are_vertically_aligned_when_rendered``
 es la guarda: verifica el render completo, no el string (el test viejo
@@ -29,6 +38,7 @@ solo miraba el string y pasaba en verde con el bug presente).
 from __future__ import annotations
 
 import json
+from itertools import groupby
 from pathlib import Path
 
 from pyfiglet import figlet_format
@@ -49,8 +59,22 @@ console = Console()
 # significado propio (verde = activo/éxito, dim = secundario).
 BRAND = "#D97959"
 
+# Sombra del arte ASCII -- el mismo matiz cálido de BRAND con la luminancia
+# bajada (~0.63x por canal). Se mantiene el matiz a propósito: un gris o un
+# negro plano cortarían la letra en dos colores que no se leen como una
+# pieza sola.
+BRAND_SHADOW = "#8A4634"
+
 BANNER_TEXT = "ROCKY SPEC"
-BANNER_FONT = "standard"
+# Fuente de bloque: las letras son macizas (glifo "█") con sombra 3D
+# dibujada con caracteres de caja. "standard" -- la anterior -- dibuja solo
+# el contorno con "_ | / \", así que el color de marca pintaba el borde y
+# las letras se veían huecas. El relleno es cuestión de fuente, no de color.
+BANNER_FONT = "ansi_shadow"
+
+# El glifo macizo de ansi_shadow. Todo lo demás que no sea espacio (las
+# cajas "╗ ╝ ║ ═ ╔ ╚") es sombra, y va en BRAND_SHADOW.
+BANNER_FACE_CHAR = "█"
 
 # Se descartan las líneas finales en blanco (pyfiglet deja una fila de
 # espacios al final, no vacía: .rstrip("\n") no la saca porque no termina
@@ -154,6 +178,35 @@ def _commands_table() -> Table:
     return table
 
 
+def _banner_text() -> Text:
+    """El arte ASCII con la cara de las letras en ``BRAND`` y la sombra en
+    ``BRAND_SHADOW``.
+
+    Se colorea por tramos y no con un estilo único porque ``ansi_shadow``
+    mezcla ambas cosas dentro de la misma fila: los tramos macizos
+    (``BANNER_FACE_CHAR``) son la cara y los caracteres de caja son la
+    sombra proyectada. Con un solo color la sombra se lee como parte del
+    trazo y la profundidad se pierde.
+
+    Los espacios se agregan sin estilo -- pintarlos daría lo mismo con
+    fondo transparente, pero mantiene el markup mínimo y deja el bloque
+    limpio si algún día se le suma un fondo.
+    """
+    text = Text(no_wrap=True, overflow="crop")
+    for i, line in enumerate(BANNER.splitlines()):
+        if i:
+            text.append("\n")
+        for char, group in groupby(line, key=lambda c: c == BANNER_FACE_CHAR):
+            chunk = "".join(group)
+            if not chunk.strip():
+                text.append(chunk)
+            elif char:
+                text.append(chunk, style=f"bold {BRAND}")
+            else:
+                text.append(chunk, style=BRAND_SHADOW)
+    return text
+
+
 def _banner_renderable(available_width: int) -> RenderableType:
     """Arte ASCII completo si entra; si no, un título compacto en vez de
     dejar que Rich reparta cada línea a la mitad (lo que rompía el diseño
@@ -168,7 +221,7 @@ def _banner_renderable(available_width: int) -> RenderableType:
     centra el bloque como una unidad y preserva el alineado relativo
     entre filas."""
     if available_width >= BANNER_WIDTH:
-        return Align.center(Text(BANNER, style=f"bold {BRAND}", no_wrap=True, overflow="crop"))
+        return Align.center(_banner_text())
     return Text(COMPACT_TITLE, style=f"bold {BRAND}", justify="center")
 
 
