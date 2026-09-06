@@ -6,6 +6,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Fixed
+- **El banner seguía descuadrado en Warp/Windows Terminal después del fix de v0.8.0** — ese fix corrigió el padding del string, pero el problema real era otro: la fuente `ansi_shadow` de `pyfiglet` arma las letras con caracteres Unicode de dibujo de cajas (`█ ═ ║ ╗ ╔`) que necesitan que el terminal empalme los glifos sin espacio extra entre líneas para verse limpios — varios terminales modernos agregan suficiente espaciado/anti-aliasing como para romper ese empalme, sin importar que el texto esté perfectamente alineado en columnas (verificado con `rich.cells.cell_len`, igual en las 6 líneas). Reemplazado por la fuente `standard` de `pyfiglet` (ASCII plano: `/ \ | _`, sin ambigüedad de renderizado en ningún terminal/fuente). Elegida por el usuario entre 3 alternativas.
+
 ## [0.8.0] - 2026-09-04
 
 ### Changed
