@@ -6,6 +6,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-09-04
+
 ### Changed
 - **Fuente del banner cambiada de `pyfiglet`/`standard` (hardcodeado) a `art`/`epic` generado en runtime** — puramente estético en el resultado (sigue siendo ASCII plano, sin caracteres de dibujo de cajas Unicode, así que no reintroduce el bug de descuadre de v0.8.0 en Warp/Windows Terminal), pero cambia el mecanismo: `art` pasa a ser dependencia real del paquete (`pyproject.toml`) y `welcome.py` llama a `art.text2art()` cada vez que muestra el banner, en vez de tener el texto fijo en el código. Decisión explícita del usuario, con el trade-off (una dependencia más a instalar) discutido antes de aplicarlo.
 
