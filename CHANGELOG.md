@@ -6,6 +6,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-09-04
+
 ### Fixed
 - **El banner con fuente `epic` (v0.9.0) se veía "punteado"/distorsionado en Warp** — el problema no era Unicode vs ASCII (`epic` ya era ASCII plano), era el grosor/densidad de los trazos: paréntesis y guiones bajos apilados en trazos finos se distorsionan en algunos terminales a tamaño de fuente chico, el mismo tipo de artefacto de renderizado que el bug de `ansi_shadow` en v0.8.0/v0.8.1, con otra causa concreta. Reemplazado por `chunky` (misma librería `art`), con formas más sólidas y menos diagonales/trazos finos.
 
