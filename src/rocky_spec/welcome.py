@@ -5,14 +5,21 @@ escribir archivos. Usa `rich` para algo prolijo en vez de texto plano
 suelto — mismo espíritu que la pantalla inicial de ``specify init``.
 
 El arte ASCII "ROCKY SPEC" se genera en runtime con la librería ``art``
-(fuente ``epic``, ASCII plano: ``/ \\ | ( )``) -- a diferencia de una
-fuente con bloques Unicode (``ansi_shadow``, con ``█ ═ ║ ╗ ╔``), que
-necesita que el terminal empalme los glifos sin espacio extra entre
-líneas para verse limpia: varios terminales (Warp, Windows Terminal)
-agregan suficiente espaciado/anti-aliasing como para que ese estilo se
-vea descuadrado aunque el texto esté perfectamente alineado en columnas
--- bug real reportado por el usuario, no arreglable con padding, resuelto
-recién al cambiar de fuente.
+(fuente ``chunky``, ASCII plano de trazos gruesos: ``_ | \\``) -- elegida
+después de dos problemas de renderizado con fuentes de trazos finos:
+
+1. ``ansi_shadow`` (bloques Unicode ``█ ═ ║ ╗ ╔``) necesita que el
+   terminal empalme los glifos sin espacio extra entre líneas para verse
+   limpia; varios terminales (Warp, Windows Terminal) agregan suficiente
+   espaciado/anti-aliasing como para que se vea descuadrada aunque el
+   texto esté perfectamente alineado en columnas -- no arreglable con
+   padding (resuelto cambiando de fuente, no el string).
+2. ``epic`` (ASCII plano, pero con paréntesis y guiones bajos apilados
+   en trazos finos) se veía "punteada"/distorsionada en el mismo tipo de
+   terminal -- el problema no era Unicode vs ASCII, era el grosor/densidad
+   de los trazos a tamaño de fuente chico. ``chunky`` usa formas más
+   sólidas (menos diagonales y trazos finos), más resistente a este tipo
+   de artefacto de renderizado.
 """
 from __future__ import annotations
 
@@ -38,7 +45,7 @@ console = Console()
 BRAND = "#D97959"
 
 BANNER_TEXT = "ROCKY SPEC"
-BANNER_FONT = "epic"
+BANNER_FONT = "chunky"
 
 # Cada línea se rellena con espacios hasta el ancho máximo -- art.text2art
 # ya genera líneas parejas, pero esto lo hace explícito y a prueba de que
