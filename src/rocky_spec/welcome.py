@@ -4,26 +4,22 @@ Interfaz de bienvenida del CLI — lo primero que ve alguien al correr
 escribir archivos. Usa `rich` para algo prolijo en vez de texto plano
 suelto — mismo espíritu que la pantalla inicial de ``specify init``.
 
-El arte ASCII de ambos bloques (ROCKY y SPEC) se generó una sola vez con
-la librería ``art`` (fuente ``epic``) y quedó hardcodeado acá — así el CLI
-no necesita esa dependencia en runtime, solo para regenerarlo si el día de
-mañana cambia el texto o la fuente.
-
-Se usa una fuente ASCII plana (``/ \\ | ( )``) en vez de una con bloques
-Unicode (``ansi_shadow``, con ``█ ═ ║ ╗ ╔``): esas fuentes necesitan que
-el terminal empalme los glifos sin espacio extra entre líneas para verse
-limpias, y varios terminales (Warp, Windows Terminal) agregan suficiente
-espaciado/anti-aliasing como para que el arte se vea descuadrada aunque
-el texto esté perfectamente alineado en columnas — bug real reportado
-por el usuario, no arreglable con padding, resuelto recién al cambiar de
-fuente. ``epic`` es la misma familia de fuentes ASCII-seguras, elegida
-por estética entre varias alternativas de la librería ``art``.
+El arte ASCII "ROCKY SPEC" se genera en runtime con la librería ``art``
+(fuente ``epic``, ASCII plano: ``/ \\ | ( )``) -- a diferencia de una
+fuente con bloques Unicode (``ansi_shadow``, con ``█ ═ ║ ╗ ╔``), que
+necesita que el terminal empalme los glifos sin espacio extra entre
+líneas para verse limpia: varios terminales (Warp, Windows Terminal)
+agregan suficiente espaciado/anti-aliasing como para que ese estilo se
+vea descuadrado aunque el texto esté perfectamente alineado en columnas
+-- bug real reportado por el usuario, no arreglable con padding, resuelto
+recién al cambiar de fuente.
 """
 from __future__ import annotations
 
 import json
 from pathlib import Path
 
+from art import text2art
 from rich.align import Align
 from rich.columns import Columns
 from rich.console import Console, Group, RenderableType
@@ -41,29 +37,18 @@ console = Console()
 # significado propio (verde = activo/éxito, dim = secundario).
 BRAND = "#D97959"
 
-_BANNER_RAW = r"""
- _______  _______  _______  _                   _______  _______  _______  _______ 
-(  ____ )(  ___  )(  ____ \| \    /\|\     /|  (  ____ \(  ____ )(  ____ \(  ____ \
-| (    )|| (   ) || (    \/|  \  / /( \   / )  | (    \/| (    )|| (    \/| (    \/
-| (____)|| |   | || |      |  (_/ /  \ (_) /   | (_____ | (____)|| (__    | |      
-|     __)| |   | || |      |   _ (    \   /    (_____  )|  _____)|  __)   | |      
-| (\ (   | |   | || |      |  ( \ \    ) (           ) || (      | (      | |      
-| ) \ \__| (___) || (____/\|  /  \ \   | |     /\____) || )      | (____/\| (____/\
-|/   \__/(_______)(_______/|_/    \/   \_/     \_______)|/       (_______/(_______/
-""".strip("\n")
+BANNER_TEXT = "ROCKY SPEC"
+BANNER_FONT = "epic"
 
-# Ancho natural del arte ASCII -- si la terminal no entra, se muestra un
-# título compacto en vez de romper el arte a la mitad (ver _banner_renderable).
-BANNER_WIDTH = max(len(line) for line in _BANNER_RAW.splitlines())
-
-# Cada línea se rellena con espacios hasta BANNER_WIDTH -- pyfiglet genera
-# todas las líneas con el mismo ancho, pero un editor que recorta espacios
-# finales al guardar puede perder ese padding en alguna línea sin que se
-# note en el código; con justify="center" eso descuadra el arte entera
-# (cada línea se centra por separado). Se recalcula acá en vez de confiar
-# en que el string hardcodeado nunca pierda espacios de nuevo.
-BANNER = "\n".join(line.ljust(BANNER_WIDTH) for line in _BANNER_RAW.splitlines())
-COMPACT_TITLE = "ROCKY SPEC"
+# Cada línea se rellena con espacios hasta el ancho máximo -- art.text2art
+# ya genera líneas parejas, pero esto lo hace explícito y a prueba de que
+# una versión futura de la librería no lo garantice; con justify="center"
+# una diferencia de ancho entre líneas descuadraría el arte entera (cada
+# línea se centra por separado).
+_raw_banner_lines = text2art(BANNER_TEXT, font=BANNER_FONT).rstrip("\n").splitlines()
+BANNER_WIDTH = max(len(line) for line in _raw_banner_lines)
+BANNER = "\n".join(line.ljust(BANNER_WIDTH) for line in _raw_banner_lines)
+COMPACT_TITLE = BANNER_TEXT
 
 # Borde (1 char c/lado) + padding=(1, 2) (2 chars c/lado) del Panel exterior
 # de show_welcome -- se resta al ancho de la consola para saber cuánto
