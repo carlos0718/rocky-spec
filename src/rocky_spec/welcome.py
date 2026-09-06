@@ -4,32 +4,33 @@ Interfaz de bienvenida del CLI — lo primero que ve alguien al correr
 escribir archivos. Usa `rich` para algo prolijo en vez de texto plano
 suelto — mismo espíritu que la pantalla inicial de ``specify init``.
 
-El arte ASCII "ROCKY SPEC" se genera en runtime con la librería ``art``
-(fuente ``colossal``, ASCII plano de trazos gruesos y letras altas,
-8 líneas) -- elegida después de dos problemas de renderizado con
-fuentes de trazos finos:
+El arte ASCII "ROCKY SPEC" se genera en runtime con ``pyfiglet``
+(fuente ``standard``, la fuente por default de la librería) y se
+renderiza con ``rich.Text`` -- centrado, con el color de marca
+``BRAND``, y con fallback a ``COMPACT_TITLE`` (texto plano) si la
+terminal es más angosta que ``BANNER_WIDTH`` (ver ``_banner_renderable``).
 
-1. ``ansi_shadow`` (bloques Unicode ``█ ═ ║ ╗ ╔``) necesita que el
-   terminal empalme los glifos sin espacio extra entre líneas para verse
-   limpia; varios terminales (Warp, Windows Terminal) agregan suficiente
-   espaciado/anti-aliasing como para que se vea descuadrada aunque el
-   texto esté perfectamente alineado en columnas -- no arreglable con
-   padding (resuelto cambiando de fuente, no el string).
-2. ``epic`` (ASCII plano, pero con paréntesis y guiones bajos apilados
-   en trazos finos) se veía "punteada"/distorsionada en el mismo tipo de
-   terminal -- el problema no era Unicode vs ASCII, era el grosor/densidad
-   de los trazos a tamaño de fuente chico. Reemplazada por ``chunky``
-   (trazos más gruesos, menos diagonales finas), que sí se vio bien.
-
-``colossal`` es un ajuste estético sobre ``chunky`` ya funcionando --
-letras más altas y trazos más gruesos, pedido explícito del usuario.
+Se probaron muchas fuentes antes de esta, todas vía la librería ``art``
+(más contexto en CHANGELOG.md, entradas v0.8.0 a v0.10.0): ``ansi_shadow``,
+``epic`` y ``banner3`` salían distorsionados en Warp; ``colossal``
+mostraba líneas corridas horizontalmente sin ningún problema real en el
+string (verificado con ``rich.cells.cell_len``). Se probó bajar la
+ambición a texto simple de una línea (sin arte ASCII), pero el usuario
+confirmó en su propia terminal que ``pyfiglet`` con la fuente
+``standard`` -- la misma fuente que ya se había usado hardcodeada en
+v0.8.1, esta vez generada en runtime -- se renderiza limpia. ``art`` y
+``pyfiglet`` leen los mismos archivos de fuente FIGlet (``.flf``): para
+un mismo nombre de fuente el contenido generado es idéntico carácter
+por carácter entre ambas librerías -- lo que resolvió el problema no
+fue cambiar de librería, fue la fuente puntual (``standard``, sin
+bloques Unicode ni trazos finos densos).
 """
 from __future__ import annotations
 
 import json
 from pathlib import Path
 
-from art import text2art
+from pyfiglet import figlet_format
 from rich.align import Align
 from rich.columns import Columns
 from rich.console import Console, Group, RenderableType
@@ -48,14 +49,14 @@ console = Console()
 BRAND = "#D97959"
 
 BANNER_TEXT = "ROCKY SPEC"
-BANNER_FONT = "colossal"
+BANNER_FONT = "standard"
 
-# Cada línea se rellena con espacios hasta el ancho máximo -- art.text2art
-# ya genera líneas parejas, pero esto lo hace explícito y a prueba de que
-# una versión futura de la librería no lo garantice; con justify="center"
-# una diferencia de ancho entre líneas descuadraría el arte entera (cada
-# línea se centra por separado).
-_raw_banner_lines = text2art(BANNER_TEXT, font=BANNER_FONT).splitlines()
+# Cada línea se rellena con espacios hasta el ancho máximo, y se descartan
+# las líneas finales en blanco (pyfiglet deja una fila de espacios al final,
+# no vacía) -- ver CHANGELOG.md v0.10.0 para el bug real que esto evita:
+# con justify="center", una línea más corta que el resto se centra distinto
+# y descuadra el arte entera.
+_raw_banner_lines = figlet_format(BANNER_TEXT, font=BANNER_FONT, width=200).splitlines()
 while _raw_banner_lines and not _raw_banner_lines[-1].strip():
     _raw_banner_lines.pop()
 BANNER_WIDTH = max(len(line) for line in _raw_banner_lines)

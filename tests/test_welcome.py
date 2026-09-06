@@ -26,10 +26,9 @@ def test_show_commands_runs_without_error():
 
 def test_banner_lines_all_have_the_same_width():
     # Con justify="center" cada línea del banner se centra por separado --
-    # si una línea pierde el padding con espacios al final (ej. un editor
-    # que recorta espacios en blanco al guardar), el arte ASCII queda
-    # descuadrado entre filas sin que salte ningún error. Bug real
-    # encontrado por el usuario en Warp/Windows Terminal tras el rename.
+    # si una línea pierde el padding con espacios al final, el arte ASCII
+    # queda descuadrado entre filas sin que salte ningún error. Bug real
+    # visto varias veces (v0.8.0-v0.10.0) con distintas fuentes/librerías.
     widths = {len(line) for line in welcome.BANNER.splitlines()}
     assert len(widths) == 1, f"líneas de BANNER con anchos distintos: {widths}"
 

@@ -6,6 +6,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Changed
+- **Banner cambiado de la librería `art`/`colossal` a `pyfiglet`/`standard`** — `colossal` mostraba líneas corridas horizontalmente en la terminal del usuario sin ningún problema real en el string (`rich.cells.cell_len` daba igual en las 8 líneas); la causa quedaba del lado del renderizado del terminal/fuente del usuario. `art` y `pyfiglet` leen los mismos archivos de fuente FIGlet (`.flf`) — para el mismo nombre de fuente generan el contenido idéntico carácter por carácter, así que cambiar de librería por sí solo no iba a cambiar nada; lo que resolvió el problema fue la fuente puntual: `standard` (la misma que ya se había usado hardcodeada en v0.8.1, ahora generada en runtime), confirmada por el usuario en su propia terminal sin distorsión. `art` se saca de las dependencias del paquete (`pyproject.toml`), `pyfiglet` entra en su lugar.
 ## [0.10.0] - 2026-09-04
 
 ### Changed
