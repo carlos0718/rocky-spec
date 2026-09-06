@@ -6,6 +6,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Changed
+- **Fuente del banner cambiada de `pyfiglet`/`standard` a la librería `art`/`epic`** — puramente estético, pedido por el usuario tras ver el banner ya alineado (v0.8.1); sigue siendo ASCII plano (sin caracteres de dibujo de cajas Unicode), así que no reintroduce el bug de descuadre en Warp/Windows Terminal. `art` se usa solo para generar el texto una vez (igual que `pyfiglet` antes) — no se agrega como dependencia de runtime ni de dev.
+
 ## [0.8.1] - 2026-09-04
 
 ### Fixed
