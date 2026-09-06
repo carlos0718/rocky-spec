@@ -6,6 +6,11 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Changed
+- **Fuente del banner cambiada de `chunky` a `colossal`** — pedido explícito del usuario tras confirmar que `chunky` ya se veía bien (v0.9.1), quería letras más altas y trazos más gruesos. Ajuste puramente estético, misma librería `art`, generado en runtime.
+
+### Fixed
+- **`BANNER` tenía líneas en blanco de más al final** (1 en `chunky`, 3 en `colossal`) — `text2art()` devuelve líneas con espacios (no vacías) en las filas de descendencia de la fuente, y `.rstrip("\n")` sobre el string completo no las eliminaba porque no terminaban en `\n` puro. Reemplazado por un loop que descarta líneas finales en blanco (`.strip()` vacío) después de `.splitlines()` — bug preexistente desde que se generaba en runtime (v0.9.0), no específico de `colossal`.
 ## [0.9.1] - 2026-09-04
 
 ### Fixed
