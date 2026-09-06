@@ -6,16 +6,16 @@
 
 ## Gobernanza
 
-- **Versión de esta Constitution**: 1.4.0
+- **Versión de esta Constitution**: 1.5.0
 - **Fecha de ratificación**: 2026-08-31
-- **Última enmienda**: 2026-09-04
+- **Última enmienda**: 2026-09-06
 
 **Regla de enmienda** (versionado propio, independiente del SemVer del software — ver `.rocky-spec/reference/versioning.md` de la skill):
 - **MAJOR**: se elimina o redefine un artículo existente (ej. dejar de aplicar SOLID).
 - **MINOR**: se agrega un artículo nuevo (ej. sumar un requisito de accesibilidad que antes no estaba).
 - **PATCH**: aclaración de redacción sin cambio de fondo.
 
-**Cómo enmendar**: nunca en silencio dentro de un commit de feature. Si una tarea hace evidente que un artículo ya no tiene sentido para este proyecto, es señal de pausar y conversarlo explícitamente con el humano — no de bandear la regla y seguir. Una vez acordado el cambio, actualizar este archivo, subir `1.0.0` según la regla de arriba, y agregar la línea correspondiente al Historial de enmiendas al final.
+**Cómo enmendar**: nunca en silencio dentro de un commit de feature. Si una tarea hace evidente que un artículo ya no tiene sentido para este proyecto, es señal de pausar y conversarlo explícitamente con el humano — no de bandear la regla y seguir. Una vez acordado el cambio, actualizar este archivo, subir la **Versión de esta Constitution** según la regla de arriba, y agregar la línea correspondiente al Historial de enmiendas al final.
 
 ## Artículo 1 — Principios de código
 
@@ -79,8 +79,18 @@ Estos patrones son la forma concreta en que este proyecto aplica el Artículo 1 
 - La versión del proyecto sigue **SemVer** (`MAJOR.MINOR.PATCH`) — romper compatibilidad es siempre MAJOR, sin excepción, incluso si el cambio fue chico de programar.
 - Un release (tag de versión) es una decisión explícita, nunca automática por acumulación de commits.
 - El trabajo del día a día se hace en `feature/*`/`fix/*`, nunca directo sobre `master`/`dev` — ver `AGENTS.md` sección "Branching". Al mergear a `dev` o `master`, recordar (no ejecutar solo) si corresponde bumpear versión.
-- **El merge nunca es automático** — después de commitear y pushear una rama, parar y mostrar un resumen del cambio antes de ejecutar `git merge`, esperando confirmación explícita. Nunca encadenar commit → push → merge sin que el usuario vea qué se integra a `dev`/`master`.
-- **El push tampoco es automático — nunca, sin importar el impacto del cambio**: commitear localmente, parar ahí, mostrar un resumen del cambio, y esperar confirmación explícita vía `AskUserQuestion` (pregunta con el nombre de la rama y el resumen, opciones Sí/No) antes de ejecutar `git push`. Si hay más de una rama lista para pushear a la vez, una pregunta por rama — nunca una sola confirmación en texto libre para todas juntas.
+- **Ninguna acción que publique, integre o destruya se ejecuta sola.** Antes de cada una: parar, mostrar un resumen de lo que se está por hacer, y esperar la confirmación **por el mecanismo que fija esta tabla**. Nunca encadenar commit → push → merge, ni inferir un permiso de una frase suelta del chat.
+
+  | Acción | Mecanismo de confirmación |
+  |---|---|
+  | `git push` — cualquier rama, cualquier tamaño de cambio | `AskUserQuestion`, una pregunta **por rama** |
+  | `git merge` — en ambos sentidos (`feature/*`→`dev`, `dev`→`master`) | `AskUserQuestion` |
+  | `git tag` / publicar un release | `AskUserQuestion` — nunca taguear por acumulación de commits |
+  | Borrar ramas (local o remoto) | `AskUserQuestion` — y solo ramas 100% mergeadas, salvo decisión explícita del humano |
+  | Elegir entre alternativas de diseño o implementación | `AskUserQuestion` con las opciones reales |
+  | Avisos que **no** piden decisión (Spec Drift, TODO Size) | Texto en la respuesta, sin bloquear |
+
+  **Por qué el mecanismo es parte de la regla y no un detalle**: una confirmación en texto libre ("dale", "ok") es ambigua en su alcance — no distingue entre aprobar un push y aprobar además el merge y el tag que vienen después. `AskUserQuestion` obliga a enumerar las opciones reales antes de preguntar, y deja la decisión registrada como decisión. Cuando la tabla no cubra una acción irreversible o de cara al exterior, el default es preguntar, no asumir.
 
 Detalle completo, ejemplos y la relación con los snapshots de `specs/` en `.rocky-spec/reference/versioning.md` de la skill.
 
@@ -108,3 +118,4 @@ Excepciones explícitas a algún artículo de arriba, acordadas para este proyec
 | 2026-08-31 | 1.2.0 | Artículo 7: el merge nunca es automático — parar y mostrar un resumen antes de ejecutar `git merge`, esperar confirmación explícita | Pedido explícito del usuario tras notar que los merges a `dev`/`master` se venían ejecutando en cadena sin pausa |
 | 2026-09-04 | 1.3.0 | Artículo 7: el push tampoco es automático para cambios breaking o de alcance grande — pausa y resumen antes de `git push`, igual que ya regía para `git merge`. Con varias ramas listas, usar `AskUserQuestion` (una pregunta por rama, Sí/No) para capturar cuáles pushear | Pedido explícito del usuario tras notar que la rama `refactor/rename-to-rocky-spec` (un rename completo del framework, marcado `BREAKING CHANGE:`) se pusheó sin pedir su aprobación primero |
 | 2026-09-04 | 1.4.0 | Artículo 7: la pausa antes de `git push` deja de depender del impacto del cambio — aplica siempre, para cualquier commit, vía `AskUserQuestion` | Pedido explícito del usuario para simplificar la regla de 1.3.0: en vez de juzgar caso a caso si un cambio es "breaking o de alcance grande", preguntar siempre |
+| 2026-09-06 | 1.5.0 | Artículo 7: los dos bullets sueltos de `merge` y `push` se reemplazan por una **tabla acción → mecanismo** que cierra el alcance (push, merge, tag, borrado de ramas, elección entre alternativas) y separa las confirmaciones de los avisos que no piden decisión | Pedido explícito del usuario de validar si el uso de `AskUserQuestion` estaba definido "y no en prosa". No lo estaba: solo regía para `push`, `merge` seguía aceptando texto libre, y ni el borrado de ramas ni el tag fijaban mecanismo. La revisión además destapó que `AGENTS.md` se contradecía a sí mismo ("hacer `git push` inmediatamente" en el paso 4 del workflow vs. la pausa obligatoria 80 líneas después) y que los templates distribuidos no llevaban nada de esto |
