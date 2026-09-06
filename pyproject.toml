@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "rocky-spec"
-version = "0.9.1"
+version = "0.10.0"
 description = "Toolkit multi-agente para Spec-Driven Development — nivel Spec-Anchored. Bootstrapea proyectos con SPEC.md, CONSTITUTION.md, AGENTS.md y el resto del ciclo de vida, para el agente de código que elijas (Claude Code, Cursor, y más por venir)."
 readme = "README.md"
 license = { file = "LICENSE" }

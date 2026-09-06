@@ -6,6 +6,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-09-04
+
 ### Changed
 - **Fuente del banner cambiada de `chunky` a `colossal`** — pedido explícito del usuario tras confirmar que `chunky` ya se veía bien (v0.9.1), quería letras más altas y trazos más gruesos. Ajuste puramente estético, misma librería `art`, generado en runtime.
 
