@@ -248,8 +248,38 @@ src/rocky_spec/
 
 | Agente | Formato generado | ¿Hay que ejecutar los comandos a mano? |
 |---|---|---|
-| Claude Code | `.claude/skills/rocky-spec/SKILL.md` | **No.** Se auto-invoca |
+| Claude Code | `.claude/skills/rocky-spec/SKILL.md` + reglas en `.claude/settings.json` | **No.** Se auto-invoca |
 | Cursor | `.cursor/commands/rocky-*.md` + `.cursor/rules/rocky.mdc` | **Sí.** Hay que tipearlos |
+
+### Reglas de confirmación (solo Claude Code)
+
+El Artículo 7 del `CONSTITUTION.md` generado dice que `git push`, `git merge`,
+`git tag` y borrar ramas se confirman con el humano antes de ejecutarse. Esa es
+una regla **escrita**: la cumple el agente si la lee. Para que además haya un
+freno real, `rocky init --agent claude` suma esas cuatro acciones a
+`permissions.ask` de `.claude/settings.json`, y Claude Code pide confirmación
+aunque el agente se olvide de preguntar.
+
+**Nunca pisa tu configuración.** Si el archivo ya existe se leen sus claves, se
+agregan solo las reglas que falten y todo lo demás —`model`, `env`, `hooks`, tus
+propios permisos— queda intacto. Correr `init` dos veces no duplica nada. Si el
+archivo existe pero no es JSON válido, no se toca y se avisa.
+
+> **Si una regla no te pide confirmación**, fijate si el mismo comando está en
+> `permissions.allow`: en Claude Code el `allow` **gana** sobre el `ask` y el
+> comando queda pre-aprobado. `rocky init` detecta ese conflicto y lo reporta,
+> pero no saca la regla del `allow` por su cuenta — es una decisión tuya.
+>
+> El `settings.json` **no** entra en el manifiesto de instalación, a propósito:
+> `uninstall` borra los archivos trackeados que no cambiaron, y ese archivo es
+> tuyo, no de `rocky-spec`.
+
+**Por qué esto no existe para Cursor**: Cursor no tiene un equivalente de `ask`
+—solo `allow` y `deny`— y su comportamiento por defecto ya es pedir aprobación
+para lo que no esté en el `allow`. Generarle un `allow` con `git push` sería
+*auto-aprobarlo*, justo lo contrario. Además su archivo de permisos
+(`.cursor/cli.json`) aplica al CLI `cursor-agent`, no al IDE donde se usan los
+comandos `/rocky-*`.
 
 ### Por qué en Claude Code no ejecutás nada y en Cursor sí
 
