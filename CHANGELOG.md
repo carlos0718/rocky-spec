@@ -6,6 +6,13 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Added
+- **`rocky commands` ahora muestra los dos niveles de comandos** — la CLI (`rocky init`, `rocky check`…, se escriben en la terminal) y los del agente (`/rocky-*`, se escriben dentro de Claude Code o Cursor), con una columna "Para qué sirve" por comando y la explicación de cómo se dispara cada uno según el agente. Antes los `/rocky-*` no estaban documentados en ningún lado fuera del README, y los dos niveles se confundían entre sí.
+- **README: sección "Por qué en Claude Code no ejecutás nada y en Cursor sí"** — en Claude Code la integración es una *skill* cuya `description` la auto-invoca (tipear `/rocky-spec` es opcional, para forzar un paso puntual); en Cursor los *commands* son Markdown sin frontmatter y solo se disparan al tipearlos, por eso se instalan 15 comandos en vez de un único punto de entrada, y la regla `alwaysApply` de `.cursor/rules/rocky.mdc` los *sugiere* sin ejecutarlos. Con la tabla de los 15 comandos y su propósito.
+
+### Fixed
+- **El conteo de comandos de Cursor estaba mal y ahora se deriva** — `INVOCATION_HINT` decía "14 comandos" cuando `rocky init --agent cursor` genera **15**; era un número escrito a mano, el mismo tipo de desfase que tenía el conteo de tests del `TODO.md`. Ahora sale de `len(COMMAND_CATALOG)`, así que se actualiza solo al sumar un paso. Nuevo `test_cursor_hint_matches_the_real_command_count`, que compara contra los archivos **realmente instalados** y no contra la constante de la que se deriva — verificado que falla si se reintroduce el "14". Más `test_every_command_has_a_purpose`, para que un paso nuevo sin descripción falle en vez de renderizar una celda vacía.
+
 ## [0.12.0] - 2026-09-06
 
 ### Changed
