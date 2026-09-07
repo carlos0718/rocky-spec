@@ -60,6 +60,30 @@ def init(path: Path, agents: tuple[str, ...], force: bool) -> None:
         for e in entries:
             click.echo(f"    {e.path}")
 
+        # Reglas de permisos (solo Claude Code las tiene; ver
+        # claude.ensure_permission_rules). Se reporta aparte de los archivos
+        # del manifiesto porque el settings.json NO se trackea: es del usuario,
+        # rocky-spec solo le suma las reglas que falten.
+        perms = getattr(integration, "last_permission_result", None)
+        if perms:
+            if perms["invalid"]:
+                click.echo(
+                    "    ⚠️  .claude/settings.json existe pero no es JSON válido — "
+                    "no se tocó. Agregá las reglas del Artículo 7 a mano."
+                )
+            elif perms["added"]:
+                click.echo(
+                    f"    + {len(perms['added'])} regla(s) de confirmación en "
+                    ".claude/settings.json (permissions.ask)"
+                )
+            if perms["shadowed"]:
+                click.echo(
+                    "    ⚠️  estas reglas no van a pedir confirmación porque el mismo "
+                    "comando está en permissions.allow (allow gana sobre ask):"
+                )
+                for rule in perms["shadowed"]:
+                    click.echo(f"         {rule}")
+
     manifest_path.write_text(json.dumps(full_manifest, indent=2), encoding="utf-8")
     click.echo(f"\nListo. {len(agents)} integración(es) activa(s) en {project_root}")
 
