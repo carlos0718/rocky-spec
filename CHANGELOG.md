@@ -6,6 +6,14 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Changed
+- **Las confirmaciones del humano pasan de prosa suelta a una tabla normativa acción → mecanismo** (`CONSTITUTION.md` Artículo 7, enmienda 1.5.0) — antes la obligación de usar `AskUserQuestion` regía **solo para `git push`**: `git merge` aceptaba texto libre ("mergeo", "dale", "sí"), y ni el borrado de ramas ni el tag fijaban mecanismo alguno. La tabla cierra el alcance (push, merge, tag, borrado de ramas, elección entre alternativas) y separa explícitamente las confirmaciones de los avisos que no piden decisión (Spec Drift, TODO Size), que siguen siendo texto y no bloquean.
+- **Resuelta una contradicción interna de `AGENTS.md`** — el paso 4 del Workflow de Git decía "Hacer `git push` inmediatamente" mientras la sección Branching, 80 líneas después, exigía parar y esperar confirmación antes de pushear. Un agente que leyera el workflow en orden pusheaba sin preguntar **y cumplía la guía**; las enmiendas 1.3.0 y 1.4.0 habían agregado la pausa sin invalidar el paso que la contradecía. Ahora el paso 4 aclara que "inmediatamente" es sobre *cuándo se ofrece* el push, no sobre saltear la confirmación.
+- **Los templates distribuidos heredan la regla** (`AGENTS.md.template`, `CONSTITUTION.md.template`) — no la tenían: `AskUserQuestion` aparecía **0 veces** en todo `templates/`, y sí viajaba el "git push inmediatamente" que la contradice. Los proyectos generados con `rocky init` no heredaban ninguna de las convenciones de confirmación del propio repo. Se suma también la preferencia por `git branch -d` sobre `-D` al limpiar ramas, para que la negativa de git actue como red de seguridad.
+
+### Fixed
+- **`CONSTITUTION.md` decía "subir `1.0.0`" en su regla de enmienda** — el placeholder `{{CONSTITUTION_VERSION}}` se renderizó con el valor inicial y quedó congelado ahí, así que la instrucción apuntaba a una versión fija en vez de a la vigente (ya en 1.5.0). Reemplazado por una referencia al campo, no a un número.
+
 ## [0.11.0] - 2026-09-06
 
 ### Fixed
