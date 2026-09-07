@@ -51,6 +51,7 @@ from rich.text import Text
 
 from . import __version__
 from .integrations import INTEGRATION_REGISTRY, SHARED_DIR_NAME
+from .scaffold import COMMAND_CATALOG
 
 console = Console()
 
@@ -122,9 +123,56 @@ GLOSSARY = [
 # del proyecto destino -- NO es el comando `rocky` (eso es la CLI, corre
 # en cualquier terminal); esto es lo que se escribe DENTRO del agente
 # correspondiente, después de un `rocky init --agent <x>`.
+# El conteo de Cursor se DERIVA de COMMAND_CATALOG en vez de escribirse a
+# mano: la version anterior decia "14 comandos" cuando `rocky init --agent
+# cursor` ya generaba 15, el mismo tipo de desfase que tenia el conteo de
+# tests del TODO. Si manana se suma un paso al catalogo, este texto se
+# actualiza solo (y `test_cursor_hint_matches_the_real_command_count` lo
+# verifica contra la instalacion real, no contra la constante).
 INVOCATION_HINT = {
-    "claude": "/rocky-spec (Claude Code)",
-    "cursor": "/rocky-* — 14 comandos en .cursor/commands/ (Cursor)",
+    "claude": "/rocky-spec (Claude Code) — se auto-invoca, no hace falta tipearlo",
+    "cursor": f"/rocky-* — {len(COMMAND_CATALOG)} comandos en .cursor/commands/, manuales",
+}
+
+# Para qué sirve cada comando del agente, en una línea. El `title` de
+# COMMAND_CATALOG dice en qué paso del flujo estamos ("P4 · Recomendar y
+# decidir arquitectura"); esto dice qué se lleva el usuario de ese paso.
+# Las claves las verifica `test_every_command_has_a_purpose` contra
+# COMMAND_CATALOG -- si mañana se suma un paso y nadie escribe su propósito,
+# falla el test en vez de mostrar una celda vacía en silencio.
+AGENT_COMMAND_PURPOSE = {
+    "workspace": "Detecta si ya hay un workspace y arma el perfil del proyecto.",
+    "spec": "Escribe SPEC.md: features, user stories y el dominio (entidades y relaciones).",
+    "stack": "Confirma o cambia el stack — framework, DB, estilos, testing.",
+    "architecture": "Elige la arquitectura y deja documentado el porqué, no solo el qué.",
+    "design": "Design system: colores, tipografía, espaciado y componentes base.",
+    "commands": "Deja la lista de comandos reales para instalar y levantar el proyecto.",
+    "deploy": "Define plataforma de deploy, Docker y CI/CD.",
+    "security": "SECURITY.md — auth, manejo de secrets y checklist OWASP adaptado.",
+    "observability": "OBSERVABILITY.md — logging, error tracking y health endpoint.",
+    "accessibility": "ACCESSIBILITY.md — criterios WCAG que este proyecto se compromete a cumplir.",
+    "build": "Genera los archivos base del proyecto y el TODO.md inicial.",
+    "review": "Revisión funcional y de QA (Three Amigos) antes de dar por cerrado el setup.",
+    "validate": "Reporte final: qué quedó completo y qué falta.",
+    "mode-adopt": "Para un proyecto que YA tiene código: lo documenta sin arrancar de cero.",
+    "mode-resume": "Retoma el proyecto donde quedó y dice cuál es la próxima tarea.",
+}
+
+# Cómo se disparan esos comandos en cada agente. Es la diferencia práctica
+# más importante entre las dos integraciones y la que más confusión genera,
+# así que se muestra junto a la tabla y no enterrada en el README.
+INVOCATION_MODE = {
+    "claude": (
+        "Claude Code los ejecuta [bold]solo[/bold]: la skill declara cuándo aplica y el agente "
+        "la invoca al detectar la intención (\"nuevo proyecto\", \"continuemos\"). "
+        "Tipear [bold]/rocky-spec[/bold] es opcional, para forzar un paso puntual."
+    ),
+    "cursor": (
+        "Cursor los ejecuta [bold]a pedido[/bold]: no hay auto-invocación, hay que tipear el "
+        "comando (ej. [bold]/rocky-spec[/bold]). La regla siempre activa de "
+        "[bold].cursor/rules/rocky.mdc[/bold] hace que Cursor te [bold]sugiera[/bold] cuál "
+        "corresponde, pero no lo corre por vos."
+    ),
 }
 
 # Espejo exacto de la tabla "Comandos disponibles" del README -- misma
@@ -175,6 +223,24 @@ def _commands_table() -> Table:
     table.add_column("Qué hace")
     for command, description in COMMANDS:
         table.add_row(command, description)
+    return table
+
+
+def _agent_commands_table() -> Table:
+    """Los comandos que se tipean DENTRO del agente, no en la terminal.
+
+    Se arma iterando ``COMMAND_CATALOG`` -- la misma fuente de verdad que usa
+    ``rocky init`` para generarlos -- así la tabla no puede quedar desfasada
+    de lo que realmente se instala. La versión anterior de esta información
+    era un "14 comandos" escrito a mano en ``INVOCATION_HINT`` que ya estaba
+    mal (son 15)."""
+    table = Table(show_header=True, header_style="bold", box=None, padding=(0, 2, 0, 0))
+    table.add_column("Comando", style=BRAND, no_wrap=True)
+    table.add_column("Paso", no_wrap=True)
+    table.add_column("Para qué sirve")
+    for key, title, _source in COMMAND_CATALOG:
+        step = title.split(" · ")[0] if " · " in title else "—"
+        table.add_row(f"/rocky-{key}", step, AGENT_COMMAND_PURPOSE.get(key, "—"))
     return table
 
 
@@ -245,12 +311,37 @@ def _centered_panels(available_width: int, *panels: Panel) -> RenderableType:
 
 
 def show_commands() -> None:
-    """``rocky commands`` -- la tabla completa, con descripción, de todo
-    lo que la CLI sabe hacer. Espejo del README, no de la skill/agente."""
+    """``rocky commands`` -- los dos niveles de comandos que tiene el kit.
+
+    Se muestran juntos a propósito: son cosas distintas que se confunden
+    seguido. Los de arriba se escriben en la terminal (la CLI ``rocky``);
+    los de abajo, dentro del agente después de un ``rocky init``. Y entre
+    los de abajo, Claude Code los dispara solo mientras que en Cursor hay
+    que tipearlos -- ver ``INVOCATION_MODE``."""
     console.print(
         Panel(
             _commands_table(),
-            title="[bold]rocky — comandos disponibles[/bold]",
+            title="[bold]1. CLI `rocky`[/bold] — se escriben en la terminal",
+            border_style=BRAND,
+            expand=False,
+        )
+    )
+    console.print()
+
+    modes = Group(
+        Text("Cómo se disparan según el agente:", style="bold"),
+        *[
+            Text.from_markup(f"  • [bold]{INTEGRATION_REGISTRY[key].display_name}[/bold]: {text}")
+            for key, text in INVOCATION_MODE.items()
+            if key in INTEGRATION_REGISTRY
+        ],
+        "",
+        _agent_commands_table(),
+    )
+    console.print(
+        Panel(
+            modes,
+            title="[bold]2. Comandos del agente[/bold] — se escriben dentro de Claude Code / Cursor",
             border_style=BRAND,
             expand=False,
         )

@@ -76,3 +76,57 @@ def test_commands_table_matches_registered_integrations_keys_used_in_invocation_
     # mostrar "—" en silencio en la pantalla de bienvenida.
     for key in INTEGRATION_REGISTRY:
         assert key in welcome.INVOCATION_HINT, f"falta INVOCATION_HINT para '{key}'"
+
+
+def test_every_command_has_a_purpose():
+    # Si se suma un paso a COMMAND_CATALOG y nadie escribe para qué sirve,
+    # la tabla de `rocky commands` mostraría una celda "—" en silencio.
+    from rocky_spec.scaffold import COMMAND_CATALOG
+
+    for key, _title, _source in COMMAND_CATALOG:
+        assert key in welcome.AGENT_COMMAND_PURPOSE, f"falta AGENT_COMMAND_PURPOSE para '{key}'"
+
+
+def test_cursor_hint_matches_the_real_command_count(tmp_path):
+    # Guarda contra el bug original: INVOCATION_HINT decía "14 comandos"
+    # cuando `rocky init --agent cursor` ya generaba 15. El número se compara
+    # contra los archivos REALMENTE instalados, no contra COMMAND_CATALOG —
+    # si se comparara contra la constante de la que ahora se deriva, el test
+    # pasaría en verde aunque la instalación generase otra cantidad.
+    import re
+
+    from rocky_spec import scaffold
+    from rocky_spec.integrations import INTEGRATION_REGISTRY
+
+    scaffold.ensure_shared_knowledge(tmp_path)
+    INTEGRATION_REGISTRY["cursor"].install(tmp_path, scaffold.all_commands())
+
+    instalados = list((tmp_path / ".cursor" / "commands").glob("rocky-*.md"))
+    declarados = int(re.search(r"(\d+) comandos", welcome.INVOCATION_HINT["cursor"]).group(1))
+
+    assert declarados == len(instalados), (
+        f"INVOCATION_HINT declara {declarados} comandos pero se instalaron {len(instalados)}"
+    )
+
+
+def test_show_commands_lists_both_levels():
+    # `rocky commands` tiene que mostrar los dos niveles (CLI y agente) y la
+    # diferencia de invocación entre Claude y Cursor -- que es justamente lo
+    # que se confundía.
+    import io
+
+    from rich.console import Console
+
+    original = welcome.console
+    buf = io.StringIO()
+    welcome.console = Console(file=buf, width=120)
+    try:
+        welcome.show_commands()
+    finally:
+        welcome.console = original
+
+    out = buf.getvalue()
+    assert "CLI `rocky`" in out
+    assert "Comandos del agente" in out
+    assert "/rocky-mode-resume" in out
+    assert "se auto-invoca" in out or "solo" in out
