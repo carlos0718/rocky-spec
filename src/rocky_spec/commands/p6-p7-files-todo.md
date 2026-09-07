@@ -94,6 +94,11 @@ Si el usuario pide explícitamente desactivar alguna de estas para el proyecto p
 - `{{TDD_DECISION}}`: la respuesta guardada en P3 ("Sí — ciclo Red→Green→Refactor, ver `.rocky-spec/reference/methodologies.md`" o el default "No — tests después de implementar").
 - Ítem libre adicional solo si hubo alguna otra decisión no trivial (ej. plataforma de deploy elegida por una razón específica, no solo el default) — si no hubo ninguna, omitir la línea en vez de dejar un placeholder vacío.
 
+**Rellenar el `AGENTS.md` generado con la sección "Servicios externos"** (datos de P3):
+- `{{EXTERNAL_SERVICES}}` → una fila por servicio capturado: `| Resend | Emails transaccionales (alta, reset de password) | \`RESEND_API_KEY\`, \`EMAIL_FROM\` | pendiente |`
+- Si el usuario respondió "ninguno", **borrar la fila de ejemplo y dejar la tabla con encabezados nada más** — no dejar el comentario HTML de muestra ni un placeholder sin resolver.
+- Las variables de cada servicio también van a `.env.example`, con nombre pero **sin valor real**.
+
 **Rellenar el `AGENTS.md` generado con la sección "Infraestructura de deploy"** (datos de P5.5):
 - `{{DOCKER}}` → "sí (Dockerfile + docker-compose.yml generados)" | "no" | "pendiente (tarea en TODO)"
 - `{{DEPLOY_PLATFORM}}` → nombre de la plataforma elegida | "pendiente"
@@ -123,6 +128,7 @@ Si alguno quedó realmente deshabilitado (paso 6), avisar al cerrar P6 (una sola
 
 **Rellenar `TODO.md`** (el modo — único u orquestador — se decide en P7, ver esa sección para el criterio completo; acá van los datos una vez decidido):
 - Modo único: descomentar Docker/CI en "Infraestructura / Deploy" según corresponda, reemplazar `{{DEPLOY_PLATFORM}}`, completar `{{SECURITY_TODO_ITEMS}}` en la sección "Seguridad" con lo de P5.6 Paso 5, y `{{OBSERVABILITY_TODO_ITEMS}}` en la sección "Observabilidad" con lo de P5.7 Paso 5.
+- Modo único, **sección "Servicios externos"**: por cada servicio capturado en P3, escribir su bloque de tareas usando la plantilla comentada del template (cuenta y API key → variables en `.env` → implementar el cliente → probar de punta a punta → credenciales en la plataforma de deploy). Sumar las tareas propias del servicio que el template no puede anticipar: verificación de dominio con DNS (email), webhooks y su endpoint (pagos), bucket y política de permisos (storage). Si no hubo servicios, **borrar la sección entera** en vez de dejarla con los comentarios de ejemplo.
 - Modo orquestador: esos mismos ítems van en `todos/infraestructura-deploy.md`, `todos/seguridad.md` y `todos/observabilidad.md` respectivamente (generados con `.rocky-spec/templates/todo-group.md.template`), y `TODO.md` solo lleva la tabla "Estado por grupo" con el conteo de cada uno.
 
 ### P7 · TODO colaborativo
@@ -136,7 +142,7 @@ Ofrecer 4 modos al usuario:
 
 Si el `profile.md` tiene `default_todo_mode` seteado, usarlo sin preguntar.
 
-Si el usuario elige B o C, el TODO debe tener **secciones mínimas**: `Setup`, `Features iniciales` (organizadas por capa o por feature, ver más abajo), `Calidad (tests/lint)`, `Documentación`, `Infraestructura / Deploy`, `Seguridad`. Cada ítem en formato `- [ ] Tarea`. Para creativo: `Brief`, `Referencias`, `Prompts`, `Frames`, `Edit`, `Exports`.
+Si el usuario elige B o C, el TODO debe tener **secciones mínimas**: `Setup`, `Features iniciales` (organizadas por capa o por feature, ver más abajo), `Calidad (tests/lint)`, `Documentación`, `Infraestructura / Deploy`, `Servicios externos` (si se capturó alguno en P3), `Seguridad`. Cada ítem en formato `- [ ] Tarea`. Para creativo: `Brief`, `Referencias`, `Prompts`, `Frames`, `Edit`, `Exports`.
 
 #### Trazabilidad de requisitos
 

@@ -20,6 +20,20 @@
 - **Testing**: {{TESTING}}
 - **Otros**: {{OTHER_TOOLS}}
 
+## Servicios externos
+
+Servicios de terceros que este proyecto consume — email, pagos, storage, auth, SMS, IA. Van acá y **no** en `Otros` del stack: no son herramientas de build, son dependencias en runtime que necesitan una cuenta, credenciales y una implementación propia. Si esta tabla está vacía, es porque el proyecto no usa ninguno todavía.
+
+| Servicio | Para qué | Variables que necesita | Estado |
+|---|---|---|---|
+{{EXTERNAL_SERVICES, default: <!-- ej. Resend \| Envío de emails transaccionales (alta de usuario, reset de password) \| `RESEND_API_KEY`, `EMAIL_FROM` \| pendiente --> \| — \| — \| — \| — \|}}
+
+**Estados**: `pendiente` (decidido, sin cuenta todavía) → `configurado` (cuenta creada y credenciales en `.env`) → `implementado` (el código lo usa y se probó de punta a punta).
+
+> **Por qué esta tabla existe**: un servicio externo se decide en una conversación ("mandamos los mails con Resend") y después se olvida, porque no es una feature del `SPEC.md` ni una tarea que nadie escribió. Las tareas concretas de cada uno viven en la sección **Servicios externos** del `TODO.md` — esta tabla es el *qué y por qué*; el `TODO.md` es el *seguimiento*.
+>
+> Sus credenciales siguen la misma regla que el resto: nunca en el repo, siempre en `.env` (gitignoreado) y en el panel de la plataforma de deploy.
+
 ## Infraestructura de deploy
 
 - **Docker**: {{DOCKER}}  <!-- sí (Dockerfile + docker-compose.yml) | no | pendiente -->

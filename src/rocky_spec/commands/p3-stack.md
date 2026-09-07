@@ -30,6 +30,29 @@ Después ofrecer el menú principal:
 
 **Loop**: ejecutar la opción elegida, mostrar la tabla actualizada, y volver al menú hasta que el usuario elija 1.
 
+#### Al confirmar (opción 1) — servicios externos
+
+**Antes de la pregunta de TDD**, capturar los servicios de terceros. Preguntar una sola vez:
+
+```
+¿El proyecto va a usar algún servicio externo? (email, pagos, storage,
+auth, SMS, IA...)
+
+Ejemplos: Resend / SendGrid (email) · Stripe / MercadoPago (pagos) ·
+S3 / Cloudinary (archivos) · Clerk / Auth0 (auth) · Twilio (SMS) ·
+OpenAI / Anthropic (IA)
+
+(Nombralos, o "ninguno por ahora")
+```
+
+Por **cada** servicio mencionado, registrar cuatro datos: **nombre**, **para qué se usa**, **variables de entorno que necesita**, y **estado** (arranca siempre en `pendiente`). Van a la tabla "Servicios externos" de `AGENTS.md` y generan su bloque de tareas en el `TODO.md` (ambos se escriben en P6/P7).
+
+**Por qué se pregunta acá y no se deja para después**: un servicio externo se menciona al pasar en la conversación del stack ("los mails los mando con Resend") y después no queda registrado en ningún lado — no es una feature del `SPEC.md` ni una capa del stack. Sin este paso, la implementación se olvida hasta que alguien nota que la app no manda emails.
+
+**No confundir con la opción 3 del menú** (herramienta extra): una librería que se instala con el gestor de paquetes y vive en el repo es stack; un servicio que necesita cuenta, credenciales y corre fuera del proyecto es servicio externo. Si el usuario nombra un servicio externo dentro de la opción 3, registrarlo acá igual.
+
+Si el usuario dice "ninguno", seguir sin insistir — la tabla queda vacía y se puede sumar después con `/rocky-stack`.
+
 #### Al confirmar (opción 1) — TDD sí o no
 
 Antes de pasar a P4, una sola pregunta binaria — **no asumir que se hace TDD solo porque hay un framework de testing elegido**, son cosas distintas (tener Vitest no implica escribir el test antes del código):
