@@ -6,6 +6,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-09-07
+
 ### Added
 - **`rocky init --agent claude` ahora instala también las reglas de confirmación del Artículo 7** en `permissions.ask` de `.claude/settings.json` (`git push`, `git merge`, `git tag`, `git branch -d/-D`). Hasta ahora la regla **escrita** viajaba en los templates pero el enforcement no existía: el proyecto generado heredaba la convención y nada que la hiciera cumplir. Van en `ask` y no en `deny` a propósito — `deny` impediría ejecutarlas incluso con autorización explícita del usuario, y son operaciones legítimas del día a día.
 - **La fusión es no destructiva**: si `.claude/settings.json` ya existe se agregan solo las reglas que falten y se conserva todo lo demás (`model`, `env`, `hooks`, permisos propios); correr `init` dos veces no duplica nada; y si el archivo no es JSON válido no se toca y se avisa. El `settings.json` **no** entra en el manifiesto de instalación — `uninstall` borra los archivos trackeados cuyo hash no cambió, así que registrarlo permitiría borrarle al usuario su configuración entera al desinstalar.
