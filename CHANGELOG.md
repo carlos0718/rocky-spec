@@ -6,6 +6,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-09-07
+
 ### Added
 - **Los servicios externos (email, pagos, storage, auth…) ahora se registran y se siguen** — antes no existía ningún lugar para ellos: si el usuario decía "los mails los mando con Resend", eso quedaba como una línea suelta en `Otros` del stack o solo en la conversación, y **no generaba ninguna tarea**. No es una feature del `SPEC.md` ni una capa del stack, así que se olvidaba hasta que alguien notaba que la app no manda emails. Tres piezas nuevas, encadenadas: (1) P3 pregunta explícitamente por servicios de terceros al confirmar el stack y captura nombre, para qué, variables y estado; (2) `AGENTS.md` gana una sección **Servicios externos** con esa tabla — separada de `Otros` a propósito, porque un servicio con cuenta y credenciales no es una herramienta de build; (3) `TODO.md` gana su propia sección con las tareas de seguimiento por servicio (crear cuenta → variables en `.env` → implementar → probar de punta a punta → credenciales en producción), incluidas las que el template no puede anticipar, como la verificación de dominio por DNS de un proveedor de email.
 - **`rocky commands` ahora muestra los dos niveles de comandos** — la CLI (`rocky init`, `rocky check`…, se escriben en la terminal) y los del agente (`/rocky-*`, se escriben dentro de Claude Code o Cursor), con una columna "Para qué sirve" por comando y la explicación de cómo se dispara cada uno según el agente. Antes los `/rocky-*` no estaban documentados en ningún lado fuera del README, y los dos niveles se confundían entre sí.
