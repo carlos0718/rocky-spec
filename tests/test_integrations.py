@@ -58,3 +58,99 @@ def test_uninstall_removes_only_untouched_files(tmp_path):
     removed = integration.uninstall(tmp_path, entries)
     assert removed == 0  # el archivo fue editado a mano, no se toca
     assert skill_file.exists()
+
+
+def _settings(root):
+    import json
+
+    return json.loads((root / ".claude" / "settings.json").read_text(encoding="utf-8"))
+
+
+def test_permission_rules_created_when_no_settings_exist(tmp_path):
+    from rocky_spec.integrations.claude import PERMISSION_ASK_RULES, ensure_permission_rules
+
+    result = ensure_permission_rules(tmp_path)
+
+    assert result["added"] == PERMISSION_ASK_RULES
+    assert _settings(tmp_path)["permissions"]["ask"] == PERMISSION_ASK_RULES
+
+
+def test_permission_rules_never_overwrite_user_settings(tmp_path):
+    # El punto central: rocky-spec SUMA reglas, no pisa la config del usuario.
+    import json
+
+    from rocky_spec.integrations.claude import ensure_permission_rules
+
+    (tmp_path / ".claude").mkdir()
+    original = {
+        "model": "opus",
+        "env": {"MI_VAR": "valor-del-usuario"},
+        "permissions": {"allow": ["Bash(npm run *)"], "ask": ["Bash(rm -rf *)"]},
+        "hooks": {"PreToolUse": []},
+    }
+    (tmp_path / ".claude" / "settings.json").write_text(json.dumps(original), encoding="utf-8")
+
+    ensure_permission_rules(tmp_path)
+    after = _settings(tmp_path)
+
+    assert after["model"] == "opus"
+    assert after["env"] == {"MI_VAR": "valor-del-usuario"}
+    assert after["hooks"] == {"PreToolUse": []}
+    assert after["permissions"]["allow"] == ["Bash(npm run *)"]
+    assert after["permissions"]["ask"][0] == "Bash(rm -rf *)", "se perdió la regla del usuario"
+
+
+def test_permission_rules_are_idempotent(tmp_path):
+    from rocky_spec.integrations.claude import ensure_permission_rules
+
+    ensure_permission_rules(tmp_path)
+    segunda = ensure_permission_rules(tmp_path)
+    reglas = _settings(tmp_path)["permissions"]["ask"]
+
+    assert segunda["added"] == [], "un segundo init no debería agregar nada"
+    assert len(reglas) == len(set(reglas)), "reglas duplicadas"
+
+
+def test_permission_rules_report_rules_shadowed_by_allow(tmp_path):
+    # En Claude Code un `allow` gana sobre el mismo comando en `ask`: la
+    # confirmación nunca aparecería. No se saca del allow (sería pisar una
+    # decisión del usuario), se avisa.
+    import json
+
+    from rocky_spec.integrations.claude import ensure_permission_rules
+
+    (tmp_path / ".claude").mkdir()
+    (tmp_path / ".claude" / "settings.json").write_text(
+        json.dumps({"permissions": {"allow": ["Bash(git push *)"]}}), encoding="utf-8"
+    )
+
+    result = ensure_permission_rules(tmp_path)
+
+    assert result["shadowed"] == ["Bash(git push *)"]
+    assert _settings(tmp_path)["permissions"]["allow"] == ["Bash(git push *)"]
+
+
+def test_permission_rules_leave_a_corrupt_settings_file_untouched(tmp_path):
+    from rocky_spec.integrations.claude import ensure_permission_rules
+
+    (tmp_path / ".claude").mkdir()
+    roto = "{ esto no es JSON válido,,, }"
+    (tmp_path / ".claude" / "settings.json").write_text(roto, encoding="utf-8")
+
+    result = ensure_permission_rules(tmp_path)
+
+    assert result["invalid"] == [".claude/settings.json"]
+    assert (tmp_path / ".claude" / "settings.json").read_text(encoding="utf-8") == roto
+
+
+def test_settings_json_is_not_tracked_in_the_manifest(tmp_path):
+    # uninstall borra los archivos del manifiesto cuyo hash no cambió. Si el
+    # settings.json del usuario estuviera trackeado, desinstalar rocky-spec le
+    # borraría su configuración entera en vez de solo las reglas agregadas.
+    from rocky_spec import scaffold
+    from rocky_spec.integrations import INTEGRATION_REGISTRY
+
+    scaffold.ensure_shared_knowledge(tmp_path)
+    entries = INTEGRATION_REGISTRY["claude"].install(tmp_path, scaffold.all_commands())
+
+    assert all("settings.json" not in e.path for e in entries)
