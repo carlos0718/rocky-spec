@@ -246,10 +246,66 @@ src/rocky_spec/
 
 ## Agentes soportados
 
-| Agente | Formato generado |
-|---|---|
-| Claude Code | `.claude/skills/rocky-spec/SKILL.md` |
-| Cursor | `.cursor/commands/rocky-*.md` + `.cursor/rules/rocky.mdc` |
+| Agente | Formato generado | ¿Hay que ejecutar los comandos a mano? |
+|---|---|---|
+| Claude Code | `.claude/skills/rocky-spec/SKILL.md` | **No.** Se auto-invoca |
+| Cursor | `.cursor/commands/rocky-*.md` + `.cursor/rules/rocky.mdc` | **Sí.** Hay que tipearlos |
+
+### Por qué en Claude Code no ejecutás nada y en Cursor sí
+
+No es una decisión de `rocky-spec`: es cómo funciona cada herramienta.
+
+**Claude Code — automático.** La integración se instala como una *skill*, y una
+skill declara en su frontmatter una `description` con las frases que la activan
+("nuevo proyecto", "continuemos", "adoptar proyecto"). Claude Code lee esa
+descripción y **decide solo** cuándo cargarla. Vos escribís *"quiero armar una
+API de pagos"* y el flujo arranca sin que tipees ningún comando.
+
+> Igual podés forzarlo: escribir `/rocky-spec` invoca la skill explícitamente.
+> Sirve para casos puntuales — retomar un paso concreto, o cuando el agente no
+> detectó la intención y querés arrancar el flujo igual. Es **opcional**, no el
+> camino normal.
+
+**Cursor — manual.** Cursor no tiene auto-invocación por descripción: sus
+*commands* (`.cursor/commands/*.md`) son Markdown plano, sin frontmatter, y se
+disparan **solo cuando los tipeás** (`/rocky-spec`, `/rocky-stack`, …). Por eso
+la integración instala 15 comandos, uno por paso del flujo,
+en vez de un único punto de entrada.
+
+Para compensarlo, `rocky init --agent cursor` también genera
+`.cursor/rules/rocky.mdc` con `alwaysApply: true`: una regla de contexto
+permanente que mantiene `CONSTITUTION.md` y `SPEC.md` presentes en cada
+respuesta y le indica a Cursor que **te sugiera** el comando que corresponde
+cuando pedís algo que encaja en un paso. Sugerir, no ejecutar — la decisión de
+correrlo sigue siendo tuya.
+
+### Los 15 comandos del agente
+
+Son los mismos pasos del ciclo de vida para los dos agentes: cambia **cómo se
+disparan**, no qué hacen. En Cursor se tipean; en Claude Code el flujo los
+recorre solo. También los podés ver en la terminal con `rocky commands`.
+
+| Comando | Paso | Para qué sirve |
+|---|---|---|
+| `/rocky-workspace` | P0 | Detecta si ya hay un workspace y arma el perfil del proyecto. |
+| `/rocky-spec` | P1 | Escribe SPEC.md: features, user stories y el dominio (entidades y relaciones). |
+| `/rocky-stack` | P3 | Confirma o cambia el stack — framework, DB, estilos, testing. |
+| `/rocky-architecture` | P4 | Elige la arquitectura y deja documentado el porqué, no solo el qué. |
+| `/rocky-design` | P4.5 | Design system: colores, tipografía, espaciado y componentes base. |
+| `/rocky-commands` | P5 | Deja la lista de comandos reales para instalar y levantar el proyecto. |
+| `/rocky-deploy` | P5.5 | Define plataforma de deploy, Docker y CI/CD. |
+| `/rocky-security` | P5.6 | SECURITY.md — auth, manejo de secrets y checklist OWASP adaptado. |
+| `/rocky-observability` | P5.7 | OBSERVABILITY.md — logging, error tracking y health endpoint. |
+| `/rocky-accessibility` | P5.8 | ACCESSIBILITY.md — criterios WCAG que este proyecto se compromete a cumplir. |
+| `/rocky-build` | P6 y P7 | Genera los archivos base del proyecto y el TODO.md inicial. |
+| `/rocky-review` | P7.5 | Revisión funcional y de QA (Three Amigos) antes de dar por cerrado el setup. |
+| `/rocky-validate` | P8 | Reporte final: qué quedó completo y qué falta. |
+| `/rocky-mode-adopt` | — | Para un proyecto que YA tiene código: lo documenta sin arrancar de cero. |
+| `/rocky-mode-resume` | — | Retoma el proyecto donde quedó y dice cuál es la próxima tarea. |
+
+> No confundir con la **CLI `rocky`** (`rocky init`, `rocky check`, …): esos se
+> escriben en la terminal y corren siempre a mano, en cualquiera de los dos
+> agentes. Los `/rocky-*` de arriba se escriben *dentro* del agente.
 
 ## Licencia
 

@@ -58,6 +58,31 @@
 - [ ] Primer deploy exitoso
 - [ ] Verificar que la app funciona en producción (smoke test manual)
 
+## Servicios externos
+<!-- 📄 README sync → si el proyecto es open source, listar qué servicios necesita quien lo clone -->
+<!-- Un bloque POR CADA servicio de la tabla "Servicios externos" de AGENTS.md.
+     Si esa tabla está vacía, esta sección queda vacía y no pasa nada.
+     Se listan las 5 tareas siempre, aunque parezcan obvias: el punto es que
+     "crear la cuenta" y "verificar el dominio" son justamente los pasos que
+     se olvidan, porque no son código y nadie los escribe en ningún lado. -->
+
+<!-- Plantilla — duplicar por servicio y reemplazar {SERVICIO}:
+- [ ] {SERVICIO}: crear la cuenta y generar la API key
+- [ ] {SERVICIO}: agregar sus variables a `.env.example` (sin valores reales) y a `.env` (con valores)
+- [ ] {SERVICIO}: implementar el cliente/wrapper en el código
+- [ ] {SERVICIO}: probar de punta a punta en desarrollo
+- [ ] {SERVICIO}: cargar las credenciales en la plataforma de deploy y verificar en producción
+-->
+
+<!-- Ejemplo real (Resend para emails transaccionales) — borrar si no aplica:
+- [ ] Resend: crear la cuenta y generar la API key
+- [ ] Resend: verificar el dominio remitente (DNS: SPF + DKIM) — puede tardar horas, no dejarlo para el final
+- [ ] Resend: agregar `RESEND_API_KEY` y `EMAIL_FROM` a `.env.example` y `.env`
+- [ ] Resend: implementar el wrapper de envío
+- [ ] Resend: probar el email de alta de usuario de punta a punta
+- [ ] Resend: cargar credenciales en la plataforma de deploy y verificar en producción
+-->
+
 ## Seguridad
 <!-- 📄 README sync → no suele necesitar sección propia en el README, salvo que el proyecto sea open source -->
 <!-- Poblado en P5.6 con los ítems del checklist OWASP de SECURITY.md que quedaron sin marcar -->
