@@ -93,6 +93,27 @@ python3 -m build
 
 - (vacío al inicio, agregar acá problemas conocidos y workarounds)
 
+## Cuando un arreglo no funciona dos veces seguidas — protocolo anti-loop
+
+**El síntoma:** se aplica un fix, el usuario reporta que el problema sigue, se aplica otro fix de la misma familia, sigue. Cada intento se siente razonable por separado, pero el conjunto es un loop: se está variando un parámetro (una fuente, una librería, un valor) sin haber verificado nunca la hipótesis de fondo.
+
+**Umbrales escalonados** (mismo patrón que el TODO Size Check y el aviso de fixes acumulados de `rocky check version`):
+
+- **1 intento fallido**: normal, seguir.
+- **2 intentos fallidos sobre el mismo síntoma** 🟡: parar de aplicar variantes. El tercer paso **no** es otro fix — es un experimento diseñado para *observar* el fenómeno.
+- **3+ intentos fallidos** 🔴: la hipótesis de trabajo está mal, no incompleta. Decirlo explícitamente al usuario, listar qué se probó y qué se descartó, y proponer cambiar el método de diagnóstico (no la solución).
+
+**Reglas concretas:**
+
+1. **Prohibido cerrar el diagnóstico en algo que no se puede medir.** "Es el renderizado de la terminal", "es la fuente del usuario", "es un tema del entorno" son **hipótesis sin verificar**, no conclusiones. Antes de aceptar una causa externa, hay que construir una forma de observar el fenómeno desde el código (capturar la salida real a un buffer, escribir a un archivo, medir posiciones/bytes). Si no se puede observar, no se puede afirmar.
+2. **Verificar la capa correcta.** Si un test pasa en verde mientras el bug está presente, el test está mirando la capa equivocada — típicamente la **entrada** (el string que se construyó) en vez de la **salida** (lo que realmente se renderizó/escribió/devolvió). El bug vive entre las dos.
+3. **Un test de regresión no vale nada hasta verlo fallar.** Antes de dar por bueno el fix, aplicar temporalmente el código con el bug y confirmar que el test nuevo falla. Si nunca falló, no prueba nada.
+4. **Aislar variables de a una.** Cambiar fuente + librería + mecanismo en la misma iteración hace imposible saber qué movió la aguja. Si ya se cambiaron varias cosas, volver atrás a una base conocida antes de seguir.
+5. **La contra-hipótesis del usuario es dato, no ruido.** Si el usuario insiste en que la causa es otra ("probá alineado a la izquierda", "eso no tiene que ver"), tratarlo como una hipótesis a testear explícitamente, no como algo a refutar con más argumentos. Suele conocer su entorno mejor que el agente.
+6. **Documentar la causa real, no la secuencia de intentos.** En `CHANGELOG.md` va qué era y cómo se arregló; el ida y vuelta queda en el historial de commits.
+
+> **Caso de referencia** (v0.8.0 → v0.10.x, banner del welcome): cinco cambios de fuente y dos de librería, con el diagnóstico cerrado en "es el renderizado de Warp". La causa real era que Rich descarta los espacios finales al centrar cada línea de un `Text` con `justify="center"`, ignorando el `ljust` de relleno. Se destrabó capturando el render a un buffer y midiendo el margen de cada fila — un experimento de observación, no otro fix.
+
 ## Agregar o modificar código — flujo de iteración (Plan → Confirmar → Implementar)
 
 > **Spec-Anchored** es uno de los niveles reconocidos de Spec-Driven Development (junto a Spec-First y Spec-as-Source — ver `.rocky-spec/reference/methodologies.md` de la skill para el detalle). Significa que `SPEC.md` es un documento **vivo**: se actualiza en cada cambio de alcance, no solo una vez al principio del proyecto.
@@ -239,7 +260,7 @@ Cada ítem del `TODO.md` (o del archivo de grupo correspondiente en `todos/`, si
    feat: render product listing with filters (TODO: Listado de productos con filtros)
    test: add login flow unit tests (TODO: Escribir primer smoke test)
    ```
-4. Hacer `git push` inmediatamente — no acumular commits sin pushear.
+4. Ofrecer el `git push` inmediatamente — no acumular commits sin pushear —, pero **no ejecutarlo solo**: pedir la confirmación con `AskUserQuestion`, una pregunta por rama, como fija la tabla acción → mecanismo del Artículo 7 de `CONSTITUTION.md` (detalle operativo en "Branching" más abajo). "Inmediatamente" es sobre *cuándo se ofrece*, no sobre saltear la confirmación.
 
 **Regla de sincronía:** el checkbox del TODO (único o de grupo) y el código que resuelve esa tarea viajan **siempre en el mismo commit**. Nunca marcar `- [x]` sin commitear el cambio correspondiente, y nunca commitear una tarea resuelta sin actualizar su checkbox. Si el código está a medias, el checkbox queda en `- [ ]` y el mensaje del commit incluye `(WIP)`.
 
@@ -320,7 +341,7 @@ git merge feature/nombre-corto
 git push
 ```
 
-**El merge nunca es automático — es un punto de parada explícito, no el último paso de una cadena.** Después de commitear y pushear la rama `feature/*`/`fix/*` (o de dejar lista una rama `dev` para un release), parar ahí y mostrar al usuario un resumen del cambio: qué se hizo, qué archivos se tocaron, resultado de tests/checks relevantes. Recién con confirmación explícita ("mergeo", "dale", "sí") ejecutar `git merge` — nunca encadenar commit → push → merge sin que el usuario vea qué se está por integrar a `dev` o `master`. Esto aplica igual a ambos sentidos del merge: `feature/*`/`fix/*` → `dev`, y `dev` → `master` en un release.
+**El merge nunca es automático — es un punto de parada explícito, no el último paso de una cadena.** Después de commitear y pushear la rama `feature/*`/`fix/*` (o de dejar lista una rama `dev` para un release), parar ahí y mostrar al usuario un resumen del cambio: qué se hizo, qué archivos se tocaron, resultado de tests/checks relevantes. Recién con confirmación explícita ejecutar `git merge` — pedida con `AskUserQuestion`, igual que el push, y no con un "dale" suelto en el chat: una frase libre no distingue entre aprobar el merge y aprobar además el tag y el push que suelen venir detrás. Nunca encadenar commit → push → merge sin que el usuario vea qué se está por integrar a `dev` o `master`. Esto aplica igual a ambos sentidos del merge: `feature/*`/`fix/*` → `dev`, y `dev` → `master` en un release.
 
 **La misma pausa aplica antes del `push`, no solo antes del merge — siempre, sin importar el impacto del cambio.** Commitear localmente, parar, mostrar el mismo resumen que se usaría antes del merge, y esperar confirmación explícita antes de `git push`, usando `AskUserQuestion` (nombre de la rama + resumen corto en la descripción, opciones Sí/No) — no una confirmación en texto libre. Si en un mismo momento hay más de una rama lista para pushear, una pregunta por rama, para capturar la decisión de cada una por separado.
 
@@ -342,7 +363,7 @@ Este proyecto sigue [SemVer](https://semver.org/lang/es/) (`MAJOR.MINOR.PATCH`) 
   1. Mover `[Unreleased]` a `## [X.Y.Z] - {{fecha}}` en `CHANGELOG.md`, dejando un `[Unreleased]` vacío arriba.
   2. `git commit -m "chore(release): vX.Y.Z"`
   3. `git tag -a vX.Y.Z -m "Release vX.Y.Z"` y `git push origin vX.Y.Z`
-  4. Después de mergear a la rama principal: listar `git branch --merged dev` (menos `dev`/`master`) y preguntarle al usuario cuáles borrar (local + remoto) — nunca borrar sin confirmar, y nunca ofrecer una rama que no esté 100% mergeada.
+  4. Después de mergear a la rama principal: listar `git branch --merged dev` (menos `dev`/`master`) y preguntarle al usuario cuáles borrar (local + remoto) **con `AskUserQuestion`** — nunca borrar sin confirmar, y nunca ofrecer una rama que no esté 100% mergeada. Usar `git branch -d` y no `-D`: si la rama no estuviera mergeada, `-d` se niega y actúa como red de seguridad además de la verificación previa.
 - **Qué bump corresponde**: `fix` → PATCH · `feat` → MINOR · breaking change → MAJOR. Mientras el proyecto está en `0.x.y` (antes del primer release estable), un breaking change puede seguir bumpeando MINOR en vez de saltar a `1.0.0` — pasar a `1.0.0` es decisión del usuario, no automática.
 - **Decisión de este proyecto (2026-09-04)**: `rocky-spec` se queda en `0.x.y` por ahora — todavía en `Development Status :: 3 - Alpha`, sin publicación en PyPI (RF-6) ni usuarios externos conocidos que fijen la versión como dependencia. Próximos breaking changes (como el rename `charless` → `rocky` de `v0.7.0`) siguen bumpeando MINOR, no `1.0.0`. Revisar esta decisión cuando aparezca cualquiera de esas dos señales.
 - **Nivel de exigencia**: un prototipo descartable no necesita nada de esto. Si este proyecto es una librería o paquete publicado (npm, PyPI), el versionado es estricto y romper compatibilidad es siempre MAJOR — ver `.rocky-spec/reference/versioning.md` sección "Nivel de exigencia" para el detalle completo.
