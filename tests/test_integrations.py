@@ -176,6 +176,7 @@ def test_claude_md_anchor_is_repaired_without_touching_the_rest(tmp_path):
 
     repaired = (tmp_path / "CLAUDE.md").read_text(encoding="utf-8")
     assert "@AGENTS.md" in repaired
+    assert "Nota para Claude Code" in repaired  # la nota es fija, no prosa improvisada
     assert "Notas mías que no quiero perder." in repaired
     assert integration.last_claude_md_result == "repaired"
 

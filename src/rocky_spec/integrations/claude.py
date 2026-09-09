@@ -36,12 +36,28 @@ CLAUDE_SETTINGS_PATH = ".claude/settings.json"
 CLAUDE_MD_PATH = "CLAUDE.md"
 CLAUDE_MD_ANCHOR = "@AGENTS.md"
 
+# Nota que acompaña al ancla cuando se repara un CLAUDE.md que la perdió.
+# Fija a propósito -- ver docstring de ensure_claude_md_anchor: antes de esto,
+# la nota se redactaba en prosa cada vez que alguien (LLM o humano) reparaba
+# un CLAUDE.md a mano, y terminó con dos versiones distintas del mismo texto
+# en este mismo repo. Es una versión más corta que la de CLAUDE.md.template
+# a propósito: acá no se está agregando la sección de roles de expertise que
+# esa nota da por hecho que existe, así que no puede prometerla.
+CLAUDE_MD_ANCHOR_NOTE = (
+    "> **Nota para Claude Code**: la línea `@AGENTS.md` de arriba importa el "
+    "contenido de `AGENTS.md` (stack, comandos, convenciones, y el flujo "
+    "Spec-Anchored) a esta sesión. Si tu versión de Claude Code no soporta "
+    "imports con `@`, pedile directamente a Claude que lea `AGENTS.md` al "
+    "arrancar la sesión — tiene toda la info operativa del proyecto."
+)
+
 
 def ensure_claude_md_anchor(project_root: Path) -> str | None:
     """Si ``CLAUDE.md`` existe pero perdió la línea ``@AGENTS.md`` (borrada a
     mano, o el archivo viene de antes de que existiera esta convención — el
-    caso real que motivó esto: pasó en la raíz de este mismo repo), la
-    reinserta sin tocar el resto del archivo.
+    caso real que motivó esto: pasó en la raíz de este mismo repo), reinserta
+    el ancla **y** su nota explicativa (``CLAUDE_MD_ANCHOR_NOTE``, fija, no
+    redactada en el momento) sin tocar el resto del archivo.
 
     No crea ``CLAUDE.md`` si no existe — eso requiere los valores del
     proyecto (nombre, etc.) y es responsabilidad de ``rocky build``, no de
@@ -58,12 +74,13 @@ def ensure_claude_md_anchor(project_root: Path) -> str | None:
     if CLAUDE_MD_ANCHOR in content:
         return None
 
+    block = CLAUDE_MD_ANCHOR + "\n\n" + CLAUDE_MD_ANCHOR_NOTE
     lines = content.splitlines()
     if lines and lines[0].startswith("# "):
         heading, rest = lines[0], lines[1:]
-        repaired = heading + "\n\n" + CLAUDE_MD_ANCHOR + "\n\n" + "\n".join(rest).lstrip("\n")
+        repaired = heading + "\n\n" + block + "\n\n" + "\n".join(rest).lstrip("\n")
     else:
-        repaired = CLAUDE_MD_ANCHOR + "\n\n" + content
+        repaired = block + "\n\n" + content
 
     if not repaired.endswith("\n"):
         repaired += "\n"
