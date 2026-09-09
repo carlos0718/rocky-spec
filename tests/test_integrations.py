@@ -209,6 +209,7 @@ def test_cursor_rule_pointer_is_repaired_without_wiping_custom_content(tmp_path)
 
     repaired = rule_path.read_text(encoding="utf-8")
     assert ".rocky-spec/" in repaired
+    assert "Nota de rocky-spec" in repaired  # la nota es fija, no prosa improvisada
     assert "Mi seccion propia." in repaired
     assert integration.last_rule_result == "repaired"
 

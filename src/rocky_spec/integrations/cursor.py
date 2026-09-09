@@ -19,6 +19,15 @@ CURSOR_RULE_PATH = ".cursor/rules/rocky.mdc"
 # — solo garantizar que el puntero siga ahí.
 CURSOR_RULE_ANCHOR = f"{SHARED_DIR_NAME}/"
 
+# Nota que acompaña al ancla cuando se repara una rocky.mdc que la perdió.
+# Fija a propósito, mismo criterio que CLAUDE_MD_ANCHOR_NOTE en claude.py —
+# no queremos que esto se redacte distinto cada vez que alguien la repare.
+CURSOR_RULE_REPAIR_NOTE = (
+    "> **Nota de rocky-spec**: se restauró el puntero a `.rocky-spec/` de "
+    "abajo — sin él, esta regla pierde el acceso al conocimiento compartido "
+    "del framework (`reference/`, `templates/`, `commands/`)."
+)
+
 # Formato real de Cursor Commands (.cursor/commands/*.md): Markdown plano,
 # SIN frontmatter, invocado como /nombre-del-archivo. Confirmado en la doc
 # oficial de Cursor (changelog 1.6) — no inventar campos que no existen.
@@ -90,6 +99,6 @@ class CursorIntegration(IntegrationBase):
         if CURSOR_RULE_ANCHOR in content:
             return InstallManifestEntry(path=CURSOR_RULE_PATH, sha256=sha256_of(content)), "ok"
 
-        repaired = content.rstrip("\n") + f"\n\n<!-- rocky-spec: puntero restaurado -->\n{CURSOR_RULE_ANCHOR}\n"
+        repaired = content.rstrip("\n") + f"\n\n{CURSOR_RULE_REPAIR_NOTE}\n\n{CURSOR_RULE_ANCHOR}\n"
         rule_path.write_text(repaired, encoding="utf-8")
         return InstallManifestEntry(path=CURSOR_RULE_PATH, sha256=sha256_of(repaired)), "repaired"
