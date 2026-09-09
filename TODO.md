@@ -57,7 +57,7 @@
 
 ## Calidad
 
-- [x] Suite de tests (116 tests — render_template, health_check, qa_review, integrations, version_check, versioning, build, welcome, accessibility_check, update). El número es un dato a mano: se verifica con `pytest -q`, no hay nada que lo mantenga sincronizado.
+- [x] Suite de tests (render_template, health_check, qa_review, integrations, version_check, versioning, build, welcome, accessibility_check, update) — correr `pytest -q` para el conteo actual, no se mantiene un número fijo acá porque queda desactualizado con cada feature que suma tests.
 - [ ] CI/CD (correr tests automáticamente en cada push)
 - [ ] Coverage report
 
