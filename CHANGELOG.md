@@ -6,6 +6,11 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.14.1] - 2026-09-09
+
+### Fixed
+- **Faltaba `CLAUDE.md` en la raíz de este mismo repo** — `AGENTS.md` daba por hecho su existencia ("`CLAUDE.md` importa este archivo para Claude Code") pero nunca se había creado. Sin él, Claude Code no auto-cargaba `AGENTS.md`/`CONSTITUTION.md` al arrancar una sesión nueva (por ejemplo después de un `/clear`), y con eso se perdía la tabla acción → mecanismo del Artículo 7: las confirmaciones por `AskUserQuestion` antes de `git push`/`merge`/`tag`/borrar ramas dejaban de aplicarse hasta que algo forzaba releer esos archivos a mano. Se agrega el `CLAUDE.md` con el mismo patrón (`@AGENTS.md`) que `templates/CLAUDE.md.template` ya genera para los proyectos destino — la propia herramienta no se lo había aplicado a sí misma.
+
 ## [0.14.0] - 2026-09-07
 
 ### Added
