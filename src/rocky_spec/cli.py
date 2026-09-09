@@ -7,7 +7,9 @@ import click
 
 from . import scaffold
 from .integrations import INTEGRATION_REGISTRY, SHARED_DIR_NAME
+from .integrations.cursor import CURSOR_RULE_PATH
 from .scripts import accessibility_check
+from .scripts import anchor_check
 from .scripts import build as build_script
 from .scripts import health_check, qa_review, version_check
 from .welcome import show_commands, show_init_banner, show_welcome
@@ -42,7 +44,12 @@ def init(path: Path, agents: tuple[str, ...], force: bool) -> None:
 
     copied = scaffold.ensure_shared_knowledge(project_root, force=force)
     if copied:
-        click.echo(f"✓ Conocimiento compartido instalado en {SHARED_DIR_NAME}/ ({', '.join(copied)})")
+        total = sum(len(files) for files in copied.values())
+        click.echo(f"✓ Conocimiento compartido instalado en {SHARED_DIR_NAME}/ ({total} archivos)")
+        for sub, files in copied.items():
+            click.echo(f"    {SHARED_DIR_NAME}/{sub}/ ({len(files)})")
+            for f in files:
+                click.echo(f"        {sub}/{f}")
     else:
         click.echo(f"· {SHARED_DIR_NAME}/ ya existía — usá --force para regenerarlo")
 
@@ -84,8 +91,26 @@ def init(path: Path, agents: tuple[str, ...], force: bool) -> None:
                 for rule in perms["shadowed"]:
                     click.echo(f"         {rule}")
 
+        # Anclas al conocimiento compartido (CLAUDE.md -> @AGENTS.md, rocky.mdc
+        # -> puntero a .rocky-spec/). Ninguna de las dos entra al manifiesto:
+        # ver ensure_claude_md_anchor / _ensure_rule.
+        if getattr(integration, "last_claude_md_result", None) == "repaired":
+            click.echo("    🔧 CLAUDE.md existía pero le faltaba `@AGENTS.md` — se reinsertó")
+
+        rule_result = getattr(integration, "last_rule_result", None)
+        if rule_result == "repaired":
+            click.echo(f"    🔧 {CURSOR_RULE_PATH} existía pero le faltaba el puntero a {SHARED_DIR_NAME}/ — se restauró")
+
     manifest_path.write_text(json.dumps(full_manifest, indent=2), encoding="utf-8")
     click.echo(f"\nListo. {len(agents)} integración(es) activa(s) en {project_root}")
+    click.echo(
+        "\nEsto solo instaló los archivos — todavía no arrancó ningún flujo.\n"
+        "Para que el agente empiece a hacer preguntas (perfil, SPEC, stack...), "
+        "abrí una sesión de Claude Code en este proyecto y decile algo como "
+        "\"quiero armar un proyecto nuevo\" (o \"continuemos\" / \"tengo un proyecto "
+        "ya avanzado\" según el caso) — ahí la skill lee .rocky-spec/ y arranca "
+        "el flujo P0 en adelante."
+    )
 
 
 @main.command(name="build")
@@ -201,6 +226,13 @@ def check_qa(path: Path) -> None:
         click.echo(f"⚠️  {us} no tiene ninguna tarea en el TODO")
     for rnf in report.unplanned_rnf:
         click.echo(f"⚠️  {rnf} tiene un objetivo concreto pero ninguna tarea que lo aborde")
+
+
+@check.command(name="anchors")
+@click.argument("path", type=click.Path(exists=True, file_okay=False, path_type=Path), default=".")
+def check_anchors(path: Path) -> None:
+    """CLAUDE.md / rocky.mdc siguen apuntando al conocimiento compartido."""
+    _print_report(anchor_check.check_anchors(path.resolve()))
 
 
 @check.command(name="version")
