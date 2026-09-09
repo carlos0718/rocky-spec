@@ -44,7 +44,12 @@ def init(path: Path, agents: tuple[str, ...], force: bool) -> None:
 
     copied = scaffold.ensure_shared_knowledge(project_root, force=force)
     if copied:
-        click.echo(f"✓ Conocimiento compartido instalado en {SHARED_DIR_NAME}/ ({', '.join(copied)})")
+        total = sum(len(files) for files in copied.values())
+        click.echo(f"✓ Conocimiento compartido instalado en {SHARED_DIR_NAME}/ ({total} archivos)")
+        for sub, files in copied.items():
+            click.echo(f"    {SHARED_DIR_NAME}/{sub}/ ({len(files)})")
+            for f in files:
+                click.echo(f"        {sub}/{f}")
     else:
         click.echo(f"· {SHARED_DIR_NAME}/ ya existía — usá --force para regenerarlo")
 
@@ -98,6 +103,14 @@ def init(path: Path, agents: tuple[str, ...], force: bool) -> None:
 
     manifest_path.write_text(json.dumps(full_manifest, indent=2), encoding="utf-8")
     click.echo(f"\nListo. {len(agents)} integración(es) activa(s) en {project_root}")
+    click.echo(
+        "\nEsto solo instaló los archivos — todavía no arrancó ningún flujo.\n"
+        "Para que el agente empiece a hacer preguntas (perfil, SPEC, stack...), "
+        "abrí una sesión de Claude Code en este proyecto y decile algo como "
+        "\"quiero armar un proyecto nuevo\" (o \"continuemos\" / \"tengo un proyecto "
+        "ya avanzado\" según el caso) — ahí la skill lee .rocky-spec/ y arranca "
+        "el flujo P0 en adelante."
+    )
 
 
 @main.command(name="build")

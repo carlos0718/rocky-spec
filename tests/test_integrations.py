@@ -43,7 +43,7 @@ def test_ensure_shared_knowledge_does_not_overwrite_without_force(tmp_path):
     custom_file = tmp_path / SHARED_DIR_NAME / "commands" / "p1-spec-ddd.md"
     custom_file.write_text("EDITADO A MANO")
     copied = scaffold.ensure_shared_knowledge(tmp_path)  # sin force
-    assert copied == []
+    assert copied == {}
     assert custom_file.read_text() == "EDITADO A MANO"
 
 

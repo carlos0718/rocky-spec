@@ -159,6 +159,16 @@ rocky check observability .
 rocky check qa .
 ```
 
+> **`rocky init` solo instala archivos — no arranca ninguna conversación.** Es
+> un comando de terminal, no puede abrir un chat por vos. El mensaje final
+> lista todo lo que se copió (`.rocky-spec/`, la integración del agente) y te
+> recuerda el siguiente paso: abrir una sesión de Claude Code o Cursor **en
+> ese proyecto** y decir una frase como *"quiero armar un proyecto nuevo"*,
+> *"continuemos"* o *"tengo un proyecto ya avanzado"*. Ahí es donde el agente
+> lee `.rocky-spec/` y empieza a hacer las preguntas del flujo (P0 en
+> adelante) — ver [Por qué en Claude Code no ejecutás nada y en Cursor
+> sí](#por-qué-en-claude-code-no-ejecutás-nada-y-en-cursor-sí).
+
 ### Comandos disponibles
 
 | Comando | Qué hace |
@@ -166,7 +176,7 @@ rocky check qa .
 | `rocky` | Sin subcomando: muestra el banner de bienvenida (estado del proyecto si ya tiene `.rocky-spec/`, o la lista de agentes si es la primera vez) y la ayuda. |
 | `rocky --version` | Imprime la versión instalada, leída de los metadatos del paquete. |
 | `rocky commands` | Esta misma tabla, renderizada en la terminal. |
-| `rocky init [PATH] --agent <agente>` | Instala el conocimiento compartido (`.rocky-spec/`) en `PATH` (default: `.`) y genera la integración de cada `--agent` (repetible: `--agent claude --agent cursor`). |
+| `rocky init [PATH] --agent <agente>` | Instala el conocimiento compartido (`.rocky-spec/`) en `PATH` (default: `.`) y genera la integración de cada `--agent` (repetible: `--agent claude --agent cursor`). Solo copia archivos — la salida lista cada uno de los instalados y termina con el siguiente paso (hablarle al agente para que arranque el flujo). |
 | `rocky init [PATH] --agent <agente> --force` | Igual que arriba, pero regenera `.rocky-spec/` aunque ya exista. |
 | `rocky build [PATH] --values <json> [--force]` | Renderiza `SPEC.md`, `CONSTITUTION.md`, `AGENTS.md`, `CLAUDE.md`, `SECURITY.md`, `OBSERVABILITY.md`, `CHANGELOG.md`, `README.md`, `TODO.md` y `LICENSE` desde `.rocky-spec/templates/` a partir de un JSON de valores — no pisa archivos existentes salvo `--force`. |
 | `rocky build [PATH] --values <json> --template <t> --output <ruta> [--force]` | Modo single-file: renderiza un solo template (ej. `MASTER.md.template`, `ACCESSIBILITY.md.template`) en vez del set fijo de arriba — `--template` y `--output` van juntos. |
