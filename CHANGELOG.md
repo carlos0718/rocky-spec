@@ -6,6 +6,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-09-09
+
 ### Added
 - **Recomendación post-merge de limpiar sesión** (`AGENTS.md`/template, sección "Branching") — justo después de confirmar un merge `feature/*`/`fix/*` → `dev`, el agente ofrece con `AskUserQuestion` limpiar la sesión (`/clear`), graduando el mensaje (🟢/🟡/🔴) según su visibilidad del consumo de contexto cuando el entorno se la da (en Claude Code, la señal de tokens restantes de los reminders del sistema); si no hay esa visibilidad, la pregunta se muestra igual, sin el dato. Pedido explícito del usuario para evitar arrastrar conversación de una feature ya integrada y gastar tokens sin beneficio (US-20).
 - **Nuevo `TODO Drift Check`** (`AGENTS.md`/template, paso 0-quater del Workflow de Git) — hasta ahora nada detectaba una feature/fix que se resuelve sobre la marcha y nunca queda registrada en `TODO.md`; solo el Spec Drift Check (alcance de `SPEC.md`) y el flujo Plan→Confirmar (features anunciadas) cubrían casos parecidos. Encontrado auditando este mismo repo: 8 features reales (`RF-10` a `RF-16`, `US-12` a `US-19`) solo existían en `CHANGELOG.md`/`git log`, ninguna en `TODO.md` — backfill retroactivo aplicado.
