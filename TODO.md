@@ -38,6 +38,14 @@
 - [x] `ACCESSIBILITY.md.template` + `p5.8-accessibility.md` — tercera pieza: template condicional (solo interfaz visual), generado via `charless build` single-file, wireado en `scaffold.py`/`qa_review.py`/`AGENTS.md.template`
 - [x] `MA-1.8` en `mode-adopt.md` — wiring de `charless check accessibility` en Modo Adopción, simétrico a MA-1.5/1.6/1.7 (piezas restantes de wiring — `TODO.md.template`, `p7.5-qa-review.md`, `p8-p8.5-validation-systemprompt.md` — siguen diferidas)
 - [x] Rename completo del framework: `charless`/`spec-charless` → `rocky`/`rocky-spec` (paquete, módulo Python, comando CLI, skill generada, carpeta compartida `.rocky-spec/`, repo de GitHub) — pedido explícito del usuario, corte limpio sin alias de compatibilidad
+- [x] Tabla normativa acción→mecanismo para confirmaciones del humano (Art. 7) en `CONSTITUTION.md` (US-12)
+- [x] Reglas de confirmación del Art. 7 instaladas en `.claude/settings.json` del proyecto destino (US-13)
+- [x] `rocky commands` muestra los dos niveles (CLI + agente) con conteo derivado (US-14)
+- [x] Seguimiento de servicios externos — P3 + secciones en `AGENTS.md`/`TODO.md` (US-15)
+- [x] Anclas no destructivas para `CLAUDE.md`/`rocky.mdc` + `rocky check anchors` (US-16)
+- [x] `rocky init` lista archivos instalados y el siguiente paso explícito (US-17)
+- [x] Protocolo anti-loop en `AGENTS.md`/template (US-18)
+- [x] Flujo de release publica el Release en GitHub (`gh release create`), no solo el tag; 6 Releases retroactivos (US-19)
 - [ ] Agregar mensaje final tipo recomendacion, si esposible en askUserQuestion, de limpiar sesion para evitar comsumo extra inadecuado despues de cada feature/fix implementada y mergeada a development.
 - [ ] crear comando para actualizar el kit en un proyecto cuando ya se uso una version anterior en el mismo.
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
