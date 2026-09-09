@@ -58,7 +58,7 @@
 ## Calidad
 
 - [x] Suite de tests (render_template, health_check, qa_review, integrations, version_check, versioning, build, welcome, accessibility_check, update) — correr `pytest -q` para el conteo actual, no se mantiene un número fijo acá porque queda desactualizado con cada feature que suma tests.
-- [ ] CI/CD (correr tests automáticamente en cada push)
+- [x] CI/CD — GitHub Actions corre `pytest` (matrix Python 3.9/3.12) en cada push/PR a `development` y `master` (US-22)
 - [ ] Coverage report
 
 ## Documentación
