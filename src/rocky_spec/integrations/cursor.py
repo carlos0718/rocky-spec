@@ -7,7 +7,25 @@ from .base import (
     IntegrationBase,
     InstallManifestEntry,
     SHARED_DIR_NAME,
+    sha256_of,
     write_tracked,
+)
+
+CURSOR_RULE_PATH = ".cursor/rules/rocky.mdc"
+
+# El único contenido de rocky.mdc que rocky-spec necesita proteger: el
+# puntero al conocimiento compartido. Si el usuario extendió la regla con
+# secciones propias, no queremos pisarla entera en el próximo `rocky init`
+# — solo garantizar que el puntero siga ahí.
+CURSOR_RULE_ANCHOR = f"{SHARED_DIR_NAME}/"
+
+# Nota que acompaña al ancla cuando se repara una rocky.mdc que la perdió.
+# Fija a propósito, mismo criterio que CLAUDE_MD_ANCHOR_NOTE en claude.py —
+# no queremos que esto se redacte distinto cada vez que alguien la repare.
+CURSOR_RULE_REPAIR_NOTE = (
+    "> **Nota de rocky-spec**: se restauró el puntero a `.rocky-spec/` de "
+    "abajo — sin él, esta regla pierde el acceso al conocimiento compartido "
+    "del framework (`reference/`, `templates/`, `commands/`)."
 )
 
 # Formato real de Cursor Commands (.cursor/commands/*.md): Markdown plano,
@@ -61,8 +79,26 @@ class CursorIntegration(IntegrationBase):
                 )
             )
 
-        rule_content = RULE_TEMPLATE.format(shared_dir=SHARED_DIR_NAME)
-        manifest.append(
-            write_tracked(project_root, ".cursor/rules/rocky.mdc", rule_content)
-        )
+        entry, self.last_rule_result = self._ensure_rule(project_root)
+        manifest.append(entry)
         return manifest
+
+    def _ensure_rule(self, project_root: Path) -> tuple[InstallManifestEntry, str]:
+        """Escribe ``rocky.mdc`` si no existe. Si ya existe, no lo pisa
+        entero — evita perder secciones propias que el usuario le haya
+        agregado — pero repara el puntero a ``.rocky-spec/`` si se lo
+        borraron a mano. Devuelve la entrada de manifiesto y el estado
+        (``"created"`` | ``"repaired"`` | ``"ok"``) para que el CLI lo
+        reporte."""
+        rule_path = project_root / CURSOR_RULE_PATH
+        if not rule_path.exists():
+            rule_content = RULE_TEMPLATE.format(shared_dir=SHARED_DIR_NAME)
+            return write_tracked(project_root, CURSOR_RULE_PATH, rule_content), "created"
+
+        content = rule_path.read_text(encoding="utf-8")
+        if CURSOR_RULE_ANCHOR in content:
+            return InstallManifestEntry(path=CURSOR_RULE_PATH, sha256=sha256_of(content)), "ok"
+
+        repaired = content.rstrip("\n") + f"\n\n{CURSOR_RULE_REPAIR_NOTE}\n\n{CURSOR_RULE_ANCHOR}\n"
+        rule_path.write_text(repaired, encoding="utf-8")
+        return InstallManifestEntry(path=CURSOR_RULE_PATH, sha256=sha256_of(repaired)), "repaired"

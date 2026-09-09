@@ -193,6 +193,7 @@ COMMANDS = [
     ("rocky check qa [PATH]", "Trazabilidad RF → US → RNF → tarea y placeholders sin rellenar."),
     ("rocky check version [PATH]", "Bump de SemVer sugerido desde el último tag + aviso de fixes acumulados."),
     ("rocky check accessibility [PATH]", "Health-check: alt, lang, div clickeable sin rol, botón solo-ícono, contraste WCAG básico."),
+    ("rocky check anchors [PATH]", "CLAUDE.md / rocky.mdc siguen apuntando a .rocky-spec/ (no perdieron el ancla)."),
 ]
 
 

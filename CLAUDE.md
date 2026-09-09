@@ -2,9 +2,9 @@
 
 @AGENTS.md
 
-> **Nota para Claude Code**: la línea `@AGENTS.md` de arriba importa el contenido de `AGENTS.md` (stack, comandos, convenciones, y el pointer a `CONSTITUTION.md`) a esta sesión, incluida la tabla acción → mecanismo del Artículo 7 (`AskUserQuestion` obligatorio antes de `git push`, `git merge`, `git tag` y borrar ramas — nunca una confirmación en texto libre). Si tu versión de Claude Code no soporta imports con `@`, leé `AGENTS.md` y `CONSTITUTION.md` al arrancar la sesión.
+> **Nota para Claude Code**: la línea `@AGENTS.md` de arriba importa el contenido de `AGENTS.md` (stack, comandos, convenciones, y el flujo Spec-Anchored) a esta sesión. Si tu versión de Claude Code no soporta imports con `@`, pedile directamente a Claude que lea `AGENTS.md` al arrancar la sesión — tiene toda la info operativa del proyecto.
 >
-> Este archivo faltaba en el repo — `AGENTS.md` lo daba por existente ("`CLAUDE.md` importa este archivo para Claude Code") pero nunca se creó, así que después de un `/clear` la regla de confirmación de Git dejaba de estar en contexto hasta que algo forzaba releer `AGENTS.md`/`CONSTITUTION.md` a mano.
+> Esta nota es texto fijo (`CLAUDE_MD_ANCHOR_NOTE` en `integrations/claude.py`), no prosa redactada al momento — es la misma que inserta `rocky check anchors`/`rocky init` si algún día este archivo perdiera la línea `@AGENTS.md` de nuevo (pasó una vez: este archivo faltaba por completo hasta que se detectó que `AGENTS.md` daba por hecho su existencia).
 
 ## Todo lo demás
 
