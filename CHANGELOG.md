@@ -6,6 +6,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.17.2] - 2026-09-09
+
 ### Fixed
 - **`master` quedaba desincronizado incluso después de "arreglar" `pyproject.toml`** — el fix de `v0.17.1` (sincronizar `pyproject.toml`) se taggeó y liberó en `development`, pero el merge `development → master` de ese release nunca se volvió a correr, así que `uv tool install`/`upgrade` (que clona el HEAD de `master`, no el tag) siguió instalando `0.15.0` aunque el Release "Latest" en GitHub ya dijera `v0.17.1`. Agregado un paso explícito — "Release Sync Check" — al flujo de release en `AGENTS.md`: después de tagear, comparar `pyproject.toml` de `origin/master` contra la versión recién liberada y ofrecer el merge ahí mismo con `AskUserQuestion`, en vez de asumir que va a pasar después.
 
