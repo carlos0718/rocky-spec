@@ -6,6 +6,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.17.3] - 2026-09-09
+
 ### Fixed
 - **US-20 (limpieza de sesión) y el paso 6 de release (limpieza de ramas) tenían triggers parecidos y se confundieron en la práctica** — se ofreció borrar una rama `fix/*` apenas se mergeó a `development`, salteando el version check, el tag, el release y el merge a `master`. Agregada una aclaración cruzada explícita entre ambas reglas en `AGENTS.md`, y un nuevo chequeo general — "Trigger Ambiguity Check" — que corre al redactar cualquier regla nueva con disparador basado en eventos, para detectar solapamientos con reglas existentes antes de que causen el mismo tipo de confusión. Portado también a `templates/AGENTS.md.template` (junto con el Release Sync Check del release anterior), para que los proyectos generados por la skill no hereden la misma ambigüedad.
 
