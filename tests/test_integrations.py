@@ -154,3 +154,75 @@ def test_settings_json_is_not_tracked_in_the_manifest(tmp_path):
     entries = INTEGRATION_REGISTRY["claude"].install(tmp_path, scaffold.all_commands())
 
     assert all("settings.json" not in e.path for e in entries)
+
+
+def test_claude_md_missing_is_not_created_by_install(tmp_path):
+    # CLAUDE.md lo genera `rocky build` (necesita los valores del proyecto),
+    # no `rocky init` -- install() no debe crearlo de la nada.
+    scaffold.ensure_shared_knowledge(tmp_path)
+    INTEGRATION_REGISTRY["claude"].install(tmp_path, scaffold.all_commands())
+    assert not (tmp_path / "CLAUDE.md").exists()
+
+
+def test_claude_md_anchor_is_repaired_without_touching_the_rest(tmp_path):
+    from rocky_spec.integrations.claude import ClaudeIntegration
+
+    original = "# Contexto del proyecto: demo\n\nNotas mías que no quiero perder.\n"
+    (tmp_path / "CLAUDE.md").write_text(original, encoding="utf-8")
+
+    scaffold.ensure_shared_knowledge(tmp_path)
+    integration = ClaudeIntegration()
+    integration.install(tmp_path, scaffold.all_commands())
+
+    repaired = (tmp_path / "CLAUDE.md").read_text(encoding="utf-8")
+    assert "@AGENTS.md" in repaired
+    assert "Notas mías que no quiero perder." in repaired
+    assert integration.last_claude_md_result == "repaired"
+
+
+def test_claude_md_with_anchor_is_left_untouched(tmp_path):
+    from rocky_spec.integrations.claude import ClaudeIntegration
+
+    original = "# demo\n\n@AGENTS.md\n\nMi nota.\n"
+    (tmp_path / "CLAUDE.md").write_text(original, encoding="utf-8")
+
+    scaffold.ensure_shared_knowledge(tmp_path)
+    integration = ClaudeIntegration()
+    integration.install(tmp_path, scaffold.all_commands())
+
+    assert (tmp_path / "CLAUDE.md").read_text(encoding="utf-8") == original
+    assert integration.last_claude_md_result is None
+
+
+def test_cursor_rule_pointer_is_repaired_without_wiping_custom_content(tmp_path):
+    from rocky_spec.integrations.cursor import CursorIntegration
+
+    rule_path = tmp_path / ".cursor" / "rules" / "rocky.mdc"
+    rule_path.parent.mkdir(parents=True)
+    original = "---\nalwaysApply: true\n---\n# regla vieja\nMi seccion propia.\n"
+    rule_path.write_text(original, encoding="utf-8")
+
+    scaffold.ensure_shared_knowledge(tmp_path)
+    integration = CursorIntegration()
+    integration.install(tmp_path, scaffold.all_commands())
+
+    repaired = rule_path.read_text(encoding="utf-8")
+    assert ".rocky-spec/" in repaired
+    assert "Mi seccion propia." in repaired
+    assert integration.last_rule_result == "repaired"
+
+
+def test_cursor_rule_with_pointer_is_left_untouched(tmp_path):
+    from rocky_spec.integrations.cursor import CursorIntegration
+
+    rule_path = tmp_path / ".cursor" / "rules" / "rocky.mdc"
+    rule_path.parent.mkdir(parents=True)
+    original = "---\nalwaysApply: true\n---\nMi regla ya apunta a .rocky-spec/ bien.\n"
+    rule_path.write_text(original, encoding="utf-8")
+
+    scaffold.ensure_shared_knowledge(tmp_path)
+    integration = CursorIntegration()
+    integration.install(tmp_path, scaffold.all_commands())
+
+    assert rule_path.read_text(encoding="utf-8") == original
+    assert integration.last_rule_result == "ok"

@@ -177,6 +177,7 @@ rocky check qa .
 | `rocky check qa [PATH]` | Trazabilidad RF → US → RNF → tarea y placeholders sin rellenar. |
 | `rocky check version [PATH]` | Calcula el bump de SemVer exacto desde el último tag (Conventional Commits, "el más alto gana") y avisa si una rama `feature/*` acumuló demasiados `fix`. |
 | `rocky check accessibility [PATH]` | Health-check: `alt`, `lang`, `div` clickeable sin rol, botón solo-ícono sin `aria-label`, contraste WCAG AA básico. |
+| `rocky check anchors [PATH]` | `CLAUDE.md` (línea `@AGENTS.md`) y `.cursor/rules/rocky.mdc` (puntero a `.rocky-spec/`) siguen apuntando al conocimiento compartido — detecta el caso de un archivo editado a mano que perdió el ancla. |
 
 `PATH` es opcional en todos los `check` — por default corre sobre el directorio actual (`.`).
 
@@ -280,6 +281,27 @@ para lo que no esté en el `allow`. Generarle un `allow` con `git push` sería
 *auto-aprobarlo*, justo lo contrario. Además su archivo de permisos
 (`.cursor/cli.json`) aplica al CLI `cursor-agent`, no al IDE donde se usan los
 comandos `/rocky-*`.
+
+### Anclas no destructivas — CLAUDE.md y rocky.mdc
+
+`CLAUDE.md` (Claude Code) y `.cursor/rules/rocky.mdc` (Cursor) son los
+archivos que hacen que el agente encuentre `.rocky-spec/` al arrancar. Cada
+uno tiene un **ancla** mínima — la línea `@AGENTS.md` en `CLAUDE.md`, el
+puntero a `.rocky-spec/` en `rocky.mdc` — y `rocky init` la protege sin pisar
+el resto del archivo:
+
+- Si el archivo no existe, no lo crea (`CLAUDE.md` lo genera `rocky build`,
+  que necesita los valores del proyecto; `rocky.mdc` sí lo crea `rocky init`
+  la primera vez).
+- Si existe y tiene el ancla, no lo toca — tus notas, roles o secciones
+  propias quedan intactas.
+- Si existe pero **perdió** el ancla (editado a mano, o viene de antes de
+  que existiera la convención — pasó en la raíz de este mismo repo, ver
+  `CHANGELOG.md` v0.14.1), la reinserta sin tocar nada más y lo reporta en
+  la salida (`🔧 ... se reinsertó` / `... se restauró`).
+
+Para verificar esto en cualquier momento sin correr `init`: `rocky check
+anchors`.
 
 ### Por qué en Claude Code no ejecutás nada y en Cursor sí
 

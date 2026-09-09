@@ -6,6 +6,10 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Added
+- **`CLAUDE.md` y `.cursor/rules/rocky.mdc` ahora se reparan solos si pierden el ancla al conocimiento compartido, sin pisar el resto del archivo** — hasta v0.14.1, el único remedio para un `CLAUDE.md` sin la línea `@AGENTS.md` (el caso real: pasó en la raíz de este mismo repo) era regenerarlo entero a mano o con `--force`, perdiendo cualquier nota o rol personalizado. `ensure_claude_md_anchor()` reinserta la línea si falta y no toca nada más; el equivalente para Cursor (`CursorIntegration._ensure_rule`) hace lo mismo con el puntero a `.rocky-spec/` en `rocky.mdc` — y de paso deja de pisarlo entero en cada `rocky init` como hacía antes, que era el problema inverso (Cursor sí sobreescribía sin avisar). Ambos casos se reportan en la salida de `init` (`🔧 ... se reinsertó` / `... se restauró`).
+- **Nuevo `rocky check anchors [PATH]`** — health-check determinista que verifica que `CLAUDE.md` y `rocky.mdc` conserven su ancla, en cualquier proyecto, sin depender de correr `init`. Nace del mismo bug: nadie lo notó hasta que se abrió el explorador de archivos a mano; este check es la versión que no depende de que alguien se acuerde de mirar.
+
 ## [0.14.1] - 2026-09-09
 
 ### Fixed

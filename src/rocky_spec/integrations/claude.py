@@ -29,6 +29,47 @@ PERMISSION_ASK_RULES = [
 
 CLAUDE_SETTINGS_PATH = ".claude/settings.json"
 
+# La línea que hace que Claude Code auto-cargue AGENTS.md (stack, comandos,
+# convenciones, y la tabla de confirmaciones del Artículo 7) en cada sesión
+# nueva. Es el único contenido de CLAUDE.md que rocky-spec necesita proteger
+# — el resto (roles de expertise, notas del proyecto) es del usuario.
+CLAUDE_MD_PATH = "CLAUDE.md"
+CLAUDE_MD_ANCHOR = "@AGENTS.md"
+
+
+def ensure_claude_md_anchor(project_root: Path) -> str | None:
+    """Si ``CLAUDE.md`` existe pero perdió la línea ``@AGENTS.md`` (borrada a
+    mano, o el archivo viene de antes de que existiera esta convención — el
+    caso real que motivó esto: pasó en la raíz de este mismo repo), la
+    reinserta sin tocar el resto del archivo.
+
+    No crea ``CLAUDE.md`` si no existe — eso requiere los valores del
+    proyecto (nombre, etc.) y es responsabilidad de ``rocky build``, no de
+    ``rocky init``.
+
+    Devuelve ``"repaired"`` si tuvo que insertar el ancla, o ``None`` si no
+    existía el archivo o ya estaba bien.
+    """
+    claude_md = project_root / CLAUDE_MD_PATH
+    if not claude_md.exists():
+        return None
+
+    content = claude_md.read_text(encoding="utf-8")
+    if CLAUDE_MD_ANCHOR in content:
+        return None
+
+    lines = content.splitlines()
+    if lines and lines[0].startswith("# "):
+        heading, rest = lines[0], lines[1:]
+        repaired = heading + "\n\n" + CLAUDE_MD_ANCHOR + "\n\n" + "\n".join(rest).lstrip("\n")
+    else:
+        repaired = CLAUDE_MD_ANCHOR + "\n\n" + content
+
+    if not repaired.endswith("\n"):
+        repaired += "\n"
+    claude_md.write_text(repaired, encoding="utf-8")
+    return "repaired"
+
 SKILL_ROOT_TEMPLATE = """---
 name: rocky-spec
 description: 'Crea proyectos desde cero, los retoma en sesiones siguientes o adopta proyectos ya iniciados. Soporta código (web app, API, fullstack, script, mobile), creativos (video ad, motion) e híbridos. Genera CONSTITUTION.md, SPEC.md, AGENTS.md, SECURITY.md, OBSERVABILITY.md, CHANGELOG.md, TODO.md y arquitectura documentada, nivel SDD Spec-Anchored. Tres modos — (1) nuevo: "nuevo proyecto", "armar proyecto", "iniciar proyecto"; (2) reanudación: "continuemos", "qué sigue", "retomemos"; (3) adopción de proyecto existente: "tengo un proyecto ya avanzado", "adoptar proyecto".'
@@ -153,4 +194,9 @@ class ClaudeIntegration(IntegrationBase):
         # parte del contrato de IntegrationBase y comparten las demás
         # integraciones.
         self.last_permission_result = ensure_permission_rules(project_root)
+
+        # Mismo motivo que arriba: CLAUDE.md no es un archivo que instale
+        # esta integración (lo genera `rocky build`, no `rocky init`), así
+        # que su reparación no entra en el manifiesto tampoco.
+        self.last_claude_md_result = ensure_claude_md_anchor(project_root)
         return manifest
