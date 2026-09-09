@@ -38,17 +38,18 @@ def _package_dir(name: str) -> Path:
     return Path(str(resources.files("rocky_spec"))) / name
 
 
-def ensure_shared_knowledge(project_root: Path, force: bool = False) -> list[str]:
+def ensure_shared_knowledge(project_root: Path, force: bool = False) -> dict[str, list[str]]:
     """Copia commands/, reference/ y templates/ empaquetados en el CLI hacia
     ``.rocky-spec/`` dentro del proyecto destino. Es la única copia real de
     contenido pesado — todas las integraciones apuntan a esta carpeta en vez
     de llevarse su propia copia.
 
-    Devuelve la lista de carpetas efectivamente copiadas (para el mensaje al
-    usuario). Si ``.rocky-spec/`` ya existe y ``force`` es False, no pisa nada.
+    Devuelve un dict {carpeta: [archivos copiados]} para que el CLI pueda
+    informar exactamente qué se instaló, no solo el nombre de la carpeta.
+    Si ``.rocky-spec/`` ya existe y ``force`` es False, no pisa nada.
     """
     shared_root = project_root / SHARED_DIR_NAME
-    copied = []
+    copied: dict[str, list[str]] = {}
 
     for sub in ("commands", "reference", "templates"):
         source = _package_dir(sub)
@@ -58,7 +59,8 @@ def ensure_shared_knowledge(project_root: Path, force: bool = False) -> list[str
         if target.exists() and force:
             shutil.rmtree(target)
         shutil.copytree(source, target)
-        copied.append(sub)
+        files = sorted(p.relative_to(target).as_posix() for p in target.rglob("*") if p.is_file())
+        copied[sub] = files
 
     version_file = shared_root / "VERSION"
     if not version_file.exists() or force:
