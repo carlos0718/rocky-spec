@@ -32,6 +32,7 @@ Desarrolladores individuales o equipos chicos que usan uno o más agentes de có
 | RF-16 | P1 (should) | Releases de GitHub sincronizados con los tags | El flujo de release publica el Release en GitHub (`gh release create`) además de pushear el tag — evita que la pestaña "Releases" quede desactualizada respecto a los tags reales |
 | RF-17 | P2 (nice) | Recomendación de limpiar sesión post-merge | Al confirmar un merge `feature/*`/`fix/*` → `development`, el agente ofrece con `AskUserQuestion` limpiar la sesión (`/clear`) — graduando el mensaje según su visibilidad del consumo de contexto, cuando el entorno se la da — para evitar arrastrar conversación ya resuelta y gastar tokens sin beneficio |
 | RF-18 | P1 (should) | Actualización no destructiva del kit instalado | `rocky update` — si `.rocky-spec/VERSION` es más vieja que la versión del paquete, refresca `commands/`/`reference/`/`templates/` archivo por archivo (preservando los que el usuario editó a mano, vía hash-tracking) y regenera los archivos 100% del kit de cada integración ya instalada (`SKILL.md`, `.cursor/commands/rocky-*.md`); `CLAUDE.md`/`rocky.mdc` siguen protegidos por la reparación de ancla existente, sin cambios |
+| RF-19 | P1 (should) | Integración continua del kit | GitHub Actions corre la suite de `pytest` de `rocky-spec` automáticamente en cada push/PR a `development` y `master` (matrix Python 3.9/3.12), en vez de depender de correrla a mano antes de cada commit |
 
 ## User Stories clave
 
@@ -56,6 +57,7 @@ Desarrolladores individuales o equipos chicos que usan uno o más agentes de có
 - **US-19** (implementa RF-16): Como mantenedor, quiero que el flujo de release incluya `gh release create` además del tag, para que la pestaña "Releases" de GitHub nunca quede desactualizada respecto a los tags reales
 - **US-20** (implementa RF-17): Como desarrollador, quiero que el agente me recomiende limpiar la sesión justo después de mergear una feature/fix a `development`, graduando la insistencia según cuánto contexto lleva consumido si puede verlo, para no seguir pagando tokens por una conversación cuyo estado ya vive en `TODO.md`/`SPEC.md`
 - **US-21** (implementa RF-18): Como desarrollador que ya usó `rocky init` en una versión anterior del paquete, quiero correr `rocky update` para traer las mejoras de `commands/`/`reference/`/`templates/` y de los archivos generados por integración a mi proyecto, sin perder las ediciones manuales que hice en `.rocky-spec/` (mi única forma de customizar el kit) y sin usar `--force`, que borra todo sin distinguir
+- **US-22** (implementa RF-19): Como mantenedor de `rocky-spec`, quiero que los tests corran solos en cada push/PR a `development`/`master`, para detectar regresiones sin depender de acordarme de correr `pytest` a mano antes de cada commit
 
 ## Criterios de aceptación — MVP listo cuando:
 
@@ -85,7 +87,6 @@ Desarrolladores individuales o equipos chicos que usan uno o más agentes de có
 
 - Publicación en PyPI (RF-6) — se instala directo desde el repo con `pip install git+...`, que cubre las tres plataformas; PyPI queda como mejora de conveniencia, no como requisito de uso
 - Integraciones con Windsurf, GitHub Copilot, Gemini CLI, Codex CLI — la arquitectura las soporta, faltan escribirse
-- CI/CD automatizado (tests corren manualmente, no hay pipeline)
 - Sistema de extensiones/presets al estilo Spec Kit (por ahora la única forma de customizar es editar `.rocky-spec/` directamente en el proyecto)
 
 ---
@@ -103,3 +104,4 @@ Desarrolladores individuales o equipos chicos que usan uno o más agentes de có
 | 2026-09-09 | Backfill de 8 features implementadas en el camino sin pasar por Spec-Anchored (nunca llegaron a `SPEC.md` ni a `TODO.md`, solo quedaron en `CHANGELOG.md` y el historial de git) — encontradas al auditar `git log` contra `TODO.md` tras una pregunta del usuario sobre si el TODO reflejaba todo lo hecho. Nuevas RF-10 a RF-16, US-12 a US-19 | `8cf0c6b`, `82a95b3`, `e6196ab`, `d7f50d9`, `88d8e62`, `21f88aa`, `d8f9c75`, `007fbdc` |
 | 2026-09-09 | Nueva RF-17/US-20: recomendación de limpiar sesión post-merge — pedido explícito del usuario para evitar consumo extra de tokens después de cada feature/fix mergeada, con graduación dinámica según el consumo de contexto visible para el agente | (pendiente) |
 | 2026-09-09 | Nueva RF-18/US-21: `rocky update`, comando no destructivo para traer un proyecto instalado con una versión vieja del paquete al día — pedido explícito del usuario tras notar que la única forma de actualizar el kit hoy es `init --force`, que borra `commands/`/`reference/`/`templates/` sin distinguir archivos editados a mano | (pendiente) |
+| 2026-09-09 | Nueva RF-19/US-22: CI/CD del propio repo `rocky-spec` (GitHub Actions corre `pytest` en cada push/PR) — sale de "Fuera del alcance (v1)" tras retomar la tarea pendiente de `TODO.md` | (pendiente) |

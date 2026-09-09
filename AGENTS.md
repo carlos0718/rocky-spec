@@ -24,8 +24,8 @@
 
 - **Docker**: no aplica — se distribuye como paquete Python, no como contenedor  <!-- sí (Dockerfile + docker-compose.yml) | no | pendiente -->
 - **Plataforma**: PyPI (pendiente — hoy se instala en modo editable)  <!-- Render | Railway | Fly.io | Vercel | AWS | GCP | Azure | pendiente -->
-- **CI/CD**: no configurado todavía  <!-- CI básico | CI/CD completo | no configurado -->
-- **Archivo de config**: —  <!-- render.yaml | fly.toml | .github/workflows/ci.yml | etc. -->
+- **CI/CD**: CI básico — GitHub Actions corre `pytest` (matrix Python 3.9/3.12) en cada push/PR a `development` y `master` (`.github/workflows/ci.yml`)  <!-- CI básico | CI/CD completo | no configurado -->
+- **Archivo de config**: `.github/workflows/ci.yml`  <!-- render.yaml | fly.toml | .github/workflows/ci.yml | etc. -->
 - **Variables de entorno**: `.env.example` generado — completar valores reales antes del primer deploy
 
 > Las variables de entorno nunca van al repo. `.env` está en `.gitignore`. Los secrets de producción se configuran en el panel de la plataforma elegida (o en GitHub Secrets si usás CI/CD).
