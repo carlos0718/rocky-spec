@@ -6,6 +6,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Changed
+- **Rama de integración renombrada `dev` → `development`** — mismo rol y reglas de GitFlow simplificado, solo cambia el nombre. Aplicado en la documentación de este repo (`AGENTS.md`, `CONSTITUTION.md`, `SPEC.md`, `TODO.md`), en los templates que la skill genera para proyectos nuevos (`templates/AGENTS.md.template`, `templates/TODO.md.template`, `templates/CONSTITUTION.md.template`, `commands/mode-adopt.md`), en `scripts/version_check.py` (antes asumía `dev` hardcodeado para el aviso de fixes acumulados) y su test, y en la rama real del repo. Pedido explícito del usuario.
+
 ## [0.16.0] - 2026-09-09
 
 ### Added

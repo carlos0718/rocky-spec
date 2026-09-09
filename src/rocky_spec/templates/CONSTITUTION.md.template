@@ -80,13 +80,13 @@ Estos patrones son la forma concreta en que este proyecto aplica el Artículo 1 
 - Un release (tag de versión) es una decisión explícita, nunca automática por acumulación de commits.
 - **La versión vive en un solo lugar del código** — se lee en runtime desde ahí (metadatos del paquete), nunca hardcodeada en una segunda constante que hay que acordarse de mover a mano.
 - Si el proyecto se distribuye vía `git+https://...` antes de publicarse en un registry (PyPI/npm), cada push a la rama principal es una publicación de hecho — taguear con más disciplina en esa etapa, no solo "cuando haya un release formal".
-- El trabajo del día a día se hace en `feature/*`/`fix/*`, nunca directo sobre `main`/`dev` — ver `AGENTS.md` sección "Branching". Al mergear a `dev` o `main`, recordar (no ejecutar solo) si corresponde bumpear versión.
+- El trabajo del día a día se hace en `feature/*`/`fix/*`, nunca directo sobre `main`/`development` — ver `AGENTS.md` sección "Branching". Al mergear a `development` o `main`, recordar (no ejecutar solo) si corresponde bumpear versión.
 - **Ninguna acción que publique, integre o destruya se ejecuta sola.** Antes de cada una: parar, mostrar un resumen de lo que se está por hacer, y esperar la confirmación **por el mecanismo que fija esta tabla**. Nunca encadenar commit → push → merge, ni inferir un permiso de una frase suelta del chat.
 
   | Acción | Mecanismo de confirmación |
   |---|---|
   | `git push` — cualquier rama, cualquier tamaño de cambio | `AskUserQuestion`, una pregunta **por rama** |
-  | `git merge` — en ambos sentidos (`feature/*`→`dev`, `dev`→`main`) | `AskUserQuestion` |
+  | `git merge` — en ambos sentidos (`feature/*`→`development`, `development`→`main`) | `AskUserQuestion` |
   | `git tag` / publicar un release | `AskUserQuestion` — nunca taguear por acumulación de commits |
   | Borrar ramas (local o remoto) | `AskUserQuestion` — y solo ramas 100% mergeadas, salvo decisión explícita del humano |
   | Elegir entre alternativas de diseño o implementación | `AskUserQuestion` con las opciones reales |

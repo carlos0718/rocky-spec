@@ -30,7 +30,7 @@ Desarrolladores individuales o equipos chicos que usan uno o más agentes de có
 | RF-14 | P2 (nice) | Transparencia de instalación | `rocky init` lista cada archivo que instala (agrupado por carpeta) y termina con el siguiente paso explícito, en vez de solo nombrar la carpeta destino |
 | RF-15 | P2 (nice) | Protocolo anti-loop | Umbrales escalonados en `AGENTS.md` para detectar cuando un fix se reintenta sobre el mismo síntoma sin resolverlo, evitando cerrar el diagnóstico en una causa externa no verificada |
 | RF-16 | P1 (should) | Releases de GitHub sincronizados con los tags | El flujo de release publica el Release en GitHub (`gh release create`) además de pushear el tag — evita que la pestaña "Releases" quede desactualizada respecto a los tags reales |
-| RF-17 | P2 (nice) | Recomendación de limpiar sesión post-merge | Al confirmar un merge `feature/*`/`fix/*` → `dev`, el agente ofrece con `AskUserQuestion` limpiar la sesión (`/clear`) — graduando el mensaje según su visibilidad del consumo de contexto, cuando el entorno se la da — para evitar arrastrar conversación ya resuelta y gastar tokens sin beneficio |
+| RF-17 | P2 (nice) | Recomendación de limpiar sesión post-merge | Al confirmar un merge `feature/*`/`fix/*` → `development`, el agente ofrece con `AskUserQuestion` limpiar la sesión (`/clear`) — graduando el mensaje según su visibilidad del consumo de contexto, cuando el entorno se la da — para evitar arrastrar conversación ya resuelta y gastar tokens sin beneficio |
 
 ## User Stories clave
 
@@ -42,7 +42,7 @@ Desarrolladores individuales o equipos chicos que usan uno o más agentes de có
 - **US-6** (implementa RF-4): Como desarrollador, quiero desinstalar una integración sin perder los archivos que edité a mano después de instalarla
 - **US-7** (implementa RF-5): Como desarrollador en Windows, Linux o macOS, quiero instalar la herramienta con un solo comando apuntando al repo, para usarla sin clonarlo ni configurar un entorno de desarrollo
 - **US-8** (implementa RF-6): Como mantenedor, quiero publicar el paquete en PyPI, para que se instale con `pip install rocky-spec` con un nombre corto y versiones fijadas
-- **US-9** (implementa RF-7): Como desarrollador, quiero correr `rocky check version` antes de mergear una rama `feature/*`/`fix/*` a `dev`/`master`, para saber el bump de SemVer exacto que corresponde (y recibir un aviso si la rama acumuló muchos `fix` dentro de una misma feature) sin llevar la cuenta manualmente
+- **US-9** (implementa RF-7): Como desarrollador, quiero correr `rocky check version` antes de mergear una rama `feature/*`/`fix/*` a `development`/`master`, para saber el bump de SemVer exacto que corresponde (y recibir un aviso si la rama acumuló muchos `fix` dentro de una misma feature) sin llevar la cuenta manualmente
 - **US-10** (implementa RF-8): Como agente ejecutando el flujo P6/P7 de la skill, quiero volcar los valores recolectados en la conversación a un JSON y correr `rocky build`, para que el llenado de placeholders sea reproducible en vez de reescribir cada archivo a mano
 - **US-11** (implementa RF-9): Como desarrollador (o agente en Modo Adopción, MA-1.8), quiero correr `rocky check accessibility` sobre un proyecto con interfaz visual, para detectar imágenes sin `alt`, `div`s clickeables sin rol/foco, botones solo-ícono sin `aria-label` y contraste WCAG insuficiente sin depender de que el LLM lo recuerde al generar o revisar código
 - **US-12** (implementa RF-10): Como mantenedor, quiero que `CONSTITUTION.md` tenga una tabla normativa acción→mecanismo para push/merge/tag/borrado de ramas, para que la obligación de confirmar con `AskUserQuestion` no dependa de prosa suelta interpretable
@@ -53,7 +53,7 @@ Desarrolladores individuales o equipos chicos que usan uno o más agentes de có
 - **US-17** (implementa RF-14): Como desarrollador, quiero que `rocky init` liste cada archivo que instaló y el siguiente paso a seguir, para no tener que abrir el explorador de archivos para confirmar que la instalación funcionó
 - **US-18** (implementa RF-15): Como agente, quiero un protocolo con umbrales escalonados para cuando un fix no resuelve el síntoma dos veces seguidas, para dejar de aplicar variantes al azar y diseñar un experimento de observación en su lugar
 - **US-19** (implementa RF-16): Como mantenedor, quiero que el flujo de release incluya `gh release create` además del tag, para que la pestaña "Releases" de GitHub nunca quede desactualizada respecto a los tags reales
-- **US-20** (implementa RF-17): Como desarrollador, quiero que el agente me recomiende limpiar la sesión justo después de mergear una feature/fix a `dev`, graduando la insistencia según cuánto contexto lleva consumido si puede verlo, para no seguir pagando tokens por una conversación cuyo estado ya vive en `TODO.md`/`SPEC.md`
+- **US-20** (implementa RF-17): Como desarrollador, quiero que el agente me recomiende limpiar la sesión justo después de mergear una feature/fix a `development`, graduando la insistencia según cuánto contexto lleva consumido si puede verlo, para no seguir pagando tokens por una conversación cuyo estado ya vive en `TODO.md`/`SPEC.md`
 
 ## Criterios de aceptación — MVP listo cuando:
 

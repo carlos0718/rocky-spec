@@ -6,7 +6,7 @@
 
 ## Gobernanza
 
-- **Versión de esta Constitution**: 1.5.0
+- **Versión de esta Constitution**: 1.6.0
 - **Fecha de ratificación**: 2026-08-31
 - **Última enmienda**: 2026-09-06
 
@@ -78,13 +78,13 @@ Estos patrones son la forma concreta en que este proyecto aplica el Artículo 1 
 - Los commits siguen **Conventional Commits** — el tipo (`feat`/`fix`/`feat!`) no es una etiqueta libre, determina el bump de SemVer y si entra al `CHANGELOG.md`.
 - La versión del proyecto sigue **SemVer** (`MAJOR.MINOR.PATCH`) — romper compatibilidad es siempre MAJOR, sin excepción, incluso si el cambio fue chico de programar.
 - Un release (tag de versión) es una decisión explícita, nunca automática por acumulación de commits.
-- El trabajo del día a día se hace en `feature/*`/`fix/*`, nunca directo sobre `master`/`dev` — ver `AGENTS.md` sección "Branching". Al mergear a `dev` o `master`, recordar (no ejecutar solo) si corresponde bumpear versión.
+- El trabajo del día a día se hace en `feature/*`/`fix/*`, nunca directo sobre `master`/`development` — ver `AGENTS.md` sección "Branching". Al mergear a `development` o `master`, recordar (no ejecutar solo) si corresponde bumpear versión.
 - **Ninguna acción que publique, integre o destruya se ejecuta sola.** Antes de cada una: parar, mostrar un resumen de lo que se está por hacer, y esperar la confirmación **por el mecanismo que fija esta tabla**. Nunca encadenar commit → push → merge, ni inferir un permiso de una frase suelta del chat.
 
   | Acción | Mecanismo de confirmación |
   |---|---|
   | `git push` — cualquier rama, cualquier tamaño de cambio | `AskUserQuestion`, una pregunta **por rama** |
-  | `git merge` — en ambos sentidos (`feature/*`→`dev`, `dev`→`master`) | `AskUserQuestion` |
+  | `git merge` — en ambos sentidos (`feature/*`→`development`, `development`→`master`) | `AskUserQuestion` |
   | `git tag` / publicar un release | `AskUserQuestion` — nunca taguear por acumulación de commits |
   | Borrar ramas (local o remoto) | `AskUserQuestion` — y solo ramas 100% mergeadas, salvo decisión explícita del humano |
   | Elegir entre alternativas de diseño o implementación | `AskUserQuestion` con las opciones reales |
@@ -119,3 +119,4 @@ Excepciones explícitas a algún artículo de arriba, acordadas para este proyec
 | 2026-09-04 | 1.3.0 | Artículo 7: el push tampoco es automático para cambios breaking o de alcance grande — pausa y resumen antes de `git push`, igual que ya regía para `git merge`. Con varias ramas listas, usar `AskUserQuestion` (una pregunta por rama, Sí/No) para capturar cuáles pushear | Pedido explícito del usuario tras notar que la rama `refactor/rename-to-rocky-spec` (un rename completo del framework, marcado `BREAKING CHANGE:`) se pusheó sin pedir su aprobación primero |
 | 2026-09-04 | 1.4.0 | Artículo 7: la pausa antes de `git push` deja de depender del impacto del cambio — aplica siempre, para cualquier commit, vía `AskUserQuestion` | Pedido explícito del usuario para simplificar la regla de 1.3.0: en vez de juzgar caso a caso si un cambio es "breaking o de alcance grande", preguntar siempre |
 | 2026-09-06 | 1.5.0 | Artículo 7: los dos bullets sueltos de `merge` y `push` se reemplazan por una **tabla acción → mecanismo** que cierra el alcance (push, merge, tag, borrado de ramas, elección entre alternativas) y separa las confirmaciones de los avisos que no piden decisión | Pedido explícito del usuario de validar si el uso de `AskUserQuestion` estaba definido "y no en prosa". No lo estaba: solo regía para `push`, `merge` seguía aceptando texto libre, y ni el borrado de ramas ni el tag fijaban mecanismo. La revisión además destapó que `AGENTS.md` se contradecía a sí mismo ("hacer `git push` inmediatamente" en el paso 4 del workflow vs. la pausa obligatoria 80 líneas después) y que los templates distribuidos no llevaban nada de esto |
+| 2026-09-09 | 1.6.0 | Artículo 7: la rama de integración se renombra de `dev` a `development` — mismo rol y reglas, solo cambia el nombre | Pedido explícito del usuario |

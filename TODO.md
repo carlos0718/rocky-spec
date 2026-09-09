@@ -48,6 +48,7 @@
 - [x] Flujo de release publica el Release en GitHub (`gh release create`), no solo el tag; 6 Releases retroactivos (US-19)
 - [x] TODO Drift Check — nuevo paso 0-quater del Workflow de Git: valida que un commit `feat`/`fix` toque `TODO.md`, evitando que features/fixes que surgen en el camino vuelvan a quedar sin registrar
 - [x] Recomendación post-merge de limpiar sesión (`AskUserQuestion`, graduada por consumo de contexto cuando el agente tiene visibilidad de esa señal) (US-20)
+- [x] Renombrar la rama de integración `dev` → `development` (docs de este repo, templates de la skill, `version_check.py` y su test, y la rama real en local/remoto)
 - [ ] crear comando para actualizar el kit en un proyecto cuando ya se uso una version anterior en el mismo.
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
 - [ ] Integración con Gemini CLI
