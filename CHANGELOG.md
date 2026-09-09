@@ -6,6 +6,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Fixed
+- **El flujo de release nunca pedía publicar el Release en GitHub, solo el tag** — `git push origin vX.Y.Z` sube el tag pero no crea el objeto "Release" de GitHub, que es independiente. Consecuencia real: este repo tenía tags hasta `v0.15.0` pero la pestaña "Releases" mostraba `v0.10.0` como última versión — 6 releases (`v0.11.0` a `v0.15.0`, incluido `v0.14.1`) publicados retroactivamente con las notas de `CHANGELOG.md`. `AGENTS.md` y `templates/AGENTS.md.template` suman el paso `gh release create` a la sección "Versionado y releases", para que los proyectos generados con `rocky init` no repitan el gap.
+
 ## [0.15.0] - 2026-09-09
 
 ### Added
