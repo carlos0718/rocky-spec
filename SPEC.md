@@ -30,6 +30,7 @@ Desarrolladores individuales o equipos chicos que usan uno o más agentes de có
 | RF-14 | P2 (nice) | Transparencia de instalación | `rocky init` lista cada archivo que instala (agrupado por carpeta) y termina con el siguiente paso explícito, en vez de solo nombrar la carpeta destino |
 | RF-15 | P2 (nice) | Protocolo anti-loop | Umbrales escalonados en `AGENTS.md` para detectar cuando un fix se reintenta sobre el mismo síntoma sin resolverlo, evitando cerrar el diagnóstico en una causa externa no verificada |
 | RF-16 | P1 (should) | Releases de GitHub sincronizados con los tags | El flujo de release publica el Release en GitHub (`gh release create`) además de pushear el tag — evita que la pestaña "Releases" quede desactualizada respecto a los tags reales |
+| RF-17 | P2 (nice) | Recomendación de limpiar sesión post-merge | Al confirmar un merge `feature/*`/`fix/*` → `dev`, el agente ofrece con `AskUserQuestion` limpiar la sesión (`/clear`) — graduando el mensaje según su visibilidad del consumo de contexto, cuando el entorno se la da — para evitar arrastrar conversación ya resuelta y gastar tokens sin beneficio |
 
 ## User Stories clave
 
@@ -52,6 +53,7 @@ Desarrolladores individuales o equipos chicos que usan uno o más agentes de có
 - **US-17** (implementa RF-14): Como desarrollador, quiero que `rocky init` liste cada archivo que instaló y el siguiente paso a seguir, para no tener que abrir el explorador de archivos para confirmar que la instalación funcionó
 - **US-18** (implementa RF-15): Como agente, quiero un protocolo con umbrales escalonados para cuando un fix no resuelve el síntoma dos veces seguidas, para dejar de aplicar variantes al azar y diseñar un experimento de observación en su lugar
 - **US-19** (implementa RF-16): Como mantenedor, quiero que el flujo de release incluya `gh release create` además del tag, para que la pestaña "Releases" de GitHub nunca quede desactualizada respecto a los tags reales
+- **US-20** (implementa RF-17): Como desarrollador, quiero que el agente me recomiende limpiar la sesión justo después de mergear una feature/fix a `dev`, graduando la insistencia según cuánto contexto lleva consumido si puede verlo, para no seguir pagando tokens por una conversación cuyo estado ya vive en `TODO.md`/`SPEC.md`
 
 ## Criterios de aceptación — MVP listo cuando:
 
@@ -97,3 +99,4 @@ Desarrolladores individuales o equipos chicos que usan uno o más agentes de có
 | 2026-08-31 | Nueva RF-9/US-11: `charless check accessibility`, pedido explícito del usuario al notar que no existía ningún chequeo determinista de accesibilidad — solo prosa en `ui-design-guidelines.md`/`coding-principles.md` | `c47b505` |
 | 2026-09-04 | Rename completo del proyecto — `spec-charless`/`charless` → `rocky-spec`/`rocky` — pedido explícito del usuario. No cambia ningún RF/US existente, solo el nombre bajo el que se distribuyen. Esta fila y las siguientes usan los nombres nuevos; las filas anteriores describen los nombres reales de cada momento pasado, sin reescribir | `1944777` |
 | 2026-09-09 | Backfill de 8 features implementadas en el camino sin pasar por Spec-Anchored (nunca llegaron a `SPEC.md` ni a `TODO.md`, solo quedaron en `CHANGELOG.md` y el historial de git) — encontradas al auditar `git log` contra `TODO.md` tras una pregunta del usuario sobre si el TODO reflejaba todo lo hecho. Nuevas RF-10 a RF-16, US-12 a US-19 | `8cf0c6b`, `82a95b3`, `e6196ab`, `d7f50d9`, `88d8e62`, `21f88aa`, `d8f9c75`, `007fbdc` |
+| 2026-09-09 | Nueva RF-17/US-20: recomendación de limpiar sesión post-merge — pedido explícito del usuario para evitar consumo extra de tokens después de cada feature/fix mergeada, con graduación dinámica según el consumo de contexto visible para el agente | (pendiente) |
