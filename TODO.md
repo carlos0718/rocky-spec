@@ -7,6 +7,7 @@
 > **Trazabilidad**: las tareas que implementan una historia de `SPEC.md` terminan con su ID — `(US-1)`.
 
 ## Setup
+
 - [x] Estructura del paquete Python (`pyproject.toml`, `src/spec_charless/`)
 - [x] Instalación en modo editable (`pip install -e .`)
 - [x] `.gitignore` (agregado al hacer el health-check de seguridad — no existía)
@@ -14,6 +15,7 @@
 - [x] Crear rama `dev` desde `master` (ver `AGENTS.md` sección "Branching — GitFlow simplificado")
 
 ## Features iniciales
+
 - [x] `charless init` con soporte multi-agente (US-1)
 - [x] `.charless/` no se sobreescribe sin `--force` (US-2)
 - [x] `IntegrationBase` + `INTEGRATION_REGISTRY` (US-3)
@@ -36,27 +38,34 @@
 - [x] `ACCESSIBILITY.md.template` + `p5.8-accessibility.md` — tercera pieza: template condicional (solo interfaz visual), generado via `charless build` single-file, wireado en `scaffold.py`/`qa_review.py`/`AGENTS.md.template`
 - [x] `MA-1.8` en `mode-adopt.md` — wiring de `charless check accessibility` en Modo Adopción, simétrico a MA-1.5/1.6/1.7 (piezas restantes de wiring — `TODO.md.template`, `p7.5-qa-review.md`, `p8-p8.5-validation-systemprompt.md` — siguen diferidas)
 - [x] Rename completo del framework: `charless`/`spec-charless` → `rocky`/`rocky-spec` (paquete, módulo Python, comando CLI, skill generada, carpeta compartida `.rocky-spec/`, repo de GitHub) — pedido explícito del usuario, corte limpio sin alias de compatibilidad
+- [ ] Agregar mensaje final tipo recomendacion, si esposible en askUserQuestion, de limpiar sesion para evitar comsumo extra inadecuado despues de cada feature/fix implementada y mergeada a development.
+- [ ] crear comando para actualizar el kit en un proyecto cuando ya se uso una version anterior en el mismo.
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
 - [ ] Integración con Gemini CLI
 - [ ] Integración con Codex CLI
 - [ ] Integración con Windsurf
 
 ## Calidad
+
 - [x] Suite de tests (91 tests — render_template, health_check, qa_review, integrations, version_check, versioning, build, welcome, accessibility_check). El número es un dato a mano: se verifica con `pytest -q`, no hay nada que lo mantenga sincronizado.
 - [ ] CI/CD (correr tests automáticamente en cada push)
 - [ ] Coverage report
 
 ## Documentación
+
 - [x] README.md
 - [x] CHANGELOG.md
 - [ ] Documentar cómo agregar una integración nueva (guía paso a paso, hoy solo está en el README a alto nivel)
 
 ## Infraestructura / Deploy
+
 - [ ] No aplica todavía — no hay deploy de un CLI, solo distribución (ver Publicar en PyPI arriba)
 
 ## Seguridad
+
 - [x] `.env` en `.gitignore`
 - [ ] Revisar si corresponde firmar los paquetes publicados en PyPI (trusted publishing)
 
 ## Observabilidad
+
 - [x] No aplica en el sentido tradicional — es un CLI, no un servicio corriendo en producción (ver `OBSERVABILITY.md`)
