@@ -11,7 +11,7 @@ from .integrations.cursor import CURSOR_RULE_PATH
 from .scripts import accessibility_check
 from .scripts import anchor_check
 from .scripts import build as build_script
-from .scripts import health_check, qa_review, version_check
+from .scripts import health_check, qa_review, update as update_script, version_check
 from .welcome import show_commands, show_init_banner, show_welcome
 
 
@@ -162,6 +162,49 @@ def build(path: Path, values_path: Path, force: bool, template_name: str | None,
 
     if not result.generated and not result.skipped_existing:
         click.echo("Nada para generar — ¿corriste `rocky init` antes? (falta .rocky-spec/templates/)")
+
+
+@main.command(name="update")
+@click.argument("path", type=click.Path(exists=True, file_okay=False, path_type=Path), default=".")
+@click.option("--dry-run", is_flag=True, help="Mostrar qué cambiaría sin escribir nada.")
+def update(path: Path, dry_run: bool) -> None:
+    """Actualiza commands/, reference/, templates/ y los archivos del kit de cada
+    integración instalada a la versión del paquete, sin pisar ediciones manuales."""
+    project_root = path.resolve()
+    if not (project_root / SHARED_DIR_NAME).exists():
+        click.echo(f"No hay {SHARED_DIR_NAME}/ en {project_root} — corré `rocky init` primero.")
+        return
+
+    report = update_script.check_update(project_root) if dry_run else update_script.apply_update(project_root)
+
+    if report.already_up_to_date:
+        click.echo(f"✅ Ya estás en la última versión ({report.target_version}).")
+        return
+
+    click.echo(f"📦 Instalado: {report.installed_version or 'desconocido'} → Paquete: {report.target_version}")
+    prefix = "Se actualizaría" if dry_run else "Actualizado"
+    prefix_add = "Se agregaría" if dry_run else "Agregado"
+
+    for f in report.updated:
+        click.echo(f"✓ {prefix}: {f}")
+    for f in report.added:
+        click.echo(f"+ {prefix_add}: {f}")
+    for f in report.preserved_edited:
+        click.echo(f"⏭  {f} — tiene ediciones manuales, no se tocó")
+    for f in report.preserved_no_baseline:
+        click.echo(f"⚠️  {f} — instalado antes de esta versión, no se pudo verificar si tiene ediciones, no se tocó")
+    for f in report.removed_from_kit:
+        click.echo(f"ℹ️  {f} ya no forma parte del kit — no se borró, revisalo a mano")
+    if report.agents_refreshed:
+        agentes = ", ".join(report.agents_refreshed)
+        verbo = "Se regenerarían" if dry_run else "Regenerados"
+        click.echo(f"🔄 {verbo} los archivos del kit de: {agentes}")
+
+    if not any([report.updated, report.added, report.preserved_edited, report.preserved_no_baseline, report.agents_refreshed]):
+        click.echo("Nada para actualizar.")
+
+    if dry_run:
+        click.echo("\n(dry-run: no se escribió nada — corré sin --dry-run para aplicar)")
 
 
 @main.command(name="commands")

@@ -6,6 +6,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Added
+- **`rocky update [PATH] [--dry-run]`** — actualiza `commands/`, `reference/`, `templates/` y los archivos 100% del kit de cada integración ya instalada (`SKILL.md`, `.cursor/commands/rocky-*.md`) a la versión del paquete instalado, sin pisar ediciones manuales. Usa un hash-tracking nuevo (`shared-manifest.json`, escrito por `scaffold.ensure_shared_knowledge`) con el mismo criterio que ya usa `uninstall` para RF-4/US-6: archivo sin cambios desde el último install/update se refresca, archivo editado se preserva y se reporta, archivo nuevo del paquete se agrega, archivo que el paquete ya no incluye se reporta sin borrarse solo. `CLAUDE.md`/`rocky.mdc` no se tocan — ya vienen protegidos por su propia reparación de ancla. Pedido explícito del usuario: la única forma de actualizar el kit hasta ahora era `init --force`, que borra `commands/`/`reference/`/`templates/` completos sin distinguir archivos editados a mano (RF-18, US-21).
+
 ### Changed
 - **Rama de integración renombrada `dev` → `development`** — mismo rol y reglas de GitFlow simplificado, solo cambia el nombre. Aplicado en la documentación de este repo (`AGENTS.md`, `CONSTITUTION.md`, `SPEC.md`, `TODO.md`), en los templates que la skill genera para proyectos nuevos (`templates/AGENTS.md.template`, `templates/TODO.md.template`, `templates/CONSTITUTION.md.template`, `commands/mode-adopt.md`), en `scripts/version_check.py` (antes asumía `dev` hardcodeado para el aviso de fixes acumulados) y su test, y en la rama real del repo. Pedido explícito del usuario.
 

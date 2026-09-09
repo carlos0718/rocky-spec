@@ -184,6 +184,7 @@ COMMANDS = [
     ("rocky commands", "Esta tabla."),
     ("rocky init [PATH] --agent <agente>", "Instala .rocky-spec/ y genera la integración de cada --agent (repetible)."),
     ("rocky init [PATH] --agent <agente> --force", "Igual que arriba, pero regenera .rocky-spec/ aunque ya exista."),
+    ("rocky update [PATH] [--dry-run]", "Actualiza commands/reference/templates y los archivos del kit de cada integración instalada a la versión del paquete, sin pisar ediciones manuales."),
     ("rocky build [PATH] --values <json> [--force]", "Renderiza SPEC.md/CONSTITUTION.md/AGENTS.md/... desde .rocky-spec/templates/ a partir de un JSON de valores."),
     ("rocky build [PATH] --values <json> --template <t> --output <ruta>", "Modo single-file: renderiza un solo template (MASTER.md.template, ACCESSIBILITY.md.template) en vez del set fijo."),
     ("rocky list-integrations", "Lista los agentes soportados por esta versión."),
