@@ -247,6 +247,7 @@ Cada ítem del `TODO.md` (o del archivo de grupo correspondiente en `todos/`, si
 0. **Spec Drift Check** (ver detalle completo abajo): ¿el código que estoy por commitear agrega algo que no está en `SPEC.md`? Si sí, actualizar `SPEC.md` primero (con su línea en "Historial de cambios") y commitear ese cambio de doc junto con el código, o en un commit `docs:` separado inmediatamente antes.
 0-bis. **TODO Size Check** (ver detalle completo abajo): si este proyecto todavía usa el modo único (sin carpeta `todos/`), ¿`TODO.md` se está acercando al límite de tamaño? Si sí, avisar antes de seguir agregando tareas.
 0-ter. **Branch Discipline Check** (ver detalle completo en "Branching — GitFlow simplificado" más abajo): ¿la rama actual es `main` o `dev`? Si sí y el cambio no es trivial, avisar antes de commitear — se espera trabajar en `feature/<nombre>` o `fix/<nombre>`, no directo sobre las ramas principales.
+0-quater. **TODO Drift Check** (ver detalle completo abajo): si el commit es `feat`/`fix`, ¿existe ya una línea en `TODO.md` (o su archivo de grupo) que describa esta tarea? Si no existe — típico de una feature/fix que surgió en el camino, sin haber pasado por el Paso 1 de "Agregar o modificar código" — agregarla marcada `- [x]` en la sección correspondiente, en el mismo commit, no dejarla para después.
 1. Editar `TODO.md` (modo único) o el archivo de grupo en `todos/` (modo orquestador) y marcar el checkbox como hecho: `- [ ]` → `- [x]`. En modo orquestador, si esa era la **última tarea del grupo**, actualizar también la fila correspondiente en la tabla "Estado por grupo" de `TODO.md`, en el mismo commit.
 1-bis. **Actualizar `CHANGELOG.md`** si el tipo del commit es `feat`, `fix`, o breaking change (ver tabla de arriba): agregar una línea bajo `[Unreleased]`, en la categoría correspondiente (`Added`/`Fixed`/`Changed`), en el mismo commit. Si el tipo no entra al changelog (`docs`, `test`, `chore`, etc.), no tocar `CHANGELOG.md`.
 2. Hacer `git add` de **los archivos de código relacionados a esa tarea + el archivo de TODO editado + `CHANGELOG.md` si se tocó, todo junto** (no mezclar varias tareas en un commit, y no dejar el TODO para un commit aparte)
@@ -313,6 +314,25 @@ wc -l TODO.md
 - **300-500 líneas**: avisar una vez, sin bloquear: *"`TODO.md` tiene [N] líneas y va camino a superar el límite recomendado — cuando quieras lo migramos a `todos/` (un archivo por capa o por feature, según cómo prefieras organizarlo). No hace falta ahora."*
 - **500+ líneas**: proponer la migración activamente antes de seguir agregando tareas nuevas: *"`TODO.md` ya superó las 500 líneas. Te propongo migrarlo a `todos/` ahora, antes de seguir sumando — muevo las tareas existentes por grupo, no se pierde nada, y `TODO.md` queda como orquestador. ¿Lo hacemos, y por capas o por features?"* Si el usuario confirma, aplicar el mecanismo de split de `.rocky-spec/commands/p6-p7-files-todo.md` sección "¿TODO único o dividido — y por qué eje?" usando las tareas ya existentes en vez de generar desde cero.
 
+### TODO Drift Check — el paso 0-quater en detalle
+
+**Por qué existe:** el Spec Drift Check de arriba cubre el alcance de `SPEC.md`, y el flujo "Agregar o modificar código" cubre features/correcciones que se **anuncian** antes de implementarlas. Pero hay un tercer caso, distinto de los dos: trabajo que se resuelve sobre la marcha dentro de una tarea más grande (un ajuste, una pieza de una feature que se va armando en varios commits) y nunca queda como línea propia del TODO — no porque se haya ocultado, sino porque nadie se detuvo a agregarla. Encontrado en este mismo repo: 8 features reales (`RF-10` a `RF-16`) solo existían en `CHANGELOG.md` y en el historial de git, ninguna en `TODO.md`, hasta que una auditoría manual las encontró.
+
+**Qué chequear** (antes de cada commit `feat`/`fix`):
+
+```bash
+git diff --staged --name-only | grep -qx "TODO.md" && echo "TODO.md en el commit" || echo "AVISO: commit feat/fix sin tocar TODO.md"
+```
+
+En modo orquestador, cambiar `TODO.md` por el archivo de grupo correspondiente en `todos/`.
+
+Si el aviso aparece:
+1. ¿Esta tarea ya tenía una línea `- [ ]` en el TODO que se está por marcar? → sigue el flujo normal (paso 1), no hace falta nada más.
+2. ¿Es una feature/fix real que nunca se listó? → agregar `- [x] <descripción> (US-N si el Spec Drift Check de este commit generó uno)` en la sección correspondiente, en el mismo commit.
+3. ¿Es una excepción ya cubierta (fix menor, typo, cambio que no corresponde a ninguna tarea)? → seguir sin agregar nada, el aviso es heurístico y no bloquea.
+
+**Límite de esto:** el heurístico solo detecta que `TODO.md` no está en el diff — no sabe si la línea que hay que agregar ya existe con otra redacción, ni evalúa si el commit realmente amerita una entrada. Sigue dependiendo del criterio del agente para decidir entre las tres opciones de arriba, igual que el Spec Drift Check con las rutas/tablas.
+
 ## Branching — GitFlow simplificado
 
 **Regla:** `master` es siempre estable. `dev` es la rama de integración — el trabajo del día a día nunca se hace directo sobre `master` ni sobre `dev`, sino en una rama propia por feature o corrección.
@@ -347,6 +367,13 @@ git push
 
 **Esto es insistente a propósito** — es común que esta convención quede escrita pero en la práctica todo se siga commiteando directo a `master`/`dev`. Por eso el Branch Discipline Check (paso 0-ter del Workflow de Git, arriba) no es solo una mención pasiva: antes de cada commit no trivial, si la rama actual es `master` o `dev`, avisar explícitamente y ofrecer crear la rama correspondiente ahí mismo — no asumir que "ya se sabe" y dejarlo pasar.
 
+**Recomendación de limpiar sesión post-merge (US-20):** justo después de confirmar el merge `feature/*`/`fix/*` → `dev` (nunca antes de esa confirmación, y nunca en el merge de release `dev` → `master`), ofrecer con `AskUserQuestion` limpiar la sesión actual — el estado del trabajo vive en `TODO.md`/`SPEC.md`/`CHANGELOG.md`, no en la conversación, así que seguir arrastrando el historial de una feature ya integrada es consumo de tokens sin beneficio.
+
+- Si el entorno da visibilidad del consumo de contexto de la sesión (en Claude Code, la señal de tokens/contexto restante que aparece en los reminders del sistema), usarla para graduar el mensaje: 🟢 consumo bajo, 🟡 medio, 🔴 alto. Si el entorno no da esa visibilidad (otros agentes), mostrar la recomendación sin el dato — la pregunta sigue siendo válida sin él.
+- Formato sugerido de la pregunta: *"La feature/fix ya está mergeada a dev. ¿Limpiamos la sesión antes de seguir?"* con opciones **"Sí, limpiar sesión"** (recomendada — la próxima tarea arranca leyendo `TODO.md`, no hace falta este historial) y **"No, seguir en esta sesión"** (por ejemplo si hay varias tareas chicas relacionadas para encadenar).
+- Si el nivel es 🔴 y el usuario elige "No": no repetir la pregunta en el mismo turno, pero sí avisar explícitamente que a ese nivel de consumo las respuestas pueden empezar a degradarse, y volver a ofrecer la limpieza apenas termine la siguiente tarea (no esperar a otro merge completo).
+- Es una recomendación, no un gate — nunca bloquear el flujo de git por esto.
+
 **Sugerencia de versión al mergear `feature/*`/`fix/*` → `dev`** (o `fix/*` → `master` en un hotfix — ver `.rocky-spec/reference/versioning.md` de la skill para el detalle completo): antes de ese merge, correr `rocky check version .` — calcula el bump exacto a partir de los commits reales desde el último tag (Conventional Commits, regla "el más alto gana": MAJOR > MINOR > PATCH, nunca se apilan varios bumps), en vez de que el agente tenga que "acordarse" en prosa. Mostrar el resultado al usuario y preguntar si se taguea ahora o se deja para cuando se junten más cambios — **nunca taguear solo**, es una decisión del usuario.
 
 **Esto NO se dispara al mergear `dev` → `master` para hacer un release.** Ahí `master` simplemente hereda la versión que `dev` ya trae acumulada de sus merges anteriores — no se vuelve a calcular ni a bumpear un número distinto. El cálculo pasa una sola vez, en el merge hacia `dev` (o en el hotfix directo a `master`), nunca en el merge de integración `dev` → `master`.
@@ -363,7 +390,8 @@ Este proyecto sigue [SemVer](https://semver.org/lang/es/) (`MAJOR.MINOR.PATCH`) 
   1. Mover `[Unreleased]` a `## [X.Y.Z] - {{fecha}}` en `CHANGELOG.md`, dejando un `[Unreleased]` vacío arriba.
   2. `git commit -m "chore(release): vX.Y.Z"`
   3. `git tag -a vX.Y.Z -m "Release vX.Y.Z"` y `git push origin vX.Y.Z`
-  4. Después de mergear a la rama principal: listar `git branch --merged dev` (menos `dev`/`master`) y preguntarle al usuario cuáles borrar (local + remoto) **con `AskUserQuestion`** — nunca borrar sin confirmar, y nunca ofrecer una rama que no esté 100% mergeada. Usar `git branch -d` y no `-D`: si la rama no estuviera mergeada, `-d` se niega y actúa como red de seguridad además de la verificación previa.
+  4. Publicar el Release en GitHub — el tag y el Release son dos objetos distintos: pushear el tag no crea el Release, y sin este paso la pestaña "Releases" de GitHub se queda mostrando una versión "Latest" vieja aunque haya tags más nuevos (pasó en este repo: tags hasta v0.15.0 pero el último Release publicado era v0.10.0). `gh release create vX.Y.Z --title vX.Y.Z --notes-file <(sección correspondiente de CHANGELOG.md)` (o "Draft a new release" en la web).
+  5. Después de mergear a la rama principal: listar `git branch --merged dev` (menos `dev`/`master`) y preguntarle al usuario cuáles borrar (local + remoto) **con `AskUserQuestion`** — nunca borrar sin confirmar, y nunca ofrecer una rama que no esté 100% mergeada. Usar `git branch -d` y no `-D`: si la rama no estuviera mergeada, `-d` se niega y actúa como red de seguridad además de la verificación previa.
 - **Qué bump corresponde**: `fix` → PATCH · `feat` → MINOR · breaking change → MAJOR. Mientras el proyecto está en `0.x.y` (antes del primer release estable), un breaking change puede seguir bumpeando MINOR en vez de saltar a `1.0.0` — pasar a `1.0.0` es decisión del usuario, no automática.
 - **Decisión de este proyecto (2026-09-04)**: `rocky-spec` se queda en `0.x.y` por ahora — todavía en `Development Status :: 3 - Alpha`, sin publicación en PyPI (RF-6) ni usuarios externos conocidos que fijen la versión como dependencia. Próximos breaking changes (como el rename `charless` → `rocky` de `v0.7.0`) siguen bumpeando MINOR, no `1.0.0`. Revisar esta decisión cuando aparezca cualquiera de esas dos señales.
 - **Nivel de exigencia**: un prototipo descartable no necesita nada de esto. Si este proyecto es una librería o paquete publicado (npm, PyPI), el versionado es estricto y romper compatibilidad es siempre MAJOR — ver `.rocky-spec/reference/versioning.md` sección "Nivel de exigencia" para el detalle completo.
