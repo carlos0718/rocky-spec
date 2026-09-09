@@ -6,6 +6,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Fixed
+- **US-20 (limpieza de sesión) y el paso 6 de release (limpieza de ramas) tenían triggers parecidos y se confundieron en la práctica** — se ofreció borrar una rama `fix/*` apenas se mergeó a `development`, salteando el version check, el tag, el release y el merge a `master`. Agregada una aclaración cruzada explícita entre ambas reglas en `AGENTS.md`, y un nuevo chequeo general — "Trigger Ambiguity Check" — que corre al redactar cualquier regla nueva con disparador basado en eventos, para detectar solapamientos con reglas existentes antes de que causen el mismo tipo de confusión.
+
 ## [0.17.2] - 2026-09-09
 
 ### Fixed
