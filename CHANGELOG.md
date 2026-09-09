@@ -6,6 +6,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Fixed
+- **`pyproject.toml` desincronizado del último release** — quedó en `0.15.0` mientras `CHANGELOG.md`/tags/Releases ya estaban en `0.17.0` (los releases `v0.16.0` y `v0.17.0` solo tocaron el CHANGELOG). Causaba que `uv tool upgrade rocky-spec` instalara un número de versión viejo. Corregido a `0.17.0`, y el paso de release en `AGENTS.md` ahora incluye explícitamente bumpear `pyproject.toml` junto con el CHANGELOG.
+
 ## [0.17.0] - 2026-09-09
 
 ### Added
