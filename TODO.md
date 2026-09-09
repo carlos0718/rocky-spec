@@ -46,6 +46,7 @@
 - [x] `rocky init` lista archivos instalados y el siguiente paso explícito (US-17)
 - [x] Protocolo anti-loop en `AGENTS.md`/template (US-18)
 - [x] Flujo de release publica el Release en GitHub (`gh release create`), no solo el tag; 6 Releases retroactivos (US-19)
+- [x] TODO Drift Check — nuevo paso 0-quater del Workflow de Git: valida que un commit `feat`/`fix` toque `TODO.md`, evitando que features/fixes que surgen en el camino vuelvan a quedar sin registrar
 - [ ] Agregar mensaje final tipo recomendacion, si esposible en askUserQuestion, de limpiar sesion para evitar comsumo extra inadecuado despues de cada feature/fix implementada y mergeada a development.
 - [ ] crear comando para actualizar el kit en un proyecto cuando ya se uso una version anterior en el mismo.
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)

@@ -250,6 +250,7 @@ Cada ítem del `TODO.md` (o del archivo de grupo correspondiente en `todos/`, si
 0. **Spec Drift Check** (ver detalle completo abajo): ¿el código que estoy por commitear agrega algo que no está en `SPEC.md`? Si sí, actualizar `SPEC.md` primero (con su línea en "Historial de cambios") y commitear ese cambio de doc junto con el código, o en un commit `docs:` separado inmediatamente antes.
 0-bis. **TODO Size Check** (ver detalle completo abajo): si este proyecto todavía usa el modo único (sin carpeta `todos/`), ¿`TODO.md` se está acercando al límite de tamaño? Si sí, avisar antes de seguir agregando tareas.
 0-ter. **Branch Discipline Check** (ver detalle completo en "Branching — GitFlow simplificado" más abajo): ¿la rama actual es `main` o `dev`? Si sí y el cambio no es trivial, avisar antes de commitear — se espera trabajar en `feature/<nombre>` o `fix/<nombre>`, no directo sobre las ramas principales.
+0-quater. **TODO Drift Check** (ver detalle completo abajo): si el commit es `feat`/`fix`, ¿existe ya una línea en `TODO.md` (o su archivo de grupo) que describa esta tarea? Si no existe — típico de una feature/fix que surgió en el camino, sin haber pasado por el Paso 1 de "Agregar o modificar código" — agregarla marcada `- [x]` en la sección correspondiente, en el mismo commit, no dejarla para después.
 1. Editar `TODO.md` (modo único) o el archivo de grupo en `todos/` (modo orquestador) y marcar el checkbox como hecho: `- [ ]` → `- [x]`. En modo orquestador, si esa era la **última tarea del grupo**, actualizar también la fila correspondiente en la tabla "Estado por grupo" de `TODO.md`, en el mismo commit.
 1-bis. **Actualizar `CHANGELOG.md`** si el tipo del commit es `feat`, `fix`, o breaking change (ver tabla de arriba): agregar una línea bajo `[Unreleased]`, en la categoría correspondiente (`Added`/`Fixed`/`Changed`), en el mismo commit. Si el tipo no entra al changelog (`docs`, `test`, `chore`, etc.), no tocar `CHANGELOG.md`.
 2. Hacer `git add` de **los archivos de código relacionados a esa tarea + el archivo de TODO editado + `CHANGELOG.md` si se tocó, todo junto** (no mezclar varias tareas en un commit, y no dejar el TODO para un commit aparte)
@@ -315,6 +316,25 @@ wc -l TODO.md
 - **< 300 líneas**: sin acción.
 - **300-500 líneas**: avisar una vez, sin bloquear: *"`TODO.md` tiene [N] líneas y va camino a superar el límite recomendado — cuando quieras lo migramos a `todos/` (un archivo por capa o por feature, según cómo prefieras organizarlo). No hace falta ahora."*
 - **500+ líneas**: proponer la migración activamente antes de seguir agregando tareas nuevas: *"`TODO.md` ya superó las 500 líneas. Te propongo migrarlo a `todos/` ahora, antes de seguir sumando — muevo las tareas existentes por grupo, no se pierde nada, y `TODO.md` queda como orquestador. ¿Lo hacemos, y por capas o por features?"* Si el usuario confirma, aplicar el mecanismo de split de `.rocky-spec/commands/p6-p7-files-todo.md` sección "¿TODO único o dividido — y por qué eje?" usando las tareas ya existentes en vez de generar desde cero.
+
+### TODO Drift Check — el paso 0-quater en detalle
+
+**Por qué existe:** el Spec Drift Check de arriba cubre el alcance de `SPEC.md`, y el flujo "Agregar o modificar código" cubre features/correcciones que se **anuncian** antes de implementarlas. Pero hay un tercer caso, distinto de los dos: trabajo que se resuelve sobre la marcha dentro de una tarea más grande (un ajuste, una pieza de una feature que se va armando en varios commits) y nunca queda como línea propia del TODO — no porque se haya ocultado, sino porque nadie se detuvo a agregarla. Con el tiempo eso deja `TODO.md` desincronizado con lo que realmente se construyó, visible solo auditando `CHANGELOG.md`/`git log` a mano.
+
+**Qué chequear** (antes de cada commit `feat`/`fix`):
+
+```bash
+git diff --staged --name-only | grep -qx "TODO.md" && echo "TODO.md en el commit" || echo "AVISO: commit feat/fix sin tocar TODO.md"
+```
+
+En modo orquestador, cambiar `TODO.md` por el archivo de grupo correspondiente en `todos/`.
+
+Si el aviso aparece:
+1. ¿Esta tarea ya tenía una línea `- [ ]` en el TODO que se está por marcar? → sigue el flujo normal (paso 1), no hace falta nada más.
+2. ¿Es una feature/fix real que nunca se listó? → agregar `- [x] <descripción> (US-N si el Spec Drift Check de este commit generó uno)` en la sección correspondiente, en el mismo commit.
+3. ¿Es una excepción ya cubierta (fix menor, typo, cambio que no corresponde a ninguna tarea)? → seguir sin agregar nada, el aviso es heurístico y no bloquea.
+
+**Límite de esto:** el heurístico solo detecta que `TODO.md` no está en el diff — no sabe si la línea que hay que agregar ya existe con otra redacción, ni evalúa si el commit realmente amerita una entrada. Sigue dependiendo del criterio del agente para decidir entre las tres opciones de arriba, igual que el Spec Drift Check con las rutas/tablas.
 
 ## Branching — GitFlow simplificado
 
