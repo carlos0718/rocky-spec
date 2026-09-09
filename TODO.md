@@ -51,6 +51,8 @@
 - [x] Renombrar la rama de integración `dev` → `development` (docs de este repo, templates de la skill, `version_check.py` y su test, y la rama real en local/remoto)
 - [x] `rocky update` — actualiza `commands`/`reference`/`templates` y los archivos del kit de cada integración instalada a la versión del paquete, sin pisar ediciones manuales (hash-tracking vía `shared-manifest.json`) (US-21)
 - [x] Release Sync Check — nuevo paso 5 del flujo de release en `AGENTS.md`: verifica que `origin/master` tenga la versión recién tageada de `pyproject.toml` y ofrece el merge `development → master` con `AskUserQuestion` ahí mismo, evitando que `uv tool install`/`upgrade` (que clona el HEAD de `master`) instale una versión vieja
+- [x] Trigger Ambiguity Check — nuevo chequeo en `AGENTS.md`: al redactar una regla nueva con disparador basado en eventos, buscar triggers parecidos ya existentes y dejar la diferencia explícita en el texto de ambas; incluye la aclaración cruzada entre US-20 (limpieza de sesión) y el paso 6 de release (limpieza de ramas), que se habían confundido en la práctica
+- [x] Portar Release Sync Check + Trigger Ambiguity Check + aclaración US-20/limpieza de ramas a `templates/AGENTS.md.template`, para que los proyectos generados por la skill no hereden la misma ambigüedad
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
 - [ ] Integración con Gemini CLI
 - [ ] Integración con Codex CLI
