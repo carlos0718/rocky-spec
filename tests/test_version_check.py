@@ -131,7 +131,7 @@ def test_breaking_change_mentioned_mid_bullet_is_not_a_real_footer(repo: Path) -
 
 
 def test_fix_budget_warning_escalates_on_feature_branch(repo: Path) -> None:
-    _git(["checkout", "-b", "dev"], repo)
+    _git(["checkout", "-b", "development"], repo)
     _git(["checkout", "-b", "feature/algo"], repo)
     _commit(repo, "feat: la feature en si")
     for i in range(3):
@@ -150,7 +150,7 @@ def test_fix_budget_warning_escalates_on_feature_branch(repo: Path) -> None:
     assert "🔴" in report.fix_budget_warning
 
 
-def test_no_fix_budget_warning_without_dev_branch(repo: Path) -> None:
+def test_no_fix_budget_warning_without_development_branch(repo: Path) -> None:
     _git(["checkout", "-b", "feature/algo"], repo)
     for i in range(5):
         _commit(repo, f"fix: ajuste {i}")
@@ -161,7 +161,7 @@ def test_no_fix_budget_warning_without_dev_branch(repo: Path) -> None:
 
 
 def test_no_fix_budget_warning_outside_feature_branch(repo: Path) -> None:
-    _git(["checkout", "-b", "dev"], repo)
+    _git(["checkout", "-b", "development"], repo)
     for i in range(5):
         _commit(repo, f"fix: ajuste {i}")
 

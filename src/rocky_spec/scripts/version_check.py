@@ -7,9 +7,9 @@ lo clasifica por Conventional Commits, aplica la regla "el más alto gana"
 (MAJOR > MINOR > PATCH, nunca se apilan varios bumps), y devuelve el próximo
 `X.Y.Z` exacto.
 
-Se dispara al mergear `feature/*`/`fix/*` -> `dev` (o `fix/*` -> `master` en
-un hotfix) — NO al mergear `dev` -> `master` para un release, donde `master`
-simplemente hereda la versión que `dev` ya trae acumulada.
+Se dispara al mergear `feature/*`/`fix/*` -> `development` (o `fix/*` -> `master`
+en un hotfix) — NO al mergear `development` -> `master` para un release, donde
+`master` simplemente hereda la versión que `development` ya trae acumulada.
 """
 from __future__ import annotations
 
@@ -151,10 +151,10 @@ def _next_version(current: tuple[int, int, int], bump: str) -> tuple[tuple[int, 
 def _fix_budget_warning(cwd: Path, branch: str) -> str | None:
     if not branch.startswith("feature/"):
         return None
-    if not _branch_exists(cwd, "dev"):
+    if not _branch_exists(cwd, "development"):
         return None
 
-    subjects = _commit_subjects(cwd, "dev..HEAD")
+    subjects = _commit_subjects(cwd, "development..HEAD")
     fix_count = sum(
         1
         for subject in subjects

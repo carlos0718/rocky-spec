@@ -48,7 +48,8 @@
 - [x] Flujo de release publica el Release en GitHub (`gh release create`), no solo el tag; 6 Releases retroactivos (US-19)
 - [x] TODO Drift Check — nuevo paso 0-quater del Workflow de Git: valida que un commit `feat`/`fix` toque `TODO.md`, evitando que features/fixes que surgen en el camino vuelvan a quedar sin registrar
 - [x] Recomendación post-merge de limpiar sesión (`AskUserQuestion`, graduada por consumo de contexto cuando el agente tiene visibilidad de esa señal) (US-20)
-- [ ] crear comando para actualizar el kit en un proyecto cuando ya se uso una version anterior en el mismo.
+- [x] Renombrar la rama de integración `dev` → `development` (docs de este repo, templates de la skill, `version_check.py` y su test, y la rama real en local/remoto)
+- [x] `rocky update` — actualiza `commands`/`reference`/`templates` y los archivos del kit de cada integración instalada a la versión del paquete, sin pisar ediciones manuales (hash-tracking vía `shared-manifest.json`) (US-21)
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
 - [ ] Integración con Gemini CLI
 - [ ] Integración con Codex CLI
@@ -56,8 +57,8 @@
 
 ## Calidad
 
-- [x] Suite de tests (91 tests — render_template, health_check, qa_review, integrations, version_check, versioning, build, welcome, accessibility_check). El número es un dato a mano: se verifica con `pytest -q`, no hay nada que lo mantenga sincronizado.
-- [ ] CI/CD (correr tests automáticamente en cada push)
+- [x] Suite de tests (render_template, health_check, qa_review, integrations, version_check, versioning, build, welcome, accessibility_check, update) — correr `pytest -q` para el conteo actual, no se mantiene un número fijo acá porque queda desactualizado con cada feature que suma tests.
+- [x] CI/CD — GitHub Actions corre `pytest` (matrix Python 3.9/3.12) en cada push/PR a `development` y `master` (US-22)
 - [ ] Coverage report
 
 ## Documentación

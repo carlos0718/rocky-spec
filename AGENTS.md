@@ -24,8 +24,8 @@
 
 - **Docker**: no aplica — se distribuye como paquete Python, no como contenedor  <!-- sí (Dockerfile + docker-compose.yml) | no | pendiente -->
 - **Plataforma**: PyPI (pendiente — hoy se instala en modo editable)  <!-- Render | Railway | Fly.io | Vercel | AWS | GCP | Azure | pendiente -->
-- **CI/CD**: no configurado todavía  <!-- CI básico | CI/CD completo | no configurado -->
-- **Archivo de config**: —  <!-- render.yaml | fly.toml | .github/workflows/ci.yml | etc. -->
+- **CI/CD**: CI básico — GitHub Actions corre `pytest` (matrix Python 3.9/3.12) en cada push/PR a `development` y `master` (`.github/workflows/ci.yml`)  <!-- CI básico | CI/CD completo | no configurado -->
+- **Archivo de config**: `.github/workflows/ci.yml`  <!-- render.yaml | fly.toml | .github/workflows/ci.yml | etc. -->
 - **Variables de entorno**: `.env.example` generado — completar valores reales antes del primer deploy
 
 > Las variables de entorno nunca van al repo. `.env` está en `.gitignore`. Los secrets de producción se configuran en el panel de la plataforma elegida (o en GitHub Secrets si usás CI/CD).
@@ -246,7 +246,7 @@ Cada ítem del `TODO.md` (o del archivo de grupo correspondiente en `todos/`, si
 
 0. **Spec Drift Check** (ver detalle completo abajo): ¿el código que estoy por commitear agrega algo que no está en `SPEC.md`? Si sí, actualizar `SPEC.md` primero (con su línea en "Historial de cambios") y commitear ese cambio de doc junto con el código, o en un commit `docs:` separado inmediatamente antes.
 0-bis. **TODO Size Check** (ver detalle completo abajo): si este proyecto todavía usa el modo único (sin carpeta `todos/`), ¿`TODO.md` se está acercando al límite de tamaño? Si sí, avisar antes de seguir agregando tareas.
-0-ter. **Branch Discipline Check** (ver detalle completo en "Branching — GitFlow simplificado" más abajo): ¿la rama actual es `main` o `dev`? Si sí y el cambio no es trivial, avisar antes de commitear — se espera trabajar en `feature/<nombre>` o `fix/<nombre>`, no directo sobre las ramas principales.
+0-ter. **Branch Discipline Check** (ver detalle completo en "Branching — GitFlow simplificado" más abajo): ¿la rama actual es `main` o `development`? Si sí y el cambio no es trivial, avisar antes de commitear — se espera trabajar en `feature/<nombre>` o `fix/<nombre>`, no directo sobre las ramas principales.
 0-quater. **TODO Drift Check** (ver detalle completo abajo): si el commit es `feat`/`fix`, ¿existe ya una línea en `TODO.md` (o su archivo de grupo) que describa esta tarea? Si no existe — típico de una feature/fix que surgió en el camino, sin haber pasado por el Paso 1 de "Agregar o modificar código" — agregarla marcada `- [x]` en la sección correspondiente, en el mismo commit, no dejarla para después.
 1. Editar `TODO.md` (modo único) o el archivo de grupo en `todos/` (modo orquestador) y marcar el checkbox como hecho: `- [ ]` → `- [x]`. En modo orquestador, si esa era la **última tarea del grupo**, actualizar también la fila correspondiente en la tabla "Estado por grupo" de `TODO.md`, en el mismo commit.
 1-bis. **Actualizar `CHANGELOG.md`** si el tipo del commit es `feat`, `fix`, o breaking change (ver tabla de arriba): agregar una línea bajo `[Unreleased]`, en la categoría correspondiente (`Added`/`Fixed`/`Changed`), en el mismo commit. Si el tipo no entra al changelog (`docs`, `test`, `chore`, etc.), no tocar `CHANGELOG.md`.
@@ -335,50 +335,50 @@ Si el aviso aparece:
 
 ## Branching — GitFlow simplificado
 
-**Regla:** `master` es siempre estable. `dev` es la rama de integración — el trabajo del día a día nunca se hace directo sobre `master` ni sobre `dev`, sino en una rama propia por feature o corrección.
+**Regla:** `master` es siempre estable. `development` es la rama de integración — el trabajo del día a día nunca se hace directo sobre `master` ni sobre `development`, sino en una rama propia por feature o corrección.
 
-> Este repo usa `master` como rama troncal (histórica, no `main`) — el resto del esquema GitFlow es el mismo.
+> Este repo usa `master` como rama troncal (histórica, no `main`) — el resto del esquema GitFlow es el mismo. La rama de integración se llamó `dev` hasta 2026-09-09; se renombró a `development` — ver "Historial de enmiendas" de `CONSTITUTION.md`.
 
 - `master` → producción (en este caso, la versión publicada/taggeada del paquete), siempre en estado deployable.
-- `dev` → integración. Se crea una sola vez desde `master` al adoptar esta convención (ver tarea en `TODO.md`).
-- `feature/<nombre-corto>` → una feature nueva (lo que dispara el Paso 2a del flujo de arriba). Sale de `dev`, vuelve a `dev`.
-- `fix/<nombre-corto>` → una corrección (Paso 2b). Sale de `dev` (o de `master` si es un hotfix urgente), vuelve a la misma rama de la que salió.
+- `development` → integración. Se crea una sola vez desde `master` al adoptar esta convención (ver tarea en `TODO.md`).
+- `feature/<nombre-corto>` → una feature nueva (lo que dispara el Paso 2a del flujo de arriba). Sale de `development`, vuelve a `development`.
+- `fix/<nombre-corto>` → una corrección (Paso 2b). Sale de `development` (o de `master` si es un hotfix urgente), vuelve a la misma rama de la que salió.
 
 ```bash
 # Una sola vez, al adoptar esta convención
 git checkout master
-git checkout -b dev
-git push -u origin dev
+git checkout -b development
+git push -u origin development
 
 # Al empezar a trabajar en algo nuevo
-git checkout dev
+git checkout development
 git pull
 git checkout -b feature/nombre-corto    # o fix/nombre-corto
 
 # Al terminar, mergear de vuelta (o abrir PR, según cómo trabaje el equipo)
-git checkout dev
+git checkout development
 git merge feature/nombre-corto
 git push
 ```
 
-**El merge nunca es automático — es un punto de parada explícito, no el último paso de una cadena.** Después de commitear y pushear la rama `feature/*`/`fix/*` (o de dejar lista una rama `dev` para un release), parar ahí y mostrar al usuario un resumen del cambio: qué se hizo, qué archivos se tocaron, resultado de tests/checks relevantes. Recién con confirmación explícita ejecutar `git merge` — pedida con `AskUserQuestion`, igual que el push, y no con un "dale" suelto en el chat: una frase libre no distingue entre aprobar el merge y aprobar además el tag y el push que suelen venir detrás. Nunca encadenar commit → push → merge sin que el usuario vea qué se está por integrar a `dev` o `master`. Esto aplica igual a ambos sentidos del merge: `feature/*`/`fix/*` → `dev`, y `dev` → `master` en un release.
+**El merge nunca es automático — es un punto de parada explícito, no el último paso de una cadena.** Después de commitear y pushear la rama `feature/*`/`fix/*` (o de dejar lista una rama `development` para un release), parar ahí y mostrar al usuario un resumen del cambio: qué se hizo, qué archivos se tocaron, resultado de tests/checks relevantes. Recién con confirmación explícita ejecutar `git merge` — pedida con `AskUserQuestion`, igual que el push, y no con un "dale" suelto en el chat: una frase libre no distingue entre aprobar el merge y aprobar además el tag y el push que suelen venir detrás. Nunca encadenar commit → push → merge sin que el usuario vea qué se está por integrar a `development` o `master`. Esto aplica igual a ambos sentidos del merge: `feature/*`/`fix/*` → `development`, y `development` → `master` en un release.
 
 **La misma pausa aplica antes del `push`, no solo antes del merge — siempre, sin importar el impacto del cambio.** Commitear localmente, parar, mostrar el mismo resumen que se usaría antes del merge, y esperar confirmación explícita antes de `git push`, usando `AskUserQuestion` (nombre de la rama + resumen corto en la descripción, opciones Sí/No) — no una confirmación en texto libre. Si en un mismo momento hay más de una rama lista para pushear, una pregunta por rama, para capturar la decisión de cada una por separado.
 
-**Esto es insistente a propósito** — es común que esta convención quede escrita pero en la práctica todo se siga commiteando directo a `master`/`dev`. Por eso el Branch Discipline Check (paso 0-ter del Workflow de Git, arriba) no es solo una mención pasiva: antes de cada commit no trivial, si la rama actual es `master` o `dev`, avisar explícitamente y ofrecer crear la rama correspondiente ahí mismo — no asumir que "ya se sabe" y dejarlo pasar.
+**Esto es insistente a propósito** — es común que esta convención quede escrita pero en la práctica todo se siga commiteando directo a `master`/`development`. Por eso el Branch Discipline Check (paso 0-ter del Workflow de Git, arriba) no es solo una mención pasiva: antes de cada commit no trivial, si la rama actual es `master` o `development`, avisar explícitamente y ofrecer crear la rama correspondiente ahí mismo — no asumir que "ya se sabe" y dejarlo pasar.
 
-**Recomendación de limpiar sesión post-merge (US-20):** justo después de confirmar el merge `feature/*`/`fix/*` → `dev` (nunca antes de esa confirmación, y nunca en el merge de release `dev` → `master`), ofrecer con `AskUserQuestion` limpiar la sesión actual — el estado del trabajo vive en `TODO.md`/`SPEC.md`/`CHANGELOG.md`, no en la conversación, así que seguir arrastrando el historial de una feature ya integrada es consumo de tokens sin beneficio.
+**Recomendación de limpiar sesión post-merge (US-20):** justo después de confirmar el merge `feature/*`/`fix/*` → `development` (nunca antes de esa confirmación, y nunca en el merge de release `development` → `master`), ofrecer con `AskUserQuestion` limpiar la sesión actual — el estado del trabajo vive en `TODO.md`/`SPEC.md`/`CHANGELOG.md`, no en la conversación, así que seguir arrastrando el historial de una feature ya integrada es consumo de tokens sin beneficio.
 
 - Si el entorno da visibilidad del consumo de contexto de la sesión (en Claude Code, la señal de tokens/contexto restante que aparece en los reminders del sistema), usarla para graduar el mensaje: 🟢 consumo bajo, 🟡 medio, 🔴 alto. Si el entorno no da esa visibilidad (otros agentes), mostrar la recomendación sin el dato — la pregunta sigue siendo válida sin él.
-- Formato sugerido de la pregunta: *"La feature/fix ya está mergeada a dev. ¿Limpiamos la sesión antes de seguir?"* con opciones **"Sí, limpiar sesión"** (recomendada — la próxima tarea arranca leyendo `TODO.md`, no hace falta este historial) y **"No, seguir en esta sesión"** (por ejemplo si hay varias tareas chicas relacionadas para encadenar).
+- Formato sugerido de la pregunta: *"La feature/fix ya está mergeada a development. ¿Limpiamos la sesión antes de seguir?"* con opciones **"Sí, limpiar sesión"** (recomendada — la próxima tarea arranca leyendo `TODO.md`, no hace falta este historial) y **"No, seguir en esta sesión"** (por ejemplo si hay varias tareas chicas relacionadas para encadenar).
 - Si el nivel es 🔴 y el usuario elige "No": no repetir la pregunta en el mismo turno, pero sí avisar explícitamente que a ese nivel de consumo las respuestas pueden empezar a degradarse, y volver a ofrecer la limpieza apenas termine la siguiente tarea (no esperar a otro merge completo).
 - Es una recomendación, no un gate — nunca bloquear el flujo de git por esto.
 
-**Sugerencia de versión al mergear `feature/*`/`fix/*` → `dev`** (o `fix/*` → `master` en un hotfix — ver `.rocky-spec/reference/versioning.md` de la skill para el detalle completo): antes de ese merge, correr `rocky check version .` — calcula el bump exacto a partir de los commits reales desde el último tag (Conventional Commits, regla "el más alto gana": MAJOR > MINOR > PATCH, nunca se apilan varios bumps), en vez de que el agente tenga que "acordarse" en prosa. Mostrar el resultado al usuario y preguntar si se taguea ahora o se deja para cuando se junten más cambios — **nunca taguear solo**, es una decisión del usuario.
+**Sugerencia de versión al mergear `feature/*`/`fix/*` → `development`** (o `fix/*` → `master` en un hotfix — ver `.rocky-spec/reference/versioning.md` de la skill para el detalle completo): antes de ese merge, correr `rocky check version .` — calcula el bump exacto a partir de los commits reales desde el último tag (Conventional Commits, regla "el más alto gana": MAJOR > MINOR > PATCH, nunca se apilan varios bumps), en vez de que el agente tenga que "acordarse" en prosa. Mostrar el resultado al usuario y preguntar si se taguea ahora o se deja para cuando se junten más cambios — **nunca taguear solo**, es una decisión del usuario.
 
-**Esto NO se dispara al mergear `dev` → `master` para hacer un release.** Ahí `master` simplemente hereda la versión que `dev` ya trae acumulada de sus merges anteriores — no se vuelve a calcular ni a bumpear un número distinto. El cálculo pasa una sola vez, en el merge hacia `dev` (o en el hotfix directo a `master`), nunca en el merge de integración `dev` → `master`.
+**Esto NO se dispara al mergear `development` → `master` para hacer un release.** Ahí `master` simplemente hereda la versión que `development` ya trae acumulada de sus merges anteriores — no se vuelve a calcular ni a bumpear un número distinto. El cálculo pasa una sola vez, en el merge hacia `development` (o en el hotfix directo a `master`), nunca en el merge de integración `development` → `master`.
 
-`rocky check version` también avisa si una rama `feature/*` acumuló demasiados `fix` además del feature en sí (comparado contra `dev`) — mismo patrón de umbrales escalonados que el TODO Size Check: 3-5 fixes es una señal 🟡 de que el plan (RF-N/US-N) subestimó la complejidad, 6+ es 🔴 y sugiere partir la feature en dos.
+`rocky check version` también avisa si una rama `feature/*` acumuló demasiados `fix` además del feature en sí (comparado contra `development`) — mismo patrón de umbrales escalonados que el TODO Size Check: 3-5 fixes es una señal 🟡 de que el plan (RF-N/US-N) subestimó la complejidad, 6+ es 🔴 y sugiere partir la feature en dos.
 
 ## Versionado y releases — Semantic Versioning
 
@@ -391,7 +391,7 @@ Este proyecto sigue [SemVer](https://semver.org/lang/es/) (`MAJOR.MINOR.PATCH`) 
   2. `git commit -m "chore(release): vX.Y.Z"`
   3. `git tag -a vX.Y.Z -m "Release vX.Y.Z"` y `git push origin vX.Y.Z`
   4. Publicar el Release en GitHub — el tag y el Release son dos objetos distintos: pushear el tag no crea el Release, y sin este paso la pestaña "Releases" de GitHub se queda mostrando una versión "Latest" vieja aunque haya tags más nuevos (pasó en este repo: tags hasta v0.15.0 pero el último Release publicado era v0.10.0). `gh release create vX.Y.Z --title vX.Y.Z --notes-file <(sección correspondiente de CHANGELOG.md)` (o "Draft a new release" en la web).
-  5. Después de mergear a la rama principal: listar `git branch --merged dev` (menos `dev`/`master`) y preguntarle al usuario cuáles borrar (local + remoto) **con `AskUserQuestion`** — nunca borrar sin confirmar, y nunca ofrecer una rama que no esté 100% mergeada. Usar `git branch -d` y no `-D`: si la rama no estuviera mergeada, `-d` se niega y actúa como red de seguridad además de la verificación previa.
+  5. Después de mergear a la rama principal: listar `git branch --merged development` (menos `development`/`master`) y preguntarle al usuario cuáles borrar (local + remoto) **con `AskUserQuestion`** — nunca borrar sin confirmar, y nunca ofrecer una rama que no esté 100% mergeada. Usar `git branch -d` y no `-D`: si la rama no estuviera mergeada, `-d` se niega y actúa como red de seguridad además de la verificación previa.
 - **Qué bump corresponde**: `fix` → PATCH · `feat` → MINOR · breaking change → MAJOR. Mientras el proyecto está en `0.x.y` (antes del primer release estable), un breaking change puede seguir bumpeando MINOR en vez de saltar a `1.0.0` — pasar a `1.0.0` es decisión del usuario, no automática.
 - **Decisión de este proyecto (2026-09-04)**: `rocky-spec` se queda en `0.x.y` por ahora — todavía en `Development Status :: 3 - Alpha`, sin publicación en PyPI (RF-6) ni usuarios externos conocidos que fijen la versión como dependencia. Próximos breaking changes (como el rename `charless` → `rocky` de `v0.7.0`) siguen bumpeando MINOR, no `1.0.0`. Revisar esta decisión cuando aparezca cualquiera de esas dos señales.
 - **Nivel de exigencia**: un prototipo descartable no necesita nada de esto. Si este proyecto es una librería o paquete publicado (npm, PyPI), el versionado es estricto y romper compatibilidad es siempre MAJOR — ver `.rocky-spec/reference/versioning.md` sección "Nivel de exigencia" para el detalle completo.

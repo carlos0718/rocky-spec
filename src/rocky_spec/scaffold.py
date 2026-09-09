@@ -1,13 +1,18 @@
 from __future__ import annotations
 
+import json
 import shutil
 from importlib import resources
 from pathlib import Path
 
 from . import __version__
 from .integrations import CommandDefinition, SHARED_DIR_NAME
+from .integrations.base import sha256_of
 
 ROCKY_SPEC_VERSION = __version__  # fuente única: metadatos del paquete (ver __init__.py)
+
+SHARED_KNOWLEDGE_SUBDIRS = ("commands", "reference", "templates")
+SHARED_MANIFEST_NAME = "shared-manifest.json"
 
 # key -> (título legible, nombre de archivo dentro de commands/)
 # El orden acá es el orden real del flujo de creación (P0 -> P8.5).
@@ -51,7 +56,7 @@ def ensure_shared_knowledge(project_root: Path, force: bool = False) -> dict[str
     shared_root = project_root / SHARED_DIR_NAME
     copied: dict[str, list[str]] = {}
 
-    for sub in ("commands", "reference", "templates"):
+    for sub in SHARED_KNOWLEDGE_SUBDIRS:
         source = _package_dir(sub)
         target = shared_root / sub
         if target.exists() and not force:
@@ -66,4 +71,26 @@ def ensure_shared_knowledge(project_root: Path, force: bool = False) -> dict[str
     if not version_file.exists() or force:
         version_file.write_text(ROCKY_SPEC_VERSION + "\n", encoding="utf-8")
 
+    if copied:
+        write_shared_manifest_entries(shared_root, copied)
+
     return copied
+
+
+def write_shared_manifest_entries(shared_root: Path, copied: dict[str, list[str]]) -> None:
+    """Registra el hash de cada archivo recién copiado en ``shared-manifest.json``
+    — la base que usa ``rocky update`` para distinguir un archivo sin tocar
+    (se refresca) de uno editado a mano (se preserva, ver `.rocky-spec/reference`
+    y `.rocky-spec/templates` en SPEC.md 'Fuera del alcance': es la única forma
+    de customizar el kit)."""
+    manifest_path = shared_root / SHARED_MANIFEST_NAME
+    manifest: dict[str, str] = {}
+    if manifest_path.exists():
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+
+    for sub, files in copied.items():
+        for relative in files:
+            content = (shared_root / sub / relative).read_text(encoding="utf-8")
+            manifest[f"{sub}/{relative}"] = sha256_of(content)
+
+    manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
