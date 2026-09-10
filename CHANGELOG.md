@@ -6,6 +6,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-09-10
+
 ### Added
 - **`rocky check drift` / integrado en `rocky update`** — detecta, para proyectos con `.skill-state.json` en `"mode": "adopted"`, qué archivos genera hoy Modo Adopción (MA-6: `CONSTITUTION.md`, `CHANGELOG.md`, `SECURITY.md`, `OBSERVABILITY.md`, `ACCESSIBILITY.md`/`design-system/MASTER.md` si el proyecto tiene UI, `LICENSE`) pero faltan porque la adopción corrió con una versión vieja de la skill. MA-6 ahora guarda `license_decision` en `.skill-state.json` para distinguir "el usuario ya eligió no tener LICENSE" de "nunca se le preguntó". (US-23)
 
