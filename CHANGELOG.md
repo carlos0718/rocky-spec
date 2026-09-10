@@ -6,6 +6,16 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.18.1] - 2026-09-10
+
+### Fixed
+- **La recomendación de limpiar sesión (US-20) y el paso de borrar rama post-release disparaban en momentos distintos por una distinción sin motivo de fondo** — se unificaron en una sola pausa al cierre del flujo completo de integración (merge a `development`, version check, tag/release si corresponde, y merge a `master`/`main`), en vez de ofrecer la limpieza de sesión apenas se mergea a `development` con ese trabajo todavía pendiente. Portado también a `templates/AGENTS.md.template`.
+
+## [0.18.0] - 2026-09-10
+
+### Added
+- **`rocky check drift` / integrado en `rocky update`** — detecta, para proyectos con `.skill-state.json` en `"mode": "adopted"`, qué archivos genera hoy Modo Adopción (MA-6: `CONSTITUTION.md`, `CHANGELOG.md`, `SECURITY.md`, `OBSERVABILITY.md`, `ACCESSIBILITY.md`/`design-system/MASTER.md` si el proyecto tiene UI, `LICENSE`) pero faltan porque la adopción corrió con una versión vieja de la skill. MA-6 ahora guarda `license_decision` en `.skill-state.json` para distinguir "el usuario ya eligió no tener LICENSE" de "nunca se le preguntó". (US-23)
+
 ## [0.17.3] - 2026-09-09
 
 ### Fixed

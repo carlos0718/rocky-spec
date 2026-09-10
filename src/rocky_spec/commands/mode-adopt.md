@@ -288,6 +288,8 @@ Para la opción **2 (mergear)**: mostrar solo las secciones que NO están en el 
 
 **Caso especial — no hay `LICENSE`:** no asumir ninguna por default (a diferencia de `AGENTS.md`/`SECURITY.md`, acá no hay un valor "seguro" para inventar sin preguntar). Preguntar igual que en P6: *"Este proyecto no tiene `LICENSE`. ¿Querés que agregue una (MIT / Apache 2.0 / Propietaria), o lo dejamos así por ahora?"*
 
+Guardar la respuesta en `"license_decision"` dentro del `.skill-state.json` que se genera en MA-8 — `"mit"` / `"apache2"` / `"proprietary"` si se generó una, `"skipped"` si el usuario prefirió no tener. Este campo es lo que le permite a `rocky check drift`/`rocky update` distinguir "el usuario ya decidió no tener LICENSE" (no es drift) de "esta adopción corrió antes de que existiera esta pregunta, nunca se le preguntó" (si es drift) — sin el campo, ambos casos se ven idénticos desde afuera (`LICENSE` ausente).
+
 ### MA-7 · TODO desde estado actual
 
 Generar el TODO adaptado al estado real del proyecto. Antes de generarlo preguntar:
@@ -369,6 +371,7 @@ Al finalizar la adopción, crear un `.skill-state.json` mínimo que marque el pr
   "mode": "adopted",
   "timestamp": "<ISO date>",
   "step": "adoption_complete",
+  "license_decision": "<mit | apache2 | proprietary | skipped>",
   "decisions": {
     "stack_detected": true,
     "spec_generated": true,
@@ -377,6 +380,8 @@ Al finalizar la adopción, crear un `.skill-state.json` mínimo que marque el pr
   }
 }
 ```
+
+`license_decision` viaja como campo de primer nivel (no dentro de `decisions`, que es de solo lectura conversacional) porque `rocky check drift`/`rocky update` lo leen en código — ver caso especial "no hay `LICENSE`" más arriba.
 
 Esto evita que la skill vuelva a ofrecer el Modo Adopción en sesiones futuras, y en cambio usa el flujo normal de Reanudación.
 

@@ -47,12 +47,18 @@
 - [x] Protocolo anti-loop en `AGENTS.md`/template (US-18)
 - [x] Flujo de release publica el Release en GitHub (`gh release create`), no solo el tag; 6 Releases retroactivos (US-19)
 - [x] TODO Drift Check — nuevo paso 0-quater del Workflow de Git: valida que un commit `feat`/`fix` toque `TODO.md`, evitando que features/fixes que surgen en el camino vuelvan a quedar sin registrar
-- [x] Recomendación post-merge de limpiar sesión (`AskUserQuestion`, graduada por consumo de contexto cuando el agente tiene visibilidad de esa señal) (US-20)
+- [x] Recomendación de limpiar sesión (`AskUserQuestion`, graduada por consumo de contexto cuando el agente tiene visibilidad de esa señal) — redefinida: se ofrece al cerrar el flujo completo de integración (push/merge a `development`, version check, tag/release si corresponde, y merge a `master`/`main`), no apenas se mergea a `development` (US-20)
+- [x] Actualizar `AGENTS.md` de este repo — mover la sección de recomendación post-merge (US-20) para que dispare al cierre del flujo completo, no en el merge `feature/*`/`fix/*` → `development` (US-20)
+- [x] Portar la corrección de timing de US-20 a `templates/AGENTS.md.template` (US-20)
 - [x] Renombrar la rama de integración `dev` → `development` (docs de este repo, templates de la skill, `version_check.py` y su test, y la rama real en local/remoto)
 - [x] `rocky update` — actualiza `commands`/`reference`/`templates` y los archivos del kit de cada integración instalada a la versión del paquete, sin pisar ediciones manuales (hash-tracking vía `shared-manifest.json`) (US-21)
 - [x] Release Sync Check — nuevo paso 5 del flujo de release en `AGENTS.md`: verifica que `origin/master` tenga la versión recién tageada de `pyproject.toml` y ofrece el merge `development → master` con `AskUserQuestion` ahí mismo, evitando que `uv tool install`/`upgrade` (que clona el HEAD de `master`) instale una versión vieja
 - [x] Trigger Ambiguity Check — nuevo chequeo en `AGENTS.md`: al redactar una regla nueva con disparador basado en eventos, buscar triggers parecidos ya existentes y dejar la diferencia explícita en el texto de ambas; incluye la aclaración cruzada entre US-20 (limpieza de sesión) y el paso 6 de release (limpieza de ramas), que se habían confundido en la práctica
 - [x] Portar Release Sync Check + Trigger Ambiguity Check + aclaración US-20/limpieza de ramas a `templates/AGENTS.md.template`, para que los proyectos generados por la skill no hereden la misma ambigüedad
+- [ ] el TODO se puede integrar via MCP a la sección de Project elijiendo la vista kamban?
+- [x] MA-6 guarda `license_decision` en `.skill-state.json` al responder la pregunta de `LICENSE` (US-23, RF-20)
+- [x] `rocky check drift` — detecta archivos que MA-6 genera hoy (`CONSTITUTION.md`/`CHANGELOG.md`/`SECURITY.md`/`OBSERVABILITY.md`/`ACCESSIBILITY.md`/`design-system/MASTER.md`/`LICENSE`) pero faltan en proyectos adoptados con una versión vieja de la skill (US-23, RF-20)
+- [x] Enganchar `rocky check drift` dentro de `rocky update` (US-23, RF-20)
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
 - [ ] Integración con Gemini CLI
 - [ ] Integración con Codex CLI
