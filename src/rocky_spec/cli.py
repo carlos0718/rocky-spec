@@ -11,6 +11,7 @@ from .integrations.cursor import CURSOR_RULE_PATH
 from .scripts import accessibility_check
 from .scripts import anchor_check
 from .scripts import build as build_script
+from .scripts import drift_check
 from .scripts import health_check, qa_review, update as update_script, version_check
 from .welcome import show_commands, show_init_banner, show_welcome
 
@@ -206,6 +207,11 @@ def update(path: Path, dry_run: bool) -> None:
     if dry_run:
         click.echo("\n(dry-run: no se escribió nada — corré sin --dry-run para aplicar)")
 
+    drift_report = drift_check.check_drift(project_root)
+    if drift_report.findings:
+        click.echo("\n⚠️  Drift de Modo Adopción detectado:")
+        _print_report(drift_report)
+
 
 @main.command(name="commands")
 def commands() -> None:
@@ -276,6 +282,13 @@ def check_qa(path: Path) -> None:
 def check_anchors(path: Path) -> None:
     """CLAUDE.md / rocky.mdc siguen apuntando al conocimiento compartido."""
     _print_report(anchor_check.check_anchors(path.resolve()))
+
+
+@check.command(name="drift")
+@click.argument("path", type=click.Path(exists=True, file_okay=False, path_type=Path), default=".")
+def check_drift(path: Path) -> None:
+    """Archivos que MA-6 genera hoy pero faltan en un proyecto adoptado con una versión vieja de la skill."""
+    _print_report(drift_check.check_drift(path.resolve()))
 
 
 @check.command(name="version")

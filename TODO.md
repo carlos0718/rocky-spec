@@ -54,9 +54,9 @@
 - [x] Trigger Ambiguity Check — nuevo chequeo en `AGENTS.md`: al redactar una regla nueva con disparador basado en eventos, buscar triggers parecidos ya existentes y dejar la diferencia explícita en el texto de ambas; incluye la aclaración cruzada entre US-20 (limpieza de sesión) y el paso 6 de release (limpieza de ramas), que se habían confundido en la práctica
 - [x] Portar Release Sync Check + Trigger Ambiguity Check + aclaración US-20/limpieza de ramas a `templates/AGENTS.md.template`, para que los proyectos generados por la skill no hereden la misma ambigüedad
 - [ ] el TODO se puede integrar via MCP a la sección de Project elijiendo la vista kamban?
-- [ ] MA-6 guarda `license_decision` en `.skill-state.json` al responder la pregunta de `LICENSE` (US-23, RF-20)
-- [ ] `rocky check drift` — detecta archivos que MA-6 genera hoy (`CONSTITUTION.md`/`CHANGELOG.md`/`SECURITY.md`/`OBSERVABILITY.md`/`ACCESSIBILITY.md`/`design-system/MASTER.md`/`LICENSE`) pero faltan en proyectos adoptados con una versión vieja de la skill (US-23, RF-20)
-- [ ] Enganchar `rocky check drift` dentro de `rocky update` (US-23, RF-20)
+- [x] MA-6 guarda `license_decision` en `.skill-state.json` al responder la pregunta de `LICENSE` (US-23, RF-20)
+- [x] `rocky check drift` — detecta archivos que MA-6 genera hoy (`CONSTITUTION.md`/`CHANGELOG.md`/`SECURITY.md`/`OBSERVABILITY.md`/`ACCESSIBILITY.md`/`design-system/MASTER.md`/`LICENSE`) pero faltan en proyectos adoptados con una versión vieja de la skill (US-23, RF-20)
+- [x] Enganchar `rocky check drift` dentro de `rocky update` (US-23, RF-20)
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
 - [ ] Integración con Gemini CLI
 - [ ] Integración con Codex CLI
