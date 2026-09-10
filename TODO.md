@@ -48,8 +48,8 @@
 - [x] Flujo de release publica el Release en GitHub (`gh release create`), no solo el tag; 6 Releases retroactivos (US-19)
 - [x] TODO Drift Check — nuevo paso 0-quater del Workflow de Git: valida que un commit `feat`/`fix` toque `TODO.md`, evitando que features/fixes que surgen en el camino vuelvan a quedar sin registrar
 - [x] Recomendación de limpiar sesión (`AskUserQuestion`, graduada por consumo de contexto cuando el agente tiene visibilidad de esa señal) — redefinida: se ofrece al cerrar el flujo completo de integración (push/merge a `development`, version check, tag/release si corresponde, y merge a `master`/`main`), no apenas se mergea a `development` (US-20)
-- [ ] Actualizar `AGENTS.md` de este repo — mover la sección de recomendación post-merge (US-20) para que dispare al cierre del flujo completo, no en el merge `feature/*`/`fix/*` → `development` (US-20)
-- [ ] Portar la corrección de timing de US-20 a `templates/AGENTS.md.template` (US-20)
+- [x] Actualizar `AGENTS.md` de este repo — mover la sección de recomendación post-merge (US-20) para que dispare al cierre del flujo completo, no en el merge `feature/*`/`fix/*` → `development` (US-20)
+- [x] Portar la corrección de timing de US-20 a `templates/AGENTS.md.template` (US-20)
 - [x] Renombrar la rama de integración `dev` → `development` (docs de este repo, templates de la skill, `version_check.py` y su test, y la rama real en local/remoto)
 - [x] `rocky update` — actualiza `commands`/`reference`/`templates` y los archivos del kit de cada integración instalada a la versión del paquete, sin pisar ediciones manuales (hash-tracking vía `shared-manifest.json`) (US-21)
 - [x] Release Sync Check — nuevo paso 5 del flujo de release en `AGENTS.md`: verifica que `origin/master` tenga la versión recién tageada de `pyproject.toml` y ofrece el merge `development → master` con `AskUserQuestion` ahí mismo, evitando que `uv tool install`/`upgrade` (que clona el HEAD de `master`) instale una versión vieja

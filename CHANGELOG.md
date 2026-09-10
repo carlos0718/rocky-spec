@@ -6,6 +6,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Fixed
+- **La recomendación de limpiar sesión (US-20) y el paso de borrar rama post-release disparaban en momentos distintos por una distinción sin motivo de fondo** — se unificaron en una sola pausa al cierre del flujo completo de integración (merge a `development`, version check, tag/release si corresponde, y merge a `master`/`main`), en vez de ofrecer la limpieza de sesión apenas se mergea a `development` con ese trabajo todavía pendiente. Portado también a `templates/AGENTS.md.template`.
+
 ## [0.18.0] - 2026-09-10
 
 ### Added
