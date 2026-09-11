@@ -339,7 +339,9 @@ def _print_drift_next_steps() -> None:
     click.echo(
         "\n👉 Para resolverlo: abrí una sesión de tu agente en este proyecto y escribí "
         '"/rocky-spec" (o el comando equivalente de tu agente) — el flujo de Reanudación '
-        "va a revalidar esto y generar lo que falte siguiendo mode-adopt.md P6."
+        "va a revalidar esto y resolverlo siguiendo mode-adopt.md MA-6 (genera lo que falte "
+        "si el archivo no existe, o guía el backup + regenerar + merge si el archivo ya "
+        "existe pero le faltan secciones del template vigente)."
     )
 
 
