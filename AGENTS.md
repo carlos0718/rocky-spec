@@ -91,7 +91,14 @@ python3 -m build
 
 ## Gotchas / cosas a recordar
 
-- (vacío al inicio, agregar acá problemas conocidos y workarounds)
+- **La skill global (`~/.claude/skills/rocky-spec/`) puede tapar la del proyecto (`.claude/skills/rocky-spec/`, la que `rocky init`/`rocky update` mantienen sincronizada con el paquete instalado).** Claude Code resuelve nombres duplicados con precedencia `user` > `project` — si tenés una copia manual de la skill instalada a nivel de usuario (típico si la usás para bootstrapear proyectos nuevos antes de correr `rocky init`), esa es la que se dispara en cualquier proyecto ya adoptado, no la copia local versionada. Síntoma: pasos del flujo (ej. el paso 0 de `mode-resume.md`, revalidación de drift) que deberían correr y no corren, sin error visible — porque la sesión está ejecutando una versión vieja de la skill.
+  - **Detectarlo**: el menú/listado de skills de Claude Code (ej. `/skills` o el panel de la extensión) muestra `rocky-spec` dos veces, con scope `user` y scope `project`.
+  - **Workaround** (`skillOverrides: false` en `settings.json` NO sirve — bug conocido de Claude Code, no oculta ni desactiva la skill de forma confiable): sacar la copia global del path que Claude Code escanea, sin borrarla —
+    ```bash
+    mkdir -p ~/.claude/skills-archive
+    mv ~/.claude/skills/rocky-spec ~/.claude/skills-archive/rocky-spec
+    ```
+    Reversible con el `mv` inverso. Trade-off: se pierde el trigger por lenguaje natural de rocky-spec en una carpeta que nunca corrió `rocky init` — ahí hay que arrancar con `pip install -e . && rocky init` a mano primero.
 
 ## Cuando un arreglo no funciona dos veces seguidas — protocolo anti-loop
 
