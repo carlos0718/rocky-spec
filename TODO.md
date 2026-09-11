@@ -59,6 +59,8 @@
 - [x] MA-6 guarda `license_decision` en `.skill-state.json` al responder la pregunta de `LICENSE` (US-23, RF-20)
 - [x] `rocky check drift` — detecta archivos que MA-6 genera hoy (`CONSTITUTION.md`/`CHANGELOG.md`/`SECURITY.md`/`OBSERVABILITY.md`/`ACCESSIBILITY.md`/`design-system/MASTER.md`/`LICENSE`) pero faltan en proyectos adoptados con una versión vieja de la skill (US-23, RF-20)
 - [x] Enganchar `rocky check drift` dentro de `rocky update` (US-23, RF-20)
+- [x] `rocky update`/`rocky check drift` terminan con un mensaje accionable de próximo paso cuando hay hallazgos de drift, en vez de solo listarlos (US-24, RF-21)
+- [x] `mode-resume.md` — nuevo paso 0 del checklist de Reanudación: revalida `.skill-state.json` contra `rocky check drift` y resuelve los hallazgos siguiendo la tabla P6 de `mode-adopt.md` antes de seguir con el TODO (US-25, RF-21)
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
 - [ ] Integración con Gemini CLI
 - [ ] Integración con Codex CLI

@@ -211,6 +211,7 @@ def update(path: Path, dry_run: bool) -> None:
     if drift_report.findings:
         click.echo("\n⚠️  Drift de Modo Adopción detectado:")
         _print_report(drift_report)
+        _print_drift_next_steps()
 
 
 @main.command(name="commands")
@@ -288,7 +289,10 @@ def check_anchors(path: Path) -> None:
 @click.argument("path", type=click.Path(exists=True, file_okay=False, path_type=Path), default=".")
 def check_drift(path: Path) -> None:
     """Archivos que MA-6 genera hoy pero faltan en un proyecto adoptado con una versión vieja de la skill."""
-    _print_report(drift_check.check_drift(path.resolve()))
+    report = drift_check.check_drift(path.resolve())
+    _print_report(report)
+    if report.findings:
+        _print_drift_next_steps()
 
 
 @check.command(name="version")
@@ -329,6 +333,14 @@ def _print_report(report: health_check.HealthCheckReport) -> None:
         icon = "🔴" if f.severity == "critical" else "🟡"
         location = f" ({f.file}:{f.line})" if f.file and f.line else f" ({f.file})" if f.file else ""
         click.echo(f"{icon} {f.message}{location}")
+
+
+def _print_drift_next_steps() -> None:
+    click.echo(
+        "\n👉 Para resolverlo: abrí una sesión de tu agente en este proyecto y escribí "
+        '"/rocky-spec" (o el comando equivalente de tu agente) — el flujo de Reanudación '
+        "va a revalidar esto y generar lo que falte siguiendo mode-adopt.md P6."
+    )
 
 
 if __name__ == "__main__":
