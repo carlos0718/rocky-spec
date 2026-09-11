@@ -290,6 +290,13 @@ Para la opción **2 (mergear)**: mostrar solo las secciones que NO están en el 
 
 Guardar la respuesta en `"license_decision"` dentro del `.skill-state.json` que se genera en MA-8 — `"mit"` / `"apache2"` / `"proprietary"` si se generó una, `"skipped"` si el usuario prefirió no tener. Este campo es lo que le permite a `rocky check drift`/`rocky update` distinguir "el usuario ya decidió no tener LICENSE" (no es drift) de "esta adopción corrió antes de que existiera esta pregunta, nunca se le preguntó" (si es drift) — sin el campo, ambos casos se ven idénticos desde afuera (`LICENSE` ausente).
 
+**Caso especial — el archivo ya existe pero le faltan secciones que el template vigente ya tiene (drift de *contenido*, RF-22):** distinto del resto de esta tabla, que asume que el archivo no existe. Acá sí existe y tiene contenido customizado que hay que conservar — nunca usar `rocky build --force` directo, pisa el archivo entero. Procedimiento:
+
+1. **Backup**: renombrar el archivo actual (ej. `AGENTS.md` → `_AGENTS.md`).
+2. **Regenerar fresco**: `rocky build . --values .rocky-spec/build-values.json --template <Archivo>.md.template --output <Archivo>.md --force` — usa el `build-values.json` que persiste `rocky build` (ver P6 en `commands/p6-p7-files-todo.md`); si el proyecto es de antes de que existiera esa persistencia y el archivo no está, reconstruirlo a mano con los valores que ya estén en el backup antes de seguir, no adivinar.
+3. **Mergear**: comparar encabezados (`##`/`###`) entre el backup y el archivo recién generado — portar al archivo nuevo cualquier sección o edición del backup que el template no tenga (decisiones del proyecto, gotchas propios, casos de referencia editados a mano), y quedarse con las secciones nuevas que trajo el template. Mostrarle el resultado al usuario antes de borrar el backup — igual que la opción "mergear" del resto de esta tabla.
+4. **Borrar el backup** solo con confirmación explícita del usuario, una vez que confirma que el merge quedó bien.
+
 ### MA-7 · TODO desde estado actual
 
 Generar el TODO adaptado al estado real del proyecto. Antes de generarlo preguntar:

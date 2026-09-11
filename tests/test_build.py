@@ -1,3 +1,5 @@
+import json
+
 from rocky_spec.scripts import build
 
 
@@ -164,3 +166,36 @@ def test_build_only_ignores_license_choice_key(tmp_path):
     assert result.invalid_license_choice is None
     assert "LICENSE" not in result.generated
     assert result.generated == ["design-system/MASTER.md"]
+
+
+# --- persistencia de build-values.json (US-26) ---
+
+
+def test_build_persists_values_json(tmp_path):
+    _make_templates(tmp_path)
+    build.build(tmp_path, {"PROJECT_NAME": "demo"})
+
+    values_path = tmp_path / ".rocky-spec" / "build-values.json"
+    assert values_path.exists()
+    assert json.loads(values_path.read_text()) == {"PROJECT_NAME": "demo"}
+
+
+def test_build_merges_values_json_across_calls_without_losing_previous_keys(tmp_path):
+    templates_dir = _make_templates(tmp_path)
+    (templates_dir / "MASTER.md.template").write_text("Design system de {{PROJECT_NAME}}\n")
+    build.build(tmp_path, {"PROJECT_NAME": "demo"})
+    build.build(
+        tmp_path,
+        {"YEAR": "2026"},
+        only=("MASTER.md.template", "design-system/MASTER.md"),
+    )
+
+    values_path = tmp_path / ".rocky-spec" / "build-values.json"
+    assert json.loads(values_path.read_text()) == {"PROJECT_NAME": "demo", "YEAR": "2026"}
+
+
+def test_build_does_not_write_values_json_when_values_empty(tmp_path):
+    _make_templates(tmp_path)
+    build.build(tmp_path, {})
+
+    assert not (tmp_path / ".rocky-spec" / "build-values.json").exists()

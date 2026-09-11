@@ -6,6 +6,11 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Added
+- **`rocky build` persiste los valores usados para renderizar cada archivo base en `.rocky-spec/build-values.json`** — mezclado con lo que ya hubiera, nunca lo pisa entero. Habilita regenerar un archivo puntual más adelante (ej. remediación de drift de contenido, RF-22) sin reconstruir a mano el JSON de placeholders. (US-26, RF-22)
+- **`rocky check drift` detecta secciones del template vigente ausentes en un archivo raíz ya existente** (`AGENTS.md`, `CONSTITUTION.md`...) — heurístico por encabezado (`##`/`###`), corre en cualquier proyecto con `.rocky-spec/templates/` instalado, no solo en los adoptados. Extiende la detección de drift más allá de "archivo completamente ausente" (RF-20/RF-21) al caso de un archivo que existe pero quedó viejo porque el template ganó secciones después. (US-27, RF-22)
+- **Remediación guiada para el drift de contenido — nuevo caso especial "drift de contenido" en MA-6 (`mode-adopt.md`)**: backup del archivo actual, regenerarlo con `rocky build --force` usando `build-values.json`, y mergear sección por sección antes de borrar el backup. `mode-resume.md` distingue este caso (por el texto del hallazgo) del de archivo ausente y lo resuelve siguiéndolo en vez de intentar generar de cero un archivo que ya existe. El mensaje de próximo paso de `rocky check drift`/`rocky update` ya no asume "generar lo que falte" para todos los hallazgos. (US-28, RF-22)
+
 ## [0.19.1] - 2026-09-11
 
 ### Fixed
