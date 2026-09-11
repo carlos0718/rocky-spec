@@ -6,6 +6,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.19.1] - 2026-09-11
+
 ### Fixed
 - **El gate de revalidación de drift en `mode-resume.md` (US-25) se podía saltear si `.skill-state.json` traía `step: "adoption_complete"`** — vivía como paso 0 de la sub-sección "Reanudación en modo desarrollo activo", condicionado a un trigger parecido al de la sección genérica de arriba (que lee `step` para detectar un setup interrumpido). Una sesión confundía ambos y pasaba directo al TODO sin correr `rocky check drift`, dejando archivos como `CONSTITUTION.md`/`SECURITY.md` sin generar. Se subió el gate al inicio de "## Reanudación", incondicional al valor de `step`. (US-25, RF-21)
 
