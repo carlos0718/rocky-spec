@@ -15,6 +15,7 @@ mecánica de forma determinista y reproducible.
 """
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -22,6 +23,7 @@ from .render_template import find_unresolved, render
 
 TEMPLATES_DIR_NAME = "templates"
 SHARED_DIR_NAME = ".rocky-spec"
+VALUES_FILE_NAME = "values.json"
 
 # (nombre del .template, ruta relativa del archivo generado en el proyecto)
 # Alcance: el set "código/híbrido" de P6/P7 (ver commands/p6-p7-files-todo.md).
@@ -63,6 +65,23 @@ def _license_entry(values: dict[str, str]) -> tuple[str, str] | None:
     if choice not in LICENSE_CHOICES:
         return None  # se reporta en build() vía invalid_license_choice
     return (f"LICENSE-{choice}.template", "LICENSE")
+
+
+def _persist_values(project_root: Path, values: dict[str, str]) -> None:
+    """Guarda ``values`` en ``.rocky-spec/values.json``, mezclado con lo que
+    ya hubiera (nunca lo pisa entero) -- para que una regeneración puntual
+    posterior (``only=``, ej. remediación de drift de contenido) no dependa
+    de reconstruir a mano el JSON de placeholders de todo el proyecto."""
+    values_path = project_root / SHARED_DIR_NAME / VALUES_FILE_NAME
+    existing: dict[str, str] = {}
+    if values_path.exists():
+        try:
+            existing = json.loads(values_path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            existing = {}
+    merged = {**existing, **values}
+    values_path.parent.mkdir(parents=True, exist_ok=True)
+    values_path.write_text(json.dumps(merged, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
 def build(
@@ -115,5 +134,8 @@ def build(
         remaining = find_unresolved(rendered)
         if remaining:
             result.unresolved[output_relative] = remaining
+
+    if values:
+        _persist_values(project_root, values)
 
     return result

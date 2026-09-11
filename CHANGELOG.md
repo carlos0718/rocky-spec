@@ -6,6 +6,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Added
+- **`rocky build` persiste los valores usados para renderizar cada archivo base en `.rocky-spec/values.json`** — mezclado con lo que ya hubiera, nunca lo pisa entero. Habilita regenerar un archivo puntual más adelante (ej. remediación de drift de contenido, RF-22) sin reconstruir a mano el JSON de placeholders. (US-26, RF-22)
+
 ## [0.19.1] - 2026-09-11
 
 ### Fixed
