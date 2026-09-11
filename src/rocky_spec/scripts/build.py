@@ -23,7 +23,7 @@ from .render_template import find_unresolved, render
 
 TEMPLATES_DIR_NAME = "templates"
 SHARED_DIR_NAME = ".rocky-spec"
-VALUES_FILE_NAME = "values.json"
+VALUES_FILE_NAME = "build-values.json"
 
 # (nombre del .template, ruta relativa del archivo generado en el proyecto)
 # Alcance: el set "código/híbrido" de P6/P7 (ver commands/p6-p7-files-todo.md).
@@ -68,10 +68,12 @@ def _license_entry(values: dict[str, str]) -> tuple[str, str] | None:
 
 
 def _persist_values(project_root: Path, values: dict[str, str]) -> None:
-    """Guarda ``values`` en ``.rocky-spec/values.json``, mezclado con lo que
-    ya hubiera (nunca lo pisa entero) -- para que una regeneración puntual
-    posterior (``only=``, ej. remediación de drift de contenido) no dependa
-    de reconstruir a mano el JSON de placeholders de todo el proyecto."""
+    """Guarda ``values`` en ``.rocky-spec/build-values.json`` -- el mismo
+    archivo que P6 (``commands/p6-p7-files-todo.md``) ya documenta que el
+    agente arma a mano antes de la primera corrida de ``rocky build`` --
+    mezclado con lo que ya hubiera (nunca lo pisa entero), para que una
+    regeneración puntual posterior (``only=``, ej. remediación de drift de
+    contenido) no dependa de reconstruirlo de cero."""
     values_path = project_root / SHARED_DIR_NAME / VALUES_FILE_NAME
     existing: dict[str, str] = {}
     if values_path.exists():

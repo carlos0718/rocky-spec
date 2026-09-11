@@ -62,7 +62,7 @@
 - [x] `rocky update`/`rocky check drift` terminan con un mensaje accionable de próximo paso cuando hay hallazgos de drift, en vez de solo listarlos (US-24, RF-21)
 - [x] `mode-resume.md` — nuevo paso 0 del checklist de Reanudación: revalida `.skill-state.json` contra `rocky check drift` y resuelve los hallazgos siguiendo la tabla P6 de `mode-adopt.md` antes de seguir con el TODO (US-25, RF-21)
 - [x] Fix: el gate de revalidación de drift (US-25) estaba condicionado a la sub-sección "Reanudación en modo desarrollo activo" y se confundía con la lógica de `step` de la sección genérica de arriba — una sesión veía `step: "adoption_complete"` y saltaba directo al TODO sin correr `rocky check drift`. Se subió el gate al inicio de "## Reanudación", incondicional a `step`, para que sea estructuralmente imposible de saltear (US-25, RF-21)
-- [x] `rocky build` persiste los valores usados en `.rocky-spec/values.json`, mezclado con lo existente (US-26, RF-22)
+- [x] `rocky build` persiste los valores usados en `.rocky-spec/build-values.json`, mezclado con lo existente (US-26, RF-22)
 - [x] `rocky check drift` detecta secciones del template vigente ausentes en un archivo raíz ya existente (US-27, RF-22)
 - [ ] Remediación guiada (backup + regenerar + merge) para el drift de contenido, wireada en `mode-adopt.md`/`mode-resume.md` (US-28, RF-22)
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
