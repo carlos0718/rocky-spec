@@ -6,6 +6,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Added
+- **`rocky update`/`rocky check drift` terminan con un mensaje accionable de próximo paso cuando hay hallazgos de drift** — en vez de solo listarlos, indican qué escribirle al agente para resolverlos. (US-24, RF-21)
+
 ## [0.18.1] - 2026-09-10
 
 ### Fixed
