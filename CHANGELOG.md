@@ -8,6 +8,7 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ### Added
 - **`rocky build --update`** — regenera un archivo raíz que ya existe en un solo comando: hace backup automático (`_<archivo>`), renderiza fresco desde el template vigente, y reporta qué encabezados (`##`/`###`) quedaron solo en el backup (candidatos a portar a mano) y cuáles trajo el template como nuevos. Automatiza los pasos 1-2 de la receta manual de remediación de drift de contenido (RF-22); el paso 3 (mergear con criterio) sigue a cargo del agente. Nunca pisa un backup previo sin resolver. **Limitación conocida**: sigue comparando encabezados, no contenido — no detecta cuando una sección con el mismo título perdió información relevante al parafrasearse en vez de copiarse literal. (US-29, RF-23)
+- **`mode-adopt.md` (MA-6) usa `rocky build --update`** en vez de la receta manual de backup+regenerar por separado, con una nota explícita (y el caso real que la motivó) sobre copiar literal el contenido de secciones que ya coincidían en título entre el backup y el archivo fresco, en vez de parafrasear de memoria. (US-30, RF-23)
 
 ## [0.20.0] - 2026-09-11
 
