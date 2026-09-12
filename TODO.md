@@ -67,7 +67,7 @@
 - [x] Remediación guiada (backup + regenerar + merge) para el drift de contenido, wireada en `mode-adopt.md`/`mode-resume.md` (US-28, RF-22)
 - [x] `rocky build --update` — backup + regeneración fresca en un solo comando, reporta encabezados solo-en-backup/solo-en-fresco (US-29, RF-23)
 - [x] `mode-adopt.md` MA-6 usa `rocky build --update` en vez de la receta manual de 2 pasos, con nota explícita de copiar literal el contenido de secciones que ya coincidían en título (US-30, RF-23)
-- [ ] Checklist OWASP LLM Top 10 en `SECURITY.md`, condicional a servicio de IA en Servicios Externos (US-31, RF-24)
+- [x] Checklist OWASP LLM Top 10 en `SECURITY.md`, condicional a servicio de IA en Servicios Externos (US-31, RF-24)
 - [ ] RNF de costo/latencia/fallback en `SPEC.md`, condicional a servicio de IA en Servicios Externos (US-32, RF-24)
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
 - [ ] Integración con Gemini CLI

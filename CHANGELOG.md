@@ -6,6 +6,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Added
+- **Checklist OWASP LLM Top 10 en `SECURITY.md`** — condicional a que el proyecto registre un servicio de IA (OpenAI/Anthropic/etc.) en la tabla "Servicios externos" de P3; no se dispara por usar una librería de IA (LangChain, Vercel AI SDK), que es stack. Detalle de los 10 ítems en `.rocky-spec/reference/security.md`. (US-31, RF-24)
+
 ## [0.21.0] - 2026-09-12
 
 ### Added
