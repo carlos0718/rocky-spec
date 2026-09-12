@@ -139,12 +139,51 @@ def init(path: Path, agents: tuple[str, ...], force: bool) -> None:
     default=None,
     help="Ruta relativa de salida para --template (ej. design-system/MASTER.md).",
 )
-def build(path: Path, values_path: Path, force: bool, template_name: str | None, output_relative: str | None) -> None:
+@click.option(
+    "--update",
+    "update_mode",
+    is_flag=True,
+    help="Regenerar un archivo que YA existe: hace backup automático y reporta qué "
+    "secciones quedaron solo en el backup. Requiere --template/--output. "
+    "Para remediar drift de contenido (RF-22) sin --force ciego.",
+)
+def build(
+    path: Path,
+    values_path: Path,
+    force: bool,
+    template_name: str | None,
+    output_relative: str | None,
+    update_mode: bool,
+) -> None:
     """Renderiza los archivos base (SPEC.md, CONSTITUTION.md, AGENTS.md...) desde .rocky-spec/templates/."""
     if bool(template_name) != bool(output_relative):
         raise click.UsageError("--template y --output tienen que usarse juntos.")
+    if update_mode and not template_name:
+        raise click.UsageError("--update requiere --template y --output.")
+    if update_mode and force:
+        raise click.UsageError("--update y --force no se usan juntos -- --update ya hace su propio backup.")
 
     project_root = path.resolve()
+
+    if update_mode:
+        values = json.loads(values_path.read_text(encoding="utf-8"))
+        result = build_script.update_file(project_root, values, template_name, output_relative)
+        if result.error:
+            click.echo(f"⚠️  {result.error}")
+            return
+        click.echo(f"✓ Backup: {result.backup_path}")
+        click.echo(f"✓ Regenerado: {result.generated}")
+        if result.only_in_fresh:
+            click.echo("🆕 Secciones nuevas que trajo el template:")
+            for h in result.only_in_fresh:
+                click.echo(f"    {h}")
+        if result.only_in_backup:
+            click.echo("👉 Secciones que quedaron solo en el backup -- revisar si portarlas a mano:")
+            for h in result.only_in_backup:
+                click.echo(f"    {h}")
+        if result.unresolved:
+            click.echo(f"⚠️  placeholders sin resolver: {', '.join(result.unresolved)}")
+        return
     values = json.loads(values_path.read_text(encoding="utf-8"))
     only = (template_name, output_relative) if template_name else None
     result = build_script.build(project_root, values, force=force, only=only)
