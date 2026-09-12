@@ -26,6 +26,8 @@ from pathlib import Path
 
 _PLACEHOLDER_RE = re.compile(r"\{\{([A-Z_][A-Z0-9_]*)(?:\s*,\s*default:\s*([^}]*))?\}\}")
 
+HEADER_PATTERN = re.compile(r"^(#{2,3})[ \t]+(\S.*?)\s*$", re.MULTILINE)
+
 
 def render(template_text: str, values: dict[str, str]) -> str:
     """Sustituye placeholders en `template_text` usando `values`, cayendo al
@@ -58,3 +60,19 @@ def find_unresolved(text: str) -> list[str]:
     """Devuelve los nombres de placeholder que sobrevivieron al render —
     equivalente determinista al grep de placeholders que usa P7.5."""
     return sorted({m.group(1) for m in _PLACEHOLDER_RE.finditer(text)})
+
+
+def extract_headers(text: str) -> list[str]:
+    """Encabezados `##`/`###` de un documento Markdown, en orden. Descarta
+    los que todavía tienen un placeholder sin resolver (ej. "## [0.1.0] -
+    {{DATE}}" en CHANGELOG.md.template) -- son contenido de ejemplo por
+    instancia, no una etiqueta de sección fija que tenga sentido comparar.
+    Compartido entre `drift_check.py` (RF-22) y `build.py` (RF-23, modo
+    ``--update``) -- vive acá, no en ninguno de los dos, para que ninguno
+    tenga que importar del otro."""
+    headers = []
+    for level, title in HEADER_PATTERN.findall(text):
+        if "{{" in title:
+            continue
+        headers.append(f"{level} {title}")
+    return headers

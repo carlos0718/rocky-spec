@@ -65,6 +65,8 @@
 - [x] `rocky build` persiste los valores usados en `.rocky-spec/build-values.json`, mezclado con lo existente (US-26, RF-22)
 - [x] `rocky check drift` detecta secciones del template vigente ausentes en un archivo raíz ya existente (US-27, RF-22)
 - [x] Remediación guiada (backup + regenerar + merge) para el drift de contenido, wireada en `mode-adopt.md`/`mode-resume.md` (US-28, RF-22)
+- [x] `rocky build --update` — backup + regeneración fresca en un solo comando, reporta encabezados solo-en-backup/solo-en-fresco (US-29, RF-23)
+- [x] `mode-adopt.md` MA-6 usa `rocky build --update` en vez de la receta manual de 2 pasos, con nota explícita de copiar literal el contenido de secciones que ya coincidían en título (US-30, RF-23)
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
 - [ ] Integración con Gemini CLI
 - [ ] Integración con Codex CLI
