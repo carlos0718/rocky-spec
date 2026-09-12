@@ -46,6 +46,12 @@ Marcado según lo que aplica a este proyecto en particular (ver `.rocky-spec/ref
 - [ ] A09 · Security Logging and Monitoring Failures — logs estructurados, sin datos sensibles en texto plano
 - [ ] A10 · SSRF {{IF_APPLIES}} <!-- solo si el proyecto hace requests salientes basados en input del usuario -->
 
+## Checklist OWASP LLM Top 10
+
+Solo aplica si este proyecto registró un servicio de IA (OpenAI/Anthropic/etc.) en la tabla "Servicios externos" de `AGENTS.md` — no confundir con una librería de IA (LangChain, Vercel AI SDK), que es stack y no dispara este checklist. Detalle de cada ítem en `.rocky-spec/reference/security.md` sección "OWASP LLM Top 10 adaptado".
+
+{{OWASP_LLM_CHECKLIST, default: No aplica — este proyecto no registró ningún servicio de IA en la tabla "Servicios externos" de `AGENTS.md`.}}
+
 ## Gestión de secrets
 
 - **Desarrollo**: `.env` (gitignorado) + `.env.example` (commiteado, sin valores reales)

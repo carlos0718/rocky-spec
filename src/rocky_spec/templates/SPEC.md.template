@@ -62,6 +62,7 @@
 | RNF-3 | Compatibilidad | Global | {{COMPATIBILITY_TARGET, default: "últimas 2 versiones de Chrome/Firefox/Safari, sin soporte IE"}} | navegadores, dispositivos, SO soportados |
 | RNF-4 | Localización / i18n | Global | {{I18N_TARGET, default: "un solo idioma, sin i18n por ahora"}} | idiomas soportados, si aplica |
 | RNF-5 | Retención de datos | Global | {{DATA_RETENTION, default: "sin política definida — revisar antes de manejar datos reales de usuarios"}} | cuánto se guardan los datos, si hay borrado de cuenta, compliance si aplica |
+{{AI_NFR_ROWS, default: <!-- si el proyecto no registró un servicio de IA en Servicios Externos (P3), no aplica -->}}
 | — | Seguridad | — | Ver `SECURITY.md` | no se duplica acá, no lleva RNF propio |
 | — | Accesibilidad | — | Ver `design-system/MASTER.md` sección "Accesibilidad" | no se duplica acá, solo si el proyecto tiene interfaz visual |
 | — | Disponibilidad / monitoreo | — | Ver `OBSERVABILITY.md` | no se duplica acá |

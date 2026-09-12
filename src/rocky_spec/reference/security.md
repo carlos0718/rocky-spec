@@ -6,6 +6,7 @@
 
 - [Cómo se usa este archivo](#cómo-se-usa-este-archivo)
 - [OWASP Top 10 adaptado](#owasp-top-10-adaptado) — qué es cada riesgo, cómo lo mitiga la skill
+- [OWASP LLM Top 10 adaptado](#owasp-llm-top-10-adaptado) — mismo criterio, solo para proyectos que usan un servicio de IA
 - [Reglas base — siempre activas](#reglas-base--siempre-activas)
 - [Gestión de secrets y variables de entorno](#gestión-de-secrets-y-variables-de-entorno)
 - [Auth — patrones según stack](#auth--patrones-según-stack)
@@ -38,6 +39,23 @@ No todos los proyectos necesitan mitigar los 10 con el mismo rigor — un script
 | A08 | Software and Data Integrity Failures | CI/CD sin verificación de integridad, dependencias de fuentes no confiables | `package-lock.json`/`poetry.lock`/equivalente siempre commiteado (reproducibilidad), no instalar paquetes fuera de los registries oficiales | **Base** — cualquier proyecto de código |
 | A09 | Security Logging and Monitoring Failures | No hay forma de detectar un ataque en curso o post-mortem | Logs estructurados (ya cubierto en `coding-principles.md`) + no loguear datos sensibles (passwords, tokens, tarjetas) en texto plano | **Base** — cualquier proyecto con backend |
 | A10 | Server-Side Request Forgery (SSRF) | El backend hace requests a URLs controladas por el usuario sin validar destino | Si el proyecto acepta URLs de usuario (webhooks, importadores, proxies) → whitelist de dominios permitidos, nunca fetch directo a input crudo | Si aplica — solo proyectos que hacen requests salientes basados en input del usuario |
+
+## OWASP LLM Top 10 adaptado
+
+Solo aplica si P3 registró un servicio de IA (OpenAI/Anthropic/etc.) en la tabla "Servicios externos" — no es parte del checklist base de arriba. No confundir con una **librería** de IA (LangChain, Vercel AI SDK, etc.): eso es stack, no un servicio con cuenta y API key — el riesgo está en el proveedor de abajo al que esa librería termina llamando, no en la librería en sí.
+
+| # | Riesgo | Qué es | Cómo lo mitiga la skill | ¿Cuándo aplica? |
+|---|---|---|---|---|
+| LLM01 | Prompt Injection | Input del usuario (o de un documento que el LLM lee) altera el comportamiento del prompt, saltando instrucciones del sistema | Nunca concatenar input del usuario directo en el system prompt sin delimitarlo; tratar cualquier texto externo (incluido el contexto de RAG) como no confiable | **Base** — cualquier proyecto que pase input de usuario a un LLM |
+| LLM02 | Sensitive Information Disclosure | El modelo devuelve datos sensibles que estaban en el prompt, en el contexto de RAG, o en su entrenamiento | No mandar secrets/PII en el prompt salvo estrictamente necesario; sanitizar el contexto de RAG antes de inyectarlo | **Base** |
+| LLM03 | Supply Chain | Vulnerabilidades en el proveedor del modelo, plugins/tools de terceros, o datasets de fine-tuning | Pinnear versión del modelo cuando el proveedor lo permite; auditar plugins/tools de terceros igual que cualquier dependencia (ver Dependency scanning) | Si aplica — proyectos con plugins/tools de terceros o fine-tuning propio |
+| LLM04 | Data and Model Poisoning | Datos de entrenamiento/fine-tuning o el contexto de RAG contaminados con contenido malicioso | Si hay fine-tuning o RAG sobre contenido de usuarios, validar/sanitizar la fuente antes de indexarla | Si aplica — proyectos con fine-tuning o RAG sobre contenido no confiable |
+| LLM05 | Improper Output Handling | La respuesta del LLM se usa directo en SQL/shell/HTML/`eval` sin tratarla como input no confiable | Nunca ejecutar/interpolar la salida del LLM sin la misma validación que un input de usuario (A03 del OWASP web) | **Base** — cualquier proyecto que actúe sobre la salida del LLM, no solo la muestre como texto |
+| LLM06 | Excessive Agency | Un agente con tools/acciones autónomas hace más de lo que debería sin supervisión | Definir explícitamente qué acciones requieren confirmación humana antes de ejecutarse — mismo principio que el Artículo 7 de `CONSTITUTION.md`, aplicado al producto en vez de a git | Si aplica — solo agentes con tools que ejecutan acciones, no un chatbot que solo responde texto |
+| LLM07 | System Prompt Leakage | Un usuario logra que el modelo revele sus instrucciones internas | No asumir que el system prompt es secreto de por sí — no poner ahí credenciales ni lógica de negocio sensible que no podría exponerse | **Base** |
+| LLM08 | Vector and Embedding Weaknesses | Datos de un tenant filtran a otro en una base vectorial compartida, o los embeddings permiten reconstruir el texto original sensible | Namespacing/filtrado por tenant en la base vectorial; no embeber datos sensibles sin evaluar el riesgo de inversión | Si aplica — solo proyectos con RAG/base vectorial |
+| LLM09 | Misinformation | El modelo alucina información presentada como si fuera un hecho verificado | Para respuestas que el usuario puede tomar como autoritativas (legal, médico, financiero), mostrar disclaimer o requerir verificación humana | Si aplica — según qué tan crítica sea la precisión del dominio |
+| LLM10 | Unbounded Consumption | Sin límite de rate/costo, un usuario (o un loop del agente) genera un consumo de API ilimitado | Rate limiting + tope de costo/tokens por usuario o por período, timeout en llamadas al modelo | **Base** — cualquier proyecto que exponga el LLM a usuarios finales |
 
 ## Reglas base — siempre activas
 
@@ -117,6 +135,7 @@ origin: 'https://miapp.com'
 - **Fullstack**: todo lo de API + frontend, más consistencia entre validaciones de ambos lados (mismo schema Zod compartido cuando sea posible).
 - **Script / CLI**: foco en A06 (dependency scanning) y no loguear secrets si el script maneja credenciales (ej. un script de deploy con API keys).
 - **Creativo**: no aplica salvo que el proyecto tenga alguna integración con API keys (ej. llamadas a un servicio de AI gen) — en ese caso, tratarlo como "script" para esa parte.
+- **Con servicio de IA** (OpenAI/Anthropic/etc. registrado en Servicios Externos de P3): sumar el checklist OWASP LLM Top 10 de arriba al de la categoría que le toque por tipo de proyecto (API/Frontend/Fullstack/Script) — no lo reemplaza, es adicional.
 
 ## Nivel de exigencia según escala del proyecto
 

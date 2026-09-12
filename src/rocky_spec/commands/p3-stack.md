@@ -51,6 +51,16 @@ Por **cada** servicio mencionado, registrar cuatro datos: **nombre**, **para qu�
 
 **No confundir con la opción 3 del menú** (herramienta extra): una librería que se instala con el gestor de paquetes y vive en el repo es stack; un servicio que necesita cuenta, credenciales y corre fuera del proyecto es servicio externo. Si el usuario nombra un servicio externo dentro de la opción 3, registrarlo acá igual.
 
+**Si alguno de los servicios registrados es de categoría IA** (OpenAI/Anthropic/etc. — no una librería como LangChain o Vercel AI SDK, esas son stack): agregar filas de RNF específicas al `SPEC.md` que ya se aprobó en P1.7 (contenido guardado en `.skill-state.json`, todavía sin escribir a disco — se patchea ahí mismo, se escribe recién en P6 como el resto). Usar el próximo `RNF-N` disponible, tres filas:
+
+| ID | Categoría | Alcance | Requisito | Detalle |
+|---|---|---|---|---|
+| RNF-N | Costo de IA | Global | costo objetivo por request o por mes (preguntar si no se mencionó, default "sin tope definido — monitorear con el proveedor") | ej. "<$0.01 por request", "<$50/mes en fase MVP" |
+| RNF-N+1 | Latencia de IA | Global | latencia p95 objetivo para la respuesta del modelo (default "sin objetivo estricto — depende del proveedor") | ej. "<3s p95 para el endpoint de chat" |
+| RNF-N+2 | Fallback de IA | Global | comportamiento si el proveedor no responde o tira error (default "sin fallback definido — el request falla") | ej. "reintentar 1 vez, después degradar a respuesta cacheada/genérica" |
+
+Esto también dispara el checklist OWASP LLM Top 10 de `SECURITY.md` (ver `p5.6-security.md`) — mismo trigger, no hace falta repetir la detección ahí.
+
 Si el usuario dice "ninguno", seguir sin insistir — la tabla queda vacía y se puede sumar después con `/rocky-stack`.
 
 #### Al confirmar (opción 1) — TDD sí o no
