@@ -199,3 +199,89 @@ def test_build_does_not_write_values_json_when_values_empty(tmp_path):
     build.build(tmp_path, {})
 
     assert not (tmp_path / ".rocky-spec" / "build-values.json").exists()
+
+
+# --- update_file / rocky build --update (US-29, RF-23) ---
+
+
+def test_update_file_backs_up_and_regenerates(tmp_path):
+    templates_dir = _make_templates(tmp_path)
+    (templates_dir / "AGENTS.md.template").write_text("## Stack\n\n## Servicios externos\n")
+    (tmp_path / "AGENTS.md").write_text("## Stack\n\nDecisión custom del proyecto.\n", encoding="utf-8")
+
+    result = build.update_file(tmp_path, {}, "AGENTS.md.template", "AGENTS.md")
+
+    assert result.error is None
+    assert result.backup_path == "_AGENTS.md"
+    assert result.generated == "AGENTS.md"
+    assert (tmp_path / "_AGENTS.md").read_text() == "## Stack\n\nDecisión custom del proyecto.\n"
+    assert (tmp_path / "AGENTS.md").read_text() == "## Stack\n\n## Servicios externos\n"
+
+
+def test_update_file_reports_headers_only_in_backup_and_only_in_fresh(tmp_path):
+    templates_dir = _make_templates(tmp_path)
+    (templates_dir / "AGENTS.md.template").write_text("## Stack\n\n## Servicios externos\n")
+    (tmp_path / "AGENTS.md").write_text("## Stack\n\n## Gotchas\n", encoding="utf-8")
+
+    result = build.update_file(tmp_path, {}, "AGENTS.md.template", "AGENTS.md")
+
+    assert result.only_in_backup == ["## Gotchas"]
+    assert result.only_in_fresh == ["## Servicios externos"]
+
+
+def test_update_file_errors_when_template_missing(tmp_path):
+    (tmp_path / ".rocky-spec" / "templates").mkdir(parents=True)
+    (tmp_path / "AGENTS.md").write_text("## Stack\n", encoding="utf-8")
+
+    result = build.update_file(tmp_path, {}, "AGENTS.md.template", "AGENTS.md")
+
+    assert result.error is not None
+    assert result.backup_path is None
+    assert (tmp_path / "AGENTS.md").read_text() == "## Stack\n"  # no se tocó
+
+
+def test_update_file_errors_when_output_does_not_exist_yet(tmp_path):
+    templates_dir = _make_templates(tmp_path)
+    (templates_dir / "AGENTS.md.template").write_text("## Stack\n")
+
+    result = build.update_file(tmp_path, {}, "AGENTS.md.template", "AGENTS.md")
+
+    assert result.error is not None
+    assert "no existe" in result.error
+    assert not (tmp_path / "AGENTS.md").exists()
+
+
+def test_update_file_errors_when_stale_backup_already_exists(tmp_path):
+    templates_dir = _make_templates(tmp_path)
+    (templates_dir / "AGENTS.md.template").write_text("## Stack\n")
+    (tmp_path / "AGENTS.md").write_text("## Stack\n\ncontenido actual\n", encoding="utf-8")
+    (tmp_path / "_AGENTS.md").write_text("backup viejo sin resolver\n", encoding="utf-8")
+
+    result = build.update_file(tmp_path, {}, "AGENTS.md.template", "AGENTS.md")
+
+    assert result.error is not None
+    assert "backup" in result.error
+    # no se tocó ni el archivo ni el backup viejo
+    assert (tmp_path / "AGENTS.md").read_text() == "## Stack\n\ncontenido actual\n"
+    assert (tmp_path / "_AGENTS.md").read_text() == "backup viejo sin resolver\n"
+
+
+def test_update_file_persists_build_values_json(tmp_path):
+    templates_dir = _make_templates(tmp_path)
+    (templates_dir / "AGENTS.md.template").write_text("# {{PROJECT_NAME}}\n")
+    (tmp_path / "AGENTS.md").write_text("# viejo\n", encoding="utf-8")
+
+    build.update_file(tmp_path, {"PROJECT_NAME": "demo"}, "AGENTS.md.template", "AGENTS.md")
+
+    values_path = tmp_path / ".rocky-spec" / "build-values.json"
+    assert json.loads(values_path.read_text()) == {"PROJECT_NAME": "demo"}
+
+
+def test_update_file_reports_unresolved_placeholders(tmp_path):
+    templates_dir = _make_templates(tmp_path)
+    (templates_dir / "AGENTS.md.template").write_text("# {{PROJECT_NAME}}\n")
+    (tmp_path / "AGENTS.md").write_text("# viejo\n", encoding="utf-8")
+
+    result = build.update_file(tmp_path, {}, "AGENTS.md.template", "AGENTS.md")
+
+    assert result.unresolved == ["PROJECT_NAME"]

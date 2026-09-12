@@ -19,7 +19,7 @@ import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from .render_template import find_unresolved, render
+from .render_template import extract_headers, find_unresolved, render
 
 TEMPLATES_DIR_NAME = "templates"
 SHARED_DIR_NAME = ".rocky-spec"
@@ -141,3 +141,74 @@ def build(
         _persist_values(project_root, values)
 
     return result
+
+
+@dataclass
+class UpdateFileResult:
+    error: str | None = None
+    backup_path: str | None = None
+    generated: str | None = None
+    only_in_backup: list[str] = field(default_factory=list)
+    only_in_fresh: list[str] = field(default_factory=list)
+    unresolved: list[str] = field(default_factory=list)
+
+
+def update_file(
+    project_root: Path,
+    values: dict[str, str],
+    template_name: str,
+    output_relative: str,
+) -> UpdateFileResult:
+    """Regenera un archivo raíz que **ya existe** preservando un backup —
+    automatiza los pasos 1-2 de la receta manual de remediación de RF-22
+    (ver "Caso especial — drift de contenido" en ``mode-adopt.md`` MA-6):
+    backup del archivo actual y regeneración fresca desde el template
+    vigente. El paso 3 (mergear con criterio) sigue a cargo del agente —
+    para eso, reporta qué encabezados (``##``/``###``) quedaron solo en el
+    backup (candidatos a portar a mano) y cuáles trajo el template como
+    nuevos, reusando ``extract_headers`` (compartida con ``drift_check.py``).
+
+    Nunca pisa un backup ya existente de una corrida anterior sin resolver
+    — mismo criterio de "preguntar, no asumir" que el resto del kit."""
+    templates_dir = project_root / SHARED_DIR_NAME / TEMPLATES_DIR_NAME
+    template_path = templates_dir / template_name
+    output_path = project_root / output_relative
+
+    if not template_path.exists():
+        return UpdateFileResult(error=f"No existe `{TEMPLATES_DIR_NAME}/{template_name}`.")
+
+    if not output_path.exists():
+        return UpdateFileResult(
+            error=f"`{output_relative}` no existe -- --update regenera un archivo que ya "
+            "existe. Para crearlo por primera vez, usá `rocky build` sin --update."
+        )
+
+    backup_path = output_path.with_name(f"_{output_path.name}")
+    if backup_path.exists():
+        return UpdateFileResult(
+            error=f"Ya existe un backup en `{backup_path.relative_to(project_root)}` de una "
+            "actualización anterior sin resolver -- mergealo o borralo antes de correr "
+            "--update de nuevo."
+        )
+
+    backup_content = output_path.read_text(encoding="utf-8")
+    output_path.rename(backup_path)
+
+    template_text = template_path.read_text(encoding="utf-8")
+    rendered = render(template_text, values)
+    output_path.write_text(rendered, encoding="utf-8")
+
+    backup_headers = extract_headers(backup_content)
+    fresh_headers = extract_headers(rendered)
+    backup_set, fresh_set = set(backup_headers), set(fresh_headers)
+
+    if values:
+        _persist_values(project_root, values)
+
+    return UpdateFileResult(
+        backup_path=str(backup_path.relative_to(project_root)),
+        generated=output_relative,
+        only_in_backup=[h for h in backup_headers if h not in fresh_set],
+        only_in_fresh=[h for h in fresh_headers if h not in backup_set],
+        unresolved=find_unresolved(rendered),
+    )
