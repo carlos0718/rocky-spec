@@ -25,15 +25,13 @@ proyecto ya generado y la versión vigente del kit:
 from __future__ import annotations
 
 import json
-import re
 from pathlib import Path
 
 from .build import BASE_FILES, SHARED_DIR_NAME as BUILD_SHARED_DIR_NAME, TEMPLATES_DIR_NAME
 from .health_check import Finding, HealthCheckReport, IGNORED_DIRS
+from .render_template import extract_headers
 
 SKILL_STATE_FILE = ".skill-state.json"
-
-HEADER_PATTERN = re.compile(r"^(#{2,3})[ \t]+(\S.*?)\s*$", re.MULTILINE)
 
 # Archivos que MA-6 genera siempre para un proyecto adoptado, en la versión
 # vigente de la skill — independiente de si el proyecto tiene interfaz visual.
@@ -43,19 +41,6 @@ ALWAYS_GENERATED = ("CONSTITUTION.md", "CHANGELOG.md", "SECURITY.md", "OBSERVABI
 UI_ONLY_GENERATED = ("ACCESSIBILITY.md", "design-system/MASTER.md")
 
 UI_EXTENSIONS = ("html", "jsx", "tsx")
-
-
-def _extract_headers(text: str) -> list[str]:
-    """Encabezados `##`/`###` de un documento Markdown, en orden. Descarta
-    los que todavía tienen un placeholder sin resolver (ej. "## [0.1.0] -
-    {{DATE}}" en CHANGELOG.md.template) -- son contenido de ejemplo por
-    instancia, no una etiqueta de sección fija que tenga sentido comparar."""
-    headers = []
-    for level, title in HEADER_PATTERN.findall(text):
-        if "{{" in title:
-            continue
-        headers.append(f"{level} {title}")
-    return headers
 
 
 def _content_drift_findings(root: Path) -> list[Finding]:
@@ -72,8 +57,8 @@ def _content_drift_findings(root: Path) -> list[Finding]:
         if not template_path.exists() or not output_path.exists():
             continue  # sin template no hay contra qué comparar; sin archivo generado es tarea de RF-20, no de esto
 
-        template_headers = _extract_headers(template_path.read_text(encoding="utf-8"))
-        project_headers = set(_extract_headers(output_path.read_text(encoding="utf-8")))
+        template_headers = extract_headers(template_path.read_text(encoding="utf-8"))
+        project_headers = set(extract_headers(output_path.read_text(encoding="utf-8")))
 
         for header in template_headers:
             if header in project_headers:
