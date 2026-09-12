@@ -171,25 +171,45 @@ rocky check qa .
 
 ### Comandos disponibles
 
+Comandos de la CLI `rocky`, agrupados por qué resuelven. Para los comandos que se escriben *dentro* del agente (Claude Code / Cursor) después de un `rocky init`, ver [Los 15 comandos del agente](#los-15-comandos-del-agente).
+
+#### General
+
 | Comando | Qué hace |
 |---|---|
 | `rocky` | Sin subcomando: muestra el banner de bienvenida (estado del proyecto si ya tiene `.rocky-spec/`, o la lista de agentes si es la primera vez) y la ayuda. |
 | `rocky --version` | Imprime la versión instalada, leída de los metadatos del paquete. |
 | `rocky commands` | Esta misma tabla, renderizada en la terminal. |
+| `rocky list-integrations` | Lista los agentes soportados por esta versión (`claude`, `cursor`). |
+
+#### Instalación y actualización
+
+| Comando | Qué hace |
+|---|---|
 | `rocky init [PATH] --agent <agente>` | Instala el conocimiento compartido (`.rocky-spec/`) en `PATH` (default: `.`) y genera la integración de cada `--agent` (repetible: `--agent claude --agent cursor`). Solo copia archivos — la salida lista cada uno de los instalados y termina con el siguiente paso (hablarle al agente para que arranque el flujo). |
 | `rocky init [PATH] --agent <agente> --force` | Igual que arriba, pero regenera `.rocky-spec/` aunque ya exista. |
+| `rocky update [PATH] [--dry-run]` | Actualiza `commands/`, `reference/`, `templates/` y los archivos del kit de cada integración instalada a la versión del paquete, sin pisar ediciones manuales. `--dry-run` muestra qué cambiaría sin tocar nada. |
+
+#### Generación de archivos
+
+| Comando | Qué hace |
+|---|---|
 | `rocky build [PATH] --values <json> [--force]` | Renderiza `SPEC.md`, `CONSTITUTION.md`, `AGENTS.md`, `CLAUDE.md`, `SECURITY.md`, `OBSERVABILITY.md`, `CHANGELOG.md`, `README.md`, `TODO.md` y `LICENSE` desde `.rocky-spec/templates/` a partir de un JSON de valores — no pisa archivos existentes salvo `--force`. |
 | `rocky build [PATH] --values <json> --template <t> --output <ruta> [--force]` | Modo single-file: renderiza un solo template (ej. `MASTER.md.template`, `ACCESSIBILITY.md.template`) en vez del set fijo de arriba — `--template` y `--output` van juntos. |
-| `rocky list-integrations` | Lista los agentes soportados por esta versión (`claude`, `cursor`). |
-| `rocky check code [PATH]` | Health-check: tamaño de archivo y code smells estructurales. |
-| `rocky check security [PATH]` | Health-check: `.env` commiteado, secrets hardcodeados, vulnerabilidades conocidas. |
-| `rocky check observability [PATH]` | Health-check: error tracking, health endpoint, logging estructurado. |
+
+#### Health-checks (`rocky check`)
+
+Código determinista — no dependen de que un LLM interprete bash cada vez. `PATH` es opcional en todos, por default corre sobre el directorio actual (`.`).
+
+| Comando | Qué hace |
+|---|---|
+| `rocky check code [PATH]` | Tamaño de archivo y code smells estructurales. |
+| `rocky check security [PATH]` | `.env` commiteado, secrets hardcodeados, vulnerabilidades conocidas. |
+| `rocky check observability [PATH]` | Error tracking, health endpoint, logging estructurado. |
 | `rocky check qa [PATH]` | Trazabilidad RF → US → RNF → tarea y placeholders sin rellenar. |
 | `rocky check version [PATH]` | Calcula el bump de SemVer exacto desde el último tag (Conventional Commits, "el más alto gana") y avisa si una rama `feature/*` acumuló demasiados `fix`. |
-| `rocky check accessibility [PATH]` | Health-check: `alt`, `lang`, `div` clickeable sin rol, botón solo-ícono sin `aria-label`, contraste WCAG AA básico. |
+| `rocky check accessibility [PATH]` | `alt`, `lang`, `div` clickeable sin rol, botón solo-ícono sin `aria-label`, contraste WCAG AA básico. |
 | `rocky check anchors [PATH]` | `CLAUDE.md` (línea `@AGENTS.md`) y `.cursor/rules/rocky.mdc` (puntero a `.rocky-spec/`) siguen apuntando al conocimiento compartido — detecta el caso de un archivo editado a mano que perdió el ancla. |
-
-`PATH` es opcional en todos los `check` — por default corre sobre el directorio actual (`.`).
 
 ## Cómo trabaja
 
