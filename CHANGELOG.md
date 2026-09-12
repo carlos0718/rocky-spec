@@ -6,6 +6,12 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.22.0] - 2026-09-12
+
+### Added
+- **Checklist OWASP LLM Top 10 en `SECURITY.md`** — condicional a que el proyecto registre un servicio de IA (OpenAI/Anthropic/etc.) en la tabla "Servicios externos" de P3; no se dispara por usar una librería de IA (LangChain, Vercel AI SDK), que es stack. Detalle de los 10 ítems en `.rocky-spec/reference/security.md`. (US-31, RF-24)
+- **RNF de costo/latencia/fallback de IA en `SPEC.md`** — mismo trigger que el checklist de arriba (servicio de IA en Servicios Externos de P3): agrega tres filas nuevas a la tabla de Requisitos No Funcionales en vez de dejar la fila genérica de performance, que no aplica a un proyecto que paga por token. Se patchea sobre el `SPEC.md` ya aprobado en P1.7 (P3 corre después), mismo patrón diferido que el resto del flujo. (US-32, RF-24)
+
 ## [0.21.0] - 2026-09-12
 
 ### Added
