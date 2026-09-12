@@ -24,7 +24,7 @@ Genera `CONSTITUTION.md`, `SPEC.md`, `AGENTS.md`, `CLAUDE.md`, `SECURITY.md`, `O
 
 **Código / híbrido**:
 - `CONSTITUTION.md` (desde `CONSTITUTION.md.template` — principios inmutables: código, seguridad, arquitectura, boundaries)
-- `SPEC.md` (desde `SPEC.md.template`, con lo definido en P1.7 — SDD nivel Spec-Anchored)
+- `SPEC.md` (desde `SPEC.md.template`, con lo definido en P1.7 — SDD nivel Spec-Anchored). `{{AI_NFR_ROWS}}`: si P3 registró un servicio de IA, una fila por cada RNF de costo/latencia/fallback (ver `p3-stack.md`); si no, **borrar el comentario HTML de muestra y dejar la línea vacía** — mismo criterio que `{{EXTERNAL_SERVICES}}` de `AGENTS.md`, no dejar el comentario visible en el archivo final.
 - `AGENTS.md` (desde `AGENTS.md.template`, rellenado con el stack, arquitectura y convenciones elegidos — instrucciones universales para cualquier agente)
 - `CLAUDE.md` (desde `CLAUDE.md.template`, importa `AGENTS.md` + roles de expertise)
 - `SECURITY.md` (desde `SECURITY.md.template`, con las decisiones de P5.6 — ver `.rocky-spec/commands/p5.6-security.md`)
