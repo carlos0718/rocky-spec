@@ -1,5 +1,7 @@
 # rocky-spec
 
+![rocky-spec](assets/rocky-spec-banner.png)
+
 Toolkit multi-agente para **Spec-Driven Development**, nivel **Spec-Anchored** (el spec es un documento vivo, no una foto del día 1 — ver `src/rocky_spec/reference/methodologies.md`).
 
 Nacido como una skill de Claude, ahora es un framework agnóstico de agente: la misma base de conocimiento (`.rocky-spec/`) sirve para Claude Code, Cursor, y los agentes que se agreguen — sin duplicar contenido entre ellos.
