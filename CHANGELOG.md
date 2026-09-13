@@ -6,6 +6,11 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.22.1] - 2026-09-13
+
+### Changed
+- **README**: se agregó el banner de Rocky Spec y se reorganizó la tabla de comandos disponibles (incluyendo `rocky update`).
+
 ## [0.22.0] - 2026-09-12
 
 ### Added
