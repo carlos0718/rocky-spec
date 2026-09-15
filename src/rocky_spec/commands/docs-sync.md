@@ -1,11 +1,6 @@
----
-name: rocky-docs-sync
-description: Trazabilidad de requisitos (RF-N/US-N/RNF-N) y sincronización del README al completar una sección del TODO. Usar al marcar el último checkbox de una sección de TODO.md (o de un archivo de todos/), al agregar un RF/US/RNF nuevo a SPEC.md, o al preguntar qué tareas implementan un requisito.
----
+> Referencia de **rocky-spec** — paso `docs-sync`, servido por la skill separada `rocky-docs-sync` (no por el índice lineal de `rocky-spec`). Se carga al marcar el último checkbox de una sección de `TODO.md` (o de un archivo de `todos/`), al agregar un `RF-N`/`US-N`/`RNF-N` nuevo a `SPEC.md`, o al preguntar qué tareas implementan un requisito.
 
-# /rocky-docs-sync — sincronización de documentación
-
-> Migrado desde `AGENTS.md` (antes siempre cargado en cada sesión) — este contenido solo hace falta en los momentos que dispara la `description` de arriba, no en cada turno.
+### docs-sync · Sincronización de documentación
 
 ## README sync — al completar una sección del TODO
 
@@ -20,7 +15,7 @@ description: Trazabilidad de requisitos (RF-N/US-N/RNF-N) y sincronización del 
 | **Seguridad** (modo único) / `todos/seguridad.md` (modo orquestador) | No suele necesitar sección propia en el README, salvo que el proyecto sea open source |
 | **Documentación**        | Completar secciones vacías, agregar links a docs adicionales o diagramas generados            |
 
-En modo orquestador, completar un archivo de grupo también actualiza la tabla "Estado por grupo" de `TODO.md` en el mismo commit (ver Workflow de Git, paso 1, en `AGENTS.md`).
+En modo orquestador, completar un archivo de grupo también actualiza la tabla "Estado por grupo" de `TODO.md` en el mismo commit (ver "Workflow de Git" de `AGENTS.md`, paso 1).
 
 **Formato del commit cuando se hace README sync** (última tarea de la sección + README):
 ```
@@ -47,4 +42,4 @@ Las tareas del TODO que implementan una historia terminan con su ID: `- [ ] Endp
 
 **Al agregar un requisito nuevo** (vía el flujo Spec-Anchored de `AGENTS.md`): asignarle el próximo ID disponible del tipo correspondiente en `SPEC.md`, y taguear las tareas nuevas del TODO con ese ID desde que se escriben — no como paso aparte al final.
 
-> **Gestión de dependencias no vive acá.** Volvió a `AGENTS.md` de este repo — son valores propios de este proyecto (pinning, cadencia, licencias), no contenido genérico entre proyectos.
+> **Gestión de dependencias no vive acá a propósito.** A diferencia de lo de arriba (genérico, igual en cualquier proyecto), la política de pinning/cadencia/licencias se decide por proyecto durante el setup (P6/P7) y queda en la sección "Gestión de dependencias" de `AGENTS.md` con los valores reales elegidos — moverla a esta skill compartida le haría perder esa customización cada vez que se necesite, que es más seguido que "antes de un release grande".

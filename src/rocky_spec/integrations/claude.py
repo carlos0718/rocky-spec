@@ -113,6 +113,35 @@ description: 'Crea proyectos desde cero, los retoma en sesiones siguientes o ado
 - `{shared_dir}/commands/` — el detalle completo de cada paso del índice de arriba, más `mode-adopt.md` y `mode-resume.md`.
 """
 
+# Segunda skill, separada de rocky-spec a propósito (RF-25/US-33): trazabilidad
+# de requisitos y sync de README no son parte del flujo lineal de creación
+# (P0-P8.5) ni de los modos Adopción/Reanudación — aplican en dos momentos
+# puntuales de la vida del proyecto ya creado, y son igual de genéricos en
+# cualquier proyecto (sin placeholders que P6/P7 tenga que resolver). Vivir
+# en una skill propia, con su propia `description` de trigger, evita que ese
+# contenido esté siempre cargado en AGENTS.md aunque no se necesite en la
+# mayoría de las sesiones (ver AGENTS.md de este mismo repo, que lo tuvo así
+# hasta que una corrida de /doctor lo encontró por encima del umbral de
+# "archivo de memoria grande").
+#
+# Gestión de dependencias NO se suma acá aunque comparte el espíritu: sus
+# valores (pinning/cadencia/licencias) se deciden por proyecto en P6/P7 y
+# quedan en AGENTS.md con los valores reales elegidos — no es contenido
+# genérico compartible entre proyectos, así que se queda donde estaba.
+DOCS_SYNC_SKILL_TEMPLATE = """---
+name: rocky-docs-sync
+description: 'Trazabilidad de requisitos (RF-N/US-N/RNF-N) y sincronización del README al completar una sección del TODO. Usar al marcar el último checkbox de una sección de TODO.md (o de un archivo de todos/), al agregar un RF/US/RNF nuevo a SPEC.md, o al preguntar qué tareas implementan un requisito.'
+---
+
+# /rocky-docs-sync — sincronización de documentación (integración Claude)
+
+> Skill sibling de `rocky-spec`, separada a propósito — ver `{shared_dir}/commands/docs-sync.md` para el detalle completo. Se dispara sola en los momentos que describe la `description` de arriba; no forma parte del índice de creación de `rocky-spec`.
+
+Leer `{shared_dir}/commands/docs-sync.md` y seguirlo al pie de la letra.
+"""
+
+DOCS_SYNC_COMMAND_KEY = "docs-sync"
+
 
 def ensure_permission_rules(project_root: Path) -> dict[str, list[str]]:
     """Suma las reglas del Artículo 7 a ``.claude/settings.json`` **sin pisar**
@@ -188,8 +217,8 @@ class ClaudeIntegration(IntegrationBase):
 
         index_lines = []
         for cmd in commands:
-            if cmd.key in ("mode-adopt", "mode-resume"):
-                continue  # esos se referencian aparte, no van en el índice lineal
+            if cmd.key in ("mode-adopt", "mode-resume", DOCS_SYNC_COMMAND_KEY):
+                continue  # mode-adopt/mode-resume se referencian aparte; docs-sync vive en su propia skill (ver DOCS_SYNC_SKILL_TEMPLATE)
             index_lines.append(
                 f"### {cmd.title}\n→ `{SHARED_DIR_NAME}/commands/{cmd.relative_source}`\n"
             )
@@ -204,6 +233,16 @@ class ClaudeIntegration(IntegrationBase):
                 project_root, ".claude/skills/rocky-spec/SKILL.md", skill_content
             )
         )
+
+        if any(cmd.key == DOCS_SYNC_COMMAND_KEY for cmd in commands):
+            docs_sync_content = DOCS_SYNC_SKILL_TEMPLATE.format(shared_dir=SHARED_DIR_NAME)
+            manifest.append(
+                write_tracked(
+                    project_root,
+                    ".claude/skills/rocky-docs-sync/SKILL.md",
+                    docs_sync_content,
+                )
+            )
 
         # Fuera del manifiesto a propósito -- ver el docstring de
         # ensure_permission_rules. El resultado queda en el atributo para que

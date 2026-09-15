@@ -69,6 +69,7 @@
 - [x] `mode-adopt.md` MA-6 usa `rocky build --update` en vez de la receta manual de 2 pasos, con nota explícita de copiar literal el contenido de secciones que ya coincidían en título (US-30, RF-23)
 - [x] Checklist OWASP LLM Top 10 en `SECURITY.md`, condicional a servicio de IA en Servicios Externos (US-31, RF-24)
 - [x] RNF de costo/latencia/fallback en `SPEC.md`, condicional a servicio de IA en Servicios Externos (US-32, RF-24)
+- [x] Skill `rocky-docs-sync` separada de `rocky-spec` (trazabilidad de requisitos + README sync), generada por `rocky init --agent claude` y `--agent cursor`; `AGENTS.md.template` pierde esas dos secciones y gana un puntero (US-33, RF-25)
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
 - [ ] Integración con Gemini CLI
 - [ ] Integración con Codex CLI

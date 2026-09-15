@@ -144,7 +144,7 @@ Si el código va antes que la spec, en 2 semanas el SPEC.md refleja lo que se pe
 
 ---
 
-> **README sync, trazabilidad de requisitos y gestión de dependencias** se movieron a la skill `rocky-docs-sync` (`.claude/skills/rocky-docs-sync/SKILL.md`) — se carga sola al completar una sección del TODO, al agregar un RF/US/RNF nuevo, o antes de un release grande, en vez de estar siempre cargado en esta sesión.
+> **README sync y trazabilidad de requisitos** se movieron a la skill `rocky-docs-sync` (`.claude/skills/rocky-docs-sync/SKILL.md`) — se carga sola al completar una sección del TODO o al agregar un RF/US/RNF nuevo, en vez de estar siempre cargada en esta sesión. La gestión de dependencias sigue acá abajo: son valores propios de este proyecto (pinning, cadencia, licencias), no contenido genérico.
 
 ## Workflow de Git — 1 user story / tarea = 1 commit + push
 
@@ -326,6 +326,15 @@ Este proyecto sigue [SemVer](https://semver.org/lang/es/) (`MAJOR.MINOR.PATCH`) 
 - **Qué bump corresponde**: `fix` → PATCH · `feat` → MINOR · breaking change → MAJOR. Mientras el proyecto está en `0.x.y` (antes del primer release estable), un breaking change puede seguir bumpeando MINOR en vez de saltar a `1.0.0` — pasar a `1.0.0` es decisión del usuario, no automática.
 - **Decisión de este proyecto (2026-09-04)**: `rocky-spec` se queda en `0.x.y` por ahora — todavía en `Development Status :: 3 - Alpha`, sin publicación en PyPI (RF-6) ni usuarios externos conocidos que fijen la versión como dependencia. Próximos breaking changes (como el rename `charless` → `rocky` de `v0.7.0`) siguen bumpeando MINOR, no `1.0.0`. Revisar esta decisión cuando aparezca cualquiera de esas dos señales.
 - **Nivel de exigencia**: un prototipo descartable no necesita nada de esto. Si este proyecto es una librería o paquete publicado (npm, PyPI), el versionado es estricto y romper compatibilidad es siempre MAJOR — ver `.rocky-spec/reference/versioning.md` sección "Nivel de exigencia" para el detalle completo.
+
+## Gestión de dependencias
+
+El escaneo de vulnerabilidades ya está en `SECURITY.md`. Acá va la política de **mantenimiento** — ver `.rocky-spec/reference/dependencies.md` de la skill para el detalle completo:
+
+- **Pinning**: dependencias de aplicación con rango caret (`^1.2.3`), herramientas de build críticas con versión exacta. El lockfile (no aplica todavía — pyproject.toml declara rangos, sin lockfile) siempre commiteado — nunca en `.gitignore`.
+- **Cadencia**: "Dependabot semanal — patches se auto-mergean si CI pasa, minors se revisan agrupados, majors se revisan uno por uno".
+- **Antes de un release grande**: correr auditoría de dependencias sin usar (`depcheck`/`pip-check`/`cargo-udeps` según el stack) — no es un chequeo de cada commit.
+- **Licencias de terceros**: "no aplica — proyecto privado, no se redistribuye" <!-- si el proyecto es open source o se redistribuye, cambiar a "sí — correr license-checker antes de cada release" -->
 
 ## Próximas decisiones pendientes
 

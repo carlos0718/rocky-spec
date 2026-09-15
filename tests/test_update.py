@@ -103,3 +103,5 @@ def test_refreshes_kit_only_files_of_installed_agents(tmp_path):
     assert report.agents_refreshed == ["claude"]
     skill_file = tmp_path / ".claude/skills/rocky-spec/SKILL.md"
     assert skill_file.exists()
+    docs_sync_file = tmp_path / ".claude/skills/rocky-docs-sync/SKILL.md"
+    assert docs_sync_file.exists()
