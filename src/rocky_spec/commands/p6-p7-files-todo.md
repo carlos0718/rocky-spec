@@ -240,9 +240,9 @@ Si el usuario no tenía `default_build_order` en `profile.md` y eligió explíci
 
 #### Convención: README sync al completar secciones
 
-El `TODO.md.template` y el `AGENTS.md.template` incluyen la tabla de mapeo de secciones a README, pero avisarle al usuario explícitamente al cerrar P7 (salvo modo D):
+El `TODO.md.template` referencia la tabla de mapeo de secciones a README que vive en `.rocky-spec/commands/docs-sync.md` (servida como skill separada `rocky-docs-sync` en Claude, o `.cursor/commands/rocky-docs-sync.md` en Cursor — no en `AGENTS.md`, ver RF-25). Avisarle al usuario explícitamente al cerrar P7 (salvo modo D):
 
-> "Otra regla que quedó en `AGENTS.md`: cuando se completa el **último checkbox de cada sección del TODO** (Setup, Features, Calidad, Deploy, Docs), Claude actualiza la sección correspondiente del README e incluye ese cambio en el mismo commit. Así el README siempre refleja el estado real del proyecto — no quedá desactualizado."
+> "Otra regla que quedó configurada: cuando se completa el **último checkbox de cada sección del TODO** (Setup, Features, Calidad, Deploy, Docs), el agente actualiza la sección correspondiente del README e incluye ese cambio en el mismo commit. Así el README siempre refleja el estado real del proyecto — no queda desactualizado."
 
 #### Convención: 1 tarea completada = 1 commit + push
 

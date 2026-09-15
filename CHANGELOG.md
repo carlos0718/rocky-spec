@@ -6,6 +6,11 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.23.0] - 2026-09-14
+
+### Added
+- **Skill `rocky-docs-sync`, separada de `rocky-spec`** — `rocky init --agent claude` genera `.claude/skills/rocky-docs-sync/SKILL.md` con trazabilidad de requisitos y sync de README, disparada sola en esos dos momentos en vez de estar siempre-cargada en `AGENTS.md`; `rocky init --agent cursor` recibe el mismo contenido como `.cursor/commands/rocky-docs-sync.md` vía el `COMMAND_CATALOG` existente. Gestión de dependencias queda en `AGENTS.md.template` sin cambios, porque sus valores se deciden por proyecto. Surgió de una corrida de `/doctor` que encontró el `AGENTS.md` de este propio repo por encima del umbral de "archivo de memoria grande". (US-33, RF-25)
+
 ## [0.22.1] - 2026-09-13
 
 ### Changed

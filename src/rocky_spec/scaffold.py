@@ -32,6 +32,7 @@ COMMAND_CATALOG: list[tuple[str, str, str]] = [
     ("validate", "P8 · Reporte de validación", "p8-p8.5-validation-systemprompt.md"),
     ("mode-adopt", "Modo Adopción", "mode-adopt.md"),
     ("mode-resume", "Modo Reanudación", "mode-resume.md"),
+    ("docs-sync", "Sincronización de documentación (trazabilidad, README)", "docs-sync.md"),
 ]
 
 
