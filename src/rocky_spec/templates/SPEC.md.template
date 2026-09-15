@@ -22,7 +22,7 @@
 
 ## User Stories clave
 
-> Cada historia tiene un ID (`US-1`, `US-2`...) y referencia el `RF-N` que implementa — una feature puede desglosarse en varias historias. Los IDs de historia se referencian a su vez desde `TODO.md` para trazar qué tareas la implementan. Ver `AGENTS.md` sección "Trazabilidad de requisitos".
+> Cada historia tiene un ID (`US-1`, `US-2`...) y referencia el `RF-N` que implementa — una feature puede desglosarse en varias historias. Los IDs de historia se referencian a su vez desde `TODO.md` para trazar qué tareas la implementan. Detalle completo en la skill `rocky-docs-sync` (`.rocky-spec/commands/docs-sync.md`).
 
 - **US-1** (implementa RF-1): Como {{USER_TYPE}}, quiero {{ACTION}}, para {{BENEFIT}}
 - **US-2** (implementa RF-1): {{USER_STORY_2}}

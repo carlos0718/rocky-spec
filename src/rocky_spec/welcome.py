@@ -156,6 +156,7 @@ AGENT_COMMAND_PURPOSE = {
     "validate": "Reporte final: qué quedó completo y qué falta.",
     "mode-adopt": "Para un proyecto que YA tiene código: lo documenta sin arrancar de cero.",
     "mode-resume": "Retoma el proyecto donde quedó y dice cuál es la próxima tarea.",
+    "docs-sync": "Trazabilidad de requisitos y sync de README — no es un paso del flujo P0-P8.5: se dispara solo en Claude (skill separada) o con /rocky-docs-sync en Cursor.",
 }
 
 # Cómo se disparan esos comandos en cada agente. Es la diferencia práctica

@@ -19,6 +19,24 @@ def test_claude_integration_generates_skill_md(tmp_path):
     assert "name: rocky-spec" in skill_file.read_text()
 
 
+def test_claude_integration_generates_docs_sync_as_a_separate_skill(tmp_path):
+    # RF-25/US-33: docs-sync no es un paso mas del indice lineal de
+    # rocky-spec -- vive en su propia skill, con su propio trigger, para no
+    # depender de que el usuario invoque /rocky-spec para que se cargue.
+    scaffold.ensure_shared_knowledge(tmp_path)
+    commands = scaffold.all_commands()
+    entries = INTEGRATION_REGISTRY["claude"].install(tmp_path, commands)
+    paths = [e.path for e in entries]
+
+    assert ".claude/skills/rocky-docs-sync/SKILL.md" in paths
+    docs_sync_file = tmp_path / ".claude/skills/rocky-docs-sync/SKILL.md"
+    assert docs_sync_file.exists()
+    assert "name: rocky-docs-sync" in docs_sync_file.read_text()
+
+    rocky_spec_index = (tmp_path / ".claude/skills/rocky-spec/SKILL.md").read_text()
+    assert "docs-sync" not in rocky_spec_index
+
+
 def test_cursor_integration_generates_one_command_per_step_plus_rule(tmp_path):
     scaffold.ensure_shared_knowledge(tmp_path)
     commands = scaffold.all_commands()
@@ -54,10 +72,12 @@ def test_uninstall_removes_only_untouched_files(tmp_path):
 
     skill_file = tmp_path / ".claude/skills/rocky-spec/SKILL.md"
     skill_file.write_text(skill_file.read_text() + "\n<!-- edición manual -->")
+    docs_sync_file = tmp_path / ".claude/skills/rocky-docs-sync/SKILL.md"
 
     removed = integration.uninstall(tmp_path, entries)
-    assert removed == 0  # el archivo fue editado a mano, no se toca
-    assert skill_file.exists()
+    assert removed == len(entries) - 1  # todo se borra salvo el editado a mano
+    assert skill_file.exists()  # editado a mano, no se toca
+    assert not docs_sync_file.exists()  # intacto, se borra normal
 
 
 def _settings(root):

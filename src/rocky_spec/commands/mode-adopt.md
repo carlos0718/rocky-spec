@@ -317,7 +317,7 @@ Generar el TODO con:
 - Features en progreso como `[ ]` con nota `<!-- en progreso -->`
 - Features pendientes como `[ ]`
 - Conservar las secciones DDD si el proyecto es fullstack (Dominio/DB, API/Backend, Frontend/UI) — o reorganizar por feature si el usuario prefiere ese modo (ver siguiente punto)
-- Si `SPEC.md` (generado en MA-3) tiene historias de usuario con ID, taguear cada tarea con su `US-N` correspondiente (ver `AGENTS.md` sección "Trazabilidad de requisitos")
+- Si `SPEC.md` (generado en MA-3) tiene historias de usuario con ID, taguear cada tarea con su `US-N` correspondiente (ver `.rocky-spec/commands/docs-sync.md` sección "Trazabilidad de requisitos")
 
 **Preguntar por capas o por features** (mismo criterio que P7, ver `.rocky-spec/commands/p6-p7-files-todo.md` sección "Organización de 'Features iniciales'") si el proyecto es fullstack o backend con DDD — no asumir por capas solo porque es lo que había antes, si el proyecto es de una sola persona full-stack puede convenirle más por features.
 
