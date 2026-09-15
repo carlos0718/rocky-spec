@@ -11,45 +11,13 @@
 - **Descripción**: Toolkit multi-agente de Spec-Driven Development, nivel Spec-Anchored. Ver SPEC.md.
 - **Generado por**: skill `rocky-spec` — ver `CONSTITUTION.md` (reglas que no se negocian), `SPEC.md` (qué se construye), `TODO.md` (qué falta), `SECURITY.md` (decisiones y checklist de seguridad), `OBSERVABILITY.md` (cómo saber si esto está funcionando en producción)
 
-## Stack
-
-- **Frontend**: no aplica — es un CLI
-- **Backend**: Python 3.9+ (click para el CLI)
-- **ORM / DB**: no aplica — no hay persistencia
-- **Estilos**: no aplica
-- **Testing**: pytest
-- **Otros**: hatchling (build backend)
-
 ## Infraestructura de deploy
-
-- **Docker**: no aplica — se distribuye como paquete Python, no como contenedor  <!-- sí (Dockerfile + docker-compose.yml) | no | pendiente -->
-- **Plataforma**: PyPI (pendiente — hoy se instala en modo editable)  <!-- Render | Railway | Fly.io | Vercel | AWS | GCP | Azure | pendiente -->
-- **CI/CD**: CI básico — GitHub Actions corre `pytest` (matrix Python 3.9/3.12) en cada push/PR a `development` y `master` (`.github/workflows/ci.yml`)  <!-- CI básico | CI/CD completo | no configurado -->
-- **Archivo de config**: `.github/workflows/ci.yml`  <!-- render.yaml | fly.toml | .github/workflows/ci.yml | etc. -->
-- **Variables de entorno**: `.env.example` generado — completar valores reales antes del primer deploy
 
 > Las variables de entorno nunca van al repo. `.env` está en `.gitignore`. Los secrets de producción se configuran en el panel de la plataforma elegida (o en GitHub Secrets si usás CI/CD).
 
 ## Arquitectura
 
 Plugin registry (Mediano — feature-based)
-
-Resumen de la estructura:
-
-```
-rocky-spec/
-├── pyproject.toml
-├── README.md / LICENSE / CHANGELOG.md
-├── src/rocky_spec/
-│   ├── cli.py                (comandos: init, check, list-integrations)
-│   ├── scaffold.py            (copia el conocimiento a .rocky-spec/)
-│   ├── integrations/          (base.py, claude.py, cursor.py, registry)
-│   ├── scripts/                (render_template, health_check, qa_review)
-│   ├── commands/                (14 pasos del ciclo de vida, agnósticos de agente)
-│   ├── reference/                (17 documentos de principios/metodologías)
-│   └── templates/                 (18 plantillas de archivos generados)
-└── tests/
-```
 
 ## Decisiones del setup
 
@@ -72,22 +40,6 @@ Los principios de código, seguridad, tamaño de archivo, y las reglas de "pregu
 
 **Patrones activos de este proyecto** (según arquitectura elegida en setup — el detalle de por qué está en `CONSTITUTION.md` Artículo 5):
 - Registry / Plugin, Adapter  <!-- ej. Repository, Factory, Observer, Strategy -->
-
-## Comandos útiles
-
-```bash
-# Dev
-pip install -e . && rocky --help
-
-# Test
-python3 -m pytest tests/ -v
-
-# Lint
-no configurado todavía
-
-# Build
-python3 -m build
-```
 
 ## Gotchas / cosas a recordar
 
@@ -192,49 +144,7 @@ Si el código va antes que la spec, en 2 semanas el SPEC.md refleja lo que se pe
 
 ---
 
-## README sync — al completar una sección del TODO
-
-**Regla:** cuando se marca el **último checkbox de una sección completa** del `TODO.md` (modo único) **o de un archivo de grupo completo** en `todos/` (modo orquestador, por capas o por features), actualizar la sección correspondiente del `README.md` antes del commit — así el README siempre refleja el estado real del proyecto.
-
-| Sección de TODO.md / archivo de `todos/` | Qué actualizar en README.md                                                                   |
-|--------------------------|-----------------------------------------------------------------------------------------------|
-| **Setup**                | Verificar/completar scripts (`dev`, `build`, `test`, `lint`), pasos de instalación y variables de entorno |
-| **Features iniciales** (modo único) / `todos/dominio-db.md`, `todos/api-backend.md`, `todos/frontend-ui.md` (modo orquestador) | Agregar o actualizar la sección "Features" con lo que realmente se construyó |
-| **Calidad**              | Actualizar comando de lint/coverage, agregar badge si aplica                                  |
-| **Infraestructura / Deploy** (modo único) / `todos/infraestructura-deploy.md` (modo orquestador) | Agregar URL de producción, hosting, y variables de entorno de prod si corresponde |
-| **Seguridad** (modo único) / `todos/seguridad.md` (modo orquestador) | No suele necesitar sección propia en el README, salvo que el proyecto sea open source |
-| **Documentación**        | Completar secciones vacías, agregar links a docs adicionales o diagramas generados            |
-
-En modo orquestador, completar un archivo de grupo también actualiza la tabla "Estado por grupo" de `TODO.md` en el mismo commit (ver Workflow de Git, paso 1).
-
-**Formato del commit cuando se hace README sync** (última tarea de la sección + README):
-```
-docs: update README — sección <nombre> completada (TODO: <última tarea>)
-```
-
-**Cuándo NO disparar el sync:**
-- Si quedan `- [ ]` sin marcar en la sección — todavía no es el momento.
-- Si la sección no tiene impacto visible en el README (ej. refactors internos) — se puede omitir.
-- Si el usuario prefiere controlar el README manualmente — respetar, pero avisar al llegar al final de cada sección.
-
----
-
-## Trazabilidad de requisitos
-
-`SPEC.md` numera tres tipos de requisitos, cada uno con su prefijo: **`RF-N`** (Requisito Funcional — features), **`US-N`** (User Story — cómo se desglosa un RF desde la perspectiva del usuario), **`RNF-N`** (Requisito No Funcional — performance, escalabilidad, etc.). La cadena de trazabilidad completa:
-
-```
-RF-N (feature)  →  US-N (historia que la implementa)  →  tarea del TODO (US-N)
-RNF-N (no funcional)  →  tarea del TODO (RNF-N), si el requisito tiene un objetivo concreto que exige trabajo puntual
-```
-
-Las tareas del TODO que implementan una historia terminan con su ID: `- [ ] Endpoint POST /login (US-1)`. Si además una tarea existe específicamente para cumplir un NFR (ej. agregar caché para cumplir un objetivo de performance), sumar también su ID: `- [ ] Agregar caché de Redis al endpoint de búsqueda (US-4, RNF-1)`. Tareas de infraestructura/setup/calidad genéricas no llevan ningún ID — no todo tiene que derivar de un requisito.
-
-**Para responder "¿qué tareas implementan el RF-N / US-N / RNF-N?"**: `grep -rn "RF-N\|US-N\|RNF-N" SPEC.md TODO.md todos/ 2>/dev/null` — no hay una tabla de mapeo aparte que mantener sincronizada, el ID en cada línea es la fuente de verdad.
-
-**Al agregar un requisito nuevo** (vía el flujo Spec-Anchored de abajo): asignarle el próximo ID disponible del tipo correspondiente en `SPEC.md`, y taguear las tareas nuevas del TODO con ese ID desde que se escriben — no como paso aparte al final.
-
----
+> **README sync, trazabilidad de requisitos y gestión de dependencias** se movieron a la skill `rocky-docs-sync` (`.claude/skills/rocky-docs-sync/SKILL.md`) — se carga sola al completar una sección del TODO, al agregar un RF/US/RNF nuevo, o antes de un release grande, en vez de estar siempre cargado en esta sesión.
 
 ## Workflow de Git — 1 user story / tarea = 1 commit + push
 
@@ -416,15 +326,6 @@ Este proyecto sigue [SemVer](https://semver.org/lang/es/) (`MAJOR.MINOR.PATCH`) 
 - **Qué bump corresponde**: `fix` → PATCH · `feat` → MINOR · breaking change → MAJOR. Mientras el proyecto está en `0.x.y` (antes del primer release estable), un breaking change puede seguir bumpeando MINOR en vez de saltar a `1.0.0` — pasar a `1.0.0` es decisión del usuario, no automática.
 - **Decisión de este proyecto (2026-09-04)**: `rocky-spec` se queda en `0.x.y` por ahora — todavía en `Development Status :: 3 - Alpha`, sin publicación en PyPI (RF-6) ni usuarios externos conocidos que fijen la versión como dependencia. Próximos breaking changes (como el rename `charless` → `rocky` de `v0.7.0`) siguen bumpeando MINOR, no `1.0.0`. Revisar esta decisión cuando aparezca cualquiera de esas dos señales.
 - **Nivel de exigencia**: un prototipo descartable no necesita nada de esto. Si este proyecto es una librería o paquete publicado (npm, PyPI), el versionado es estricto y romper compatibilidad es siempre MAJOR — ver `.rocky-spec/reference/versioning.md` sección "Nivel de exigencia" para el detalle completo.
-
-## Gestión de dependencias
-
-El escaneo de vulnerabilidades ya está en `SECURITY.md`. Acá va la política de **mantenimiento** — ver `.rocky-spec/reference/dependencies.md` de la skill para el detalle completo:
-
-- **Pinning**: dependencias de aplicación con rango caret (`^1.2.3`), herramientas de build críticas con versión exacta. El lockfile (no aplica todavía — pyproject.toml declara rangos, sin lockfile) siempre commiteado — nunca en `.gitignore`.
-- **Cadencia**: "Dependabot semanal — patches se auto-mergean si CI pasa, minors se revisan agrupados, majors se revisan uno por uno".
-- **Antes de un release grande**: correr auditoría de dependencias sin usar (`depcheck`/`pip-check`/`cargo-udeps` según el stack) — no es un chequeo de cada commit.
-- **Licencias de terceros**: "no aplica — proyecto privado, no se redistribuye" <!-- si el proyecto es open source o se redistribuye, cambiar a "sí — correr license-checker antes de cada release" -->
 
 ## Próximas decisiones pendientes
 
