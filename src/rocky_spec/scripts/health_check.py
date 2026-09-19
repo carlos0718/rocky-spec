@@ -15,14 +15,43 @@ import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
 
-IGNORED_DIRS = {"node_modules", ".git", "dist", "build", ".venv", "__pycache__"}
-
-FILE_SIZE_LIMITS = {
-    # extensión -> (ideal, revisar, dividir_si_o_si)
-    "component": (150, 250, 400),
-    "service": (200, 300, 400),
-    "default": (200, 300, 500),
+IGNORED_DIRS = {
+    "node_modules", ".git", "dist", "build", ".venv", "__pycache__",
+    # generados o de terceros — no son código del proyecto
+    "venv", "vendor", "obj", "target", ".next", "coverage",
 }
+
+# Extensiones que mide `check_file_sizes`: los stacks de reference/stacks-code.md
+# (incl. Vue/Svelte, que la tabla de coding-principles.md nombra explícitamente).
+SIZE_CHECKED_EXTENSIONS = (
+    "ts", "tsx", "js", "jsx", "vue", "svelte", "py", "go", "rs", "java", "kt", "cs", "rb", "php",
+)
+
+# Tabla "Tamaño de archivo" de coding-principles.md -> (revisar, dividir_sí_o_sí).
+# None = esa fila del doc no da un umbral para ese escalón. "default" cubre componentes
+# UI y cualquier archivo sin fila propia en el doc (250/400, el comportamiento histórico).
+FILE_SIZE_LIMITS = {
+    "default": (250, 400),
+    "service": (300, 400),  # servicio / hook / composable
+    "types": (300, 500),
+    "tests": (500, None),  # el doc dice "dividir por describe/escenario", sin número
+    "config": (None, None),  # config/constantes: sin límite práctico
+}
+HARD_CEILING_LINES = 1000  # regla dura del doc: sin excepción de tipo de archivo
+
+KIND_LABELS = {
+    "service": "servicio/hook",
+    "types": "tipos",
+    "tests": "tests",
+    "config": "config/constantes",
+}
+
+_TEST_DIRS = {"tests", "test", "__tests__", "spec", "specs"}
+_TEST_NAME = re.compile(r"^test_|_tests?$|\.(test|spec)$|[a-z0-9]Tests?$")
+_TYPES_NAME = re.compile(r"\.d$|\.types?$|^types?$")
+_CONFIG_NAME = re.compile(r"\.config$|^config$|^constants?$")
+_SERVICE_DIRS = {"services", "hooks", "composables"}
+_SERVICE_NAME = re.compile(r"(?i:service|hook|composable)s?$|^use[A-Z]")
 
 SECRET_PATTERN = re.compile(
     r"(api[_-]?key|secret|password|token)\s*[:=]\s*['\"][A-Za-z0-9_\-]{16,}['\"]",
@@ -69,25 +98,49 @@ def _iter_source_files(root: Path, extensions: tuple[str, ...]) -> list[Path]:
     return files
 
 
+def _is_test_dir(part: str) -> bool:
+    return part.lower() in _TEST_DIRS or part.lower().endswith((".tests", ".test"))  # MyApp.Tests (C#)
+
+
+def _file_kind(relative: Path) -> str:
+    """Clasifica por nombre/carpetas *relativas al proyecto* (nunca la ruta
+    absoluta: un proyecto bajo una carpeta `tests/` no es todo tests). Heurístico,
+    no un parser: el orden resuelve solapes (un `UserServiceTests.cs` es tests)."""
+    stem = relative.stem
+    dirs = relative.parent.parts
+    if any(_is_test_dir(d) for d in dirs) or _TEST_NAME.search(stem):
+        return "tests"
+    if "types" in dirs or _TYPES_NAME.search(stem):
+        return "types"
+    if _CONFIG_NAME.search(stem):
+        return "config"
+    if any(d in _SERVICE_DIRS for d in dirs) or _SERVICE_NAME.search(stem):
+        return "service"
+    return "default"
+
+
 def check_file_sizes(root: Path) -> HealthCheckReport:
     """Equivalente determinista de MA-1.5 — límites de coding-principles.md."""
     report = HealthCheckReport(category="code")
-    for path in _iter_source_files(root, ("ts", "tsx", "js", "jsx", "py", "go", "rs")):
+    for path in _iter_source_files(root, SIZE_CHECKED_EXTENSIONS):
         try:
             n_lines = sum(1 for _ in path.open(encoding="utf-8", errors="ignore"))
         except OSError:
             continue
-        if n_lines >= 1000:
+        kind = _file_kind(path.relative_to(root))
+        review_at, split_at = FILE_SIZE_LIMITS[kind]
+        see = "ver coding-principles.md" if kind == "default" else f"ver coding-principles.md, límite de {KIND_LABELS[kind]}"
+        if n_lines >= HARD_CEILING_LINES:
             report.findings.append(
-                Finding("critical", f"{n_lines} líneas — techo duro de 1000 sin excepción", str(path))
+                Finding("critical", f"{n_lines} líneas — techo duro de {HARD_CEILING_LINES} sin excepción", str(path))
             )
-        elif n_lines >= 400:
+        elif split_at is not None and n_lines >= split_at:
             report.findings.append(
-                Finding("warning", f"{n_lines} líneas — dividir sí o sí (ver coding-principles.md)", str(path))
+                Finding("warning", f"{n_lines} líneas — dividir sí o sí ({see})", str(path))
             )
-        elif n_lines >= 250:
+        elif review_at is not None and n_lines >= review_at:
             report.findings.append(
-                Finding("warning", f"{n_lines} líneas — zona de revisar", str(path))
+                Finding("warning", f"{n_lines} líneas — zona de revisar ({see})", str(path))
             )
     return report
 
