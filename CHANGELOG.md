@@ -6,6 +6,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Fixed
+- **`rocky check` ignoraba proyectos enteros que vivían bajo una carpeta llamada `build`, `dist`, `node_modules`, `.git`, etc.** — el filtro de carpetas ignoradas comparaba contra la ruta absoluta completa en vez de solo las carpetas dentro del proyecto. Un proyecto en `/build/app` (típico `WORKDIR /build` de Docker) devolvía "✅ sin hallazgos" en `check code`, `check security` (incluidos los secrets hardcodeados), `check observability` y `check accessibility`, y `check drift` no detectaba su UI. Ahora solo cuentan las carpetas dentro del proyecto.
+
 ## [0.23.0] - 2026-09-14
 
 ### Added

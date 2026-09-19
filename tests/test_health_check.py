@@ -32,6 +32,33 @@ def test_check_file_sizes_ignores_small_files(tmp_path):
     assert report.findings == []
 
 
+def test_check_file_sizes_scans_project_that_lives_under_an_ignored_dir_name(tmp_path):
+    # Ej. `WORKDIR /build` en Docker: la carpeta ancestro se llama como una
+    # de IGNORED_DIRS, pero el proyecto en sí no está dentro de una carpeta ignorada.
+    project = tmp_path / "build" / "proj"
+    project.mkdir(parents=True)
+    (project / "big.ts").write_text("\n".join(f"// line {i}" for i in range(450)))
+    report = health_check.check_file_sizes(project)
+    assert any("dividir sí o sí" in f.message for f in report.findings)
+
+
+def test_check_file_sizes_still_ignores_ignored_dirs_inside_the_project(tmp_path):
+    vendored = tmp_path / "node_modules" / "lib"
+    vendored.mkdir(parents=True)
+    (vendored / "big.ts").write_text("\n".join(f"// line {i}" for i in range(450)))
+    report = health_check.check_file_sizes(tmp_path)
+    assert report.findings == []
+
+
+def test_check_security_scans_project_that_lives_under_an_ignored_dir_name(tmp_path):
+    project = tmp_path / "dist" / "proj"
+    project.mkdir(parents=True)
+    subprocess.run(["git", "init", "-q"], cwd=project, check=True)
+    (project / "config.js").write_text("const API_KEY = 'sk-live-abc123def456ghi789jkl';\n")
+    report = health_check.check_security(project)
+    assert any("secret hardcodeado" in f.message for f in report.findings)
+
+
 def test_check_security_detects_missing_env_in_gitignore(git_repo):
     (git_repo / ".gitignore").write_text("node_modules\n")
     report = health_check.check_security(git_repo)

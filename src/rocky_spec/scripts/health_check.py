@@ -50,12 +50,19 @@ class HealthCheckReport:
         return any(f.severity == "critical" for f in self.findings)
 
 
+def _is_ignored(path: Path, root: Path) -> bool:
+    """Solo mira las carpetas *dentro* de ``root``: un proyecto que vive bajo una
+    carpeta llamada como una de IGNORED_DIRS (ej. ``WORKDIR /build`` en Docker)
+    no debe quedar entero ignorado."""
+    return any(part in IGNORED_DIRS for part in path.relative_to(root).parent.parts)
+
+
 def _iter_source_files(root: Path, extensions: tuple[str, ...]) -> list[Path]:
     files = []
     for path in root.rglob("*"):
         if path.is_dir():
             continue
-        if any(part in IGNORED_DIRS for part in path.parts):
+        if _is_ignored(path, root):
             continue
         if path.suffix.lstrip(".") in extensions:
             files.append(path)

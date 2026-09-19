@@ -28,7 +28,7 @@ import json
 from pathlib import Path
 
 from .build import BASE_FILES, SHARED_DIR_NAME as BUILD_SHARED_DIR_NAME, TEMPLATES_DIR_NAME
-from .health_check import Finding, HealthCheckReport, IGNORED_DIRS
+from .health_check import Finding, HealthCheckReport, _is_ignored
 from .render_template import extract_headers
 
 SKILL_STATE_FILE = ".skill-state.json"
@@ -82,7 +82,7 @@ def _project_has_ui(root: Path) -> bool:
     for path in root.rglob("*"):
         if path.is_dir():
             continue
-        if any(part in IGNORED_DIRS for part in path.parts):
+        if _is_ignored(path, root):
             continue
         if path.suffix.lstrip(".") in UI_EXTENSIONS:
             return True
