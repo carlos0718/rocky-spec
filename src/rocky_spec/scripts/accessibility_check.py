@@ -21,7 +21,8 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from .health_check import Finding, HealthCheckReport, _iter_source_files
+from .health_check import Finding, HealthCheckReport
+from .source_files import extensions_for, iter_source_files
 
 # --- Heurístico 1: <img> sin alt ---
 IMG_TAG = re.compile(r"<img\b[^>]*/?>", re.IGNORECASE | re.DOTALL)
@@ -69,7 +70,7 @@ def check_img_alt(root: Path) -> list[Finding]:
     """<img> sin `alt`. NO flaggea si el tag tiene `{...spread}` -- puede
     traer `alt` inyectado dinámicamente, no se ve en el texto."""
     findings: list[Finding] = []
-    for path in _iter_source_files(root, ("html", "jsx", "tsx")):
+    for path in iter_source_files(root, extensions_for("accessibility")):
         text = _read(path)
         if text is None:
             continue
@@ -87,7 +88,7 @@ def check_img_alt(root: Path) -> list[Finding]:
 def check_html_lang(root: Path) -> list[Finding]:
     """<html> sin `lang`. Bajo riesgo de falso positivo -- sin excepciones."""
     findings: list[Finding] = []
-    for path in _iter_source_files(root, ("html", "jsx", "tsx")):
+    for path in iter_source_files(root, extensions_for("accessibility")):
         text = _read(path)
         if text is None:
             continue
@@ -103,7 +104,7 @@ def check_clickable_div_role(root: Path) -> list[Finding]:
     """<div onClick>/<div onclick> sin `role`/`tabIndex` en el mismo tag --
     no es focuseable ni anunciado como interactivo sin eso."""
     findings: list[Finding] = []
-    for path in _iter_source_files(root, ("html", "jsx", "tsx")):
+    for path in iter_source_files(root, extensions_for("accessibility")):
         text = _read(path)
         if text is None:
             continue
@@ -130,7 +131,7 @@ def check_icon_only_button(root: Path) -> list[Finding]:
     le da nombre accesible a nadie (ni screen reader) y sigue sin
     flaggearse -- falso negativo conocido, no falso positivo."""
     findings: list[Finding] = []
-    for path in _iter_source_files(root, ("html", "jsx", "tsx")):
+    for path in iter_source_files(root, extensions_for("accessibility")):
         text = _read(path)
         if text is None:
             continue
@@ -220,7 +221,7 @@ def check_color_contrast(root: Path) -> list[Finding]:
     no falso negativo silencioso: simplemente no hay valor de color que
     resolver desde el texto solo."""
     findings: list[Finding] = []
-    for path in _iter_source_files(root, ("css", "html", "jsx", "tsx")):
+    for path in iter_source_files(root, extensions_for("contrast")):
         text = _read(path)
         if text is None:
             continue

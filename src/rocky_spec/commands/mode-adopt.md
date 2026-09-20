@@ -43,8 +43,12 @@ Correr un chequeo rápido de salud del código existente, sobre los archivos de 
 
 ```bash
 # Top 15 archivos más largos del proyecto
-find . -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.py" -o -name "*.go" -o -name "*.rs" \) \
+find . -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" -o -name "*.mjs" -o -name "*.cjs" \
+  -o -name "*.vue" -o -name "*.svelte" -o -name "*.astro" -o -name "*.py" -o -name "*.go" -o -name "*.rs" \
+  -o -name "*.java" -o -name "*.kt" -o -name "*.cs" -o -name "*.rb" -o -name "*.php" \) \
   -not -path "*/node_modules/*" -not -path "*/dist/*" -not -path "*/build/*" -not -path "*/.git/*" \
+  -not -path "*/.venv/*" -not -path "*/venv/*" -not -path "*/vendor/*" -not -path "*/obj/*" \
+  -not -path "*/target/*" -not -path "*/.next/*" -not -path "*/coverage/*" \
   -exec wc -l {} \; | sort -rn | head -15
 ```
 
@@ -72,8 +76,12 @@ grep -q "^\.env$" .gitignore 2>/dev/null || echo "⚠️  .env no está en .giti
 
 # Candidatos a secret hardcodeado (heurístico — falsos positivos posibles, no reemplaza revisión manual)
 grep -rEn "(api[_-]?key|secret|password|token)\s*[:=]\s*['\"][A-Za-z0-9_\-]{16,}['\"]" \
-  --include="*.ts" --include="*.js" --include="*.py" --include="*.go" \
-  --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=dist --exclude-dir=build .
+  --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" --include="*.mjs" --include="*.cjs" \
+  --include="*.vue" --include="*.svelte" --include="*.astro" --include="*.py" --include="*.go" --include="*.rs" \
+  --include="*.java" --include="*.kt" --include="*.cs" --include="*.rb" --include="*.php" \
+  --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=dist --exclude-dir=build \
+  --exclude-dir=.venv --exclude-dir=venv --exclude-dir=vendor --exclude-dir=obj \
+  --exclude-dir=target --exclude-dir=.next --exclude-dir=coverage .
 
 # Dependencias con vulnerabilidades conocidas (según el ecosistema detectado en MA-1)
 npm audit --audit-level=high 2>/dev/null || pip-audit 2>/dev/null || echo "Correr el audit del ecosistema correspondiente manualmente"
@@ -98,19 +106,19 @@ Guardar la lista de hallazgos — se muestra en MA-2 junto a la salud del códig
 
 **Si `rocky` está disponible**, correr `rocky check observability .` — versión determinista de este chequeo (`health_check.check_observability`). **Si no está disponible**, aplicar el criterio manual:
 
-Correr un chequeo rápido de observabilidad sobre el proyecto existente (heurístico — ver `.rocky-spec/reference/observability.md`):
+Correr un chequeo rápido de observabilidad sobre el proyecto existente (heurístico — ver `.rocky-spec/reference/observability.md`). Estos patrones solo cubren TypeScript/JavaScript/Python: en un proyecto de otro lenguaje (C#, Java, PHP...) **no concluir "no hay error tracking"** por una búsqueda vacía — buscar el equivalente del ecosistema (Serilog/Application Insights, Actuator, etc.) o reportarlo como "no evaluado", igual que hace `rocky check observability`:
 
 ```bash
 # Error tracking configurado (Sentry u otro)
-grep -rEl "Sentry\.init|@sentry/|bugsnag|rollbar" --include="*.ts" --include="*.js" --include="*.py" \
+grep -rEl "Sentry\.init|@sentry/|bugsnag|rollbar" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" --include="*.mjs" --include="*.cjs" --include="*.py" \
   --exclude-dir=node_modules --exclude-dir=.git . | head -1
 
 # Endpoint de health check
-grep -rEln "['\"](\/health|\/healthz|\/status)['\"]" --include="*.ts" --include="*.js" --include="*.py" \
+grep -rEln "['\"](\/health|\/healthz|\/status)['\"]" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" --include="*.mjs" --include="*.cjs" --include="*.py" \
   --exclude-dir=node_modules --exclude-dir=.git . | head -1
 
 # Logging estructurado vs console.log suelto
-grep -rc "console\.log(" --include="*.ts" --include="*.js" \
+grep -rc "console\.log(" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" --include="*.mjs" --include="*.cjs" \
   --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=dist . | awk -F: '{sum+=$2} END {print sum " apariciones de console.log"}'
 ```
 

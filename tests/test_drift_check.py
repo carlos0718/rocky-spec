@@ -1,5 +1,7 @@
 import json
 
+import pytest
+
 from rocky_spec.scripts.drift_check import check_drift
 
 
@@ -59,6 +61,53 @@ def test_flags_ui_only_files_when_project_lives_under_an_ignored_dir_name(tmp_pa
     report = check_drift(project)
     flagged = {f.file for f in report.findings}
     assert flagged == {"ACCESSIBILITY.md", "design-system/MASTER.md"}
+
+
+def _flagged_for_adopted_project_with_file(tmp_path, relative):
+    _write_state(tmp_path, license_decision="skipped")
+    for name in ("CONSTITUTION.md", "CHANGELOG.md", "SECURITY.md", "OBSERVABILITY.md"):
+        (tmp_path / name).write_text("ok", encoding="utf-8")
+    target = tmp_path / relative
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text("x", encoding="utf-8")
+    return {f.file for f in check_drift(tmp_path).findings}
+
+
+@pytest.mark.parametrize(
+    "relative",
+    [
+        "Views/Home/Index.cshtml",  # Razor (ASP.NET Core MVC / Razor Pages)
+        "Pages/Counter.razor",  # Blazor
+        "app/views/users/show.html.erb",  # Rails
+        "app/views/list.haml",
+        "app/views/list.slim",
+        "resources/views/welcome.blade.php",  # Laravel: el sufijo real es .php
+        "views/page.ejs",
+        "views/page.hbs",
+        "views/page.handlebars",
+        "views/page.njk",
+        "views/page.pug",
+        "templates/base.jinja",
+        "templates/base.j2",
+        "templates/page.twig",
+        "web/page.jsp",
+        "layouts/default.liquid",
+        "views/page.mustache",
+        "tmpl/page.gohtml",
+        "src/App.vue",
+        "src/App.svelte",
+        "src/pages/index.astro",
+        "public/index.htm",
+        "public/INDEX.HTML",  # el sufijo se compara sin distinguir mayúsculas
+    ],
+)
+def test_project_with_a_ui_file_of_any_supported_kind_is_flagged_for_ui_only_files(tmp_path, relative):
+    assert _flagged_for_adopted_project_with_file(tmp_path, relative) == {"ACCESSIBILITY.md", "design-system/MASTER.md"}
+
+
+@pytest.mark.parametrize("relative", ["Program.cs", "api/routes.php", "app.py", "main.go", "README.md"])
+def test_project_with_only_non_ui_files_is_not_flagged_for_ui_only_files(tmp_path, relative):
+    assert _flagged_for_adopted_project_with_file(tmp_path, relative) == set()
 
 
 def test_does_not_flag_ui_only_files_without_ui(tmp_path):
