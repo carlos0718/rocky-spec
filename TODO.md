@@ -82,6 +82,12 @@
 - [x] Suite de tests (render_template, health_check, qa_review, integrations, version_check, versioning, build, welcome, accessibility_check, update) — correr `pytest -q` para el conteo actual, no se mantiene un número fijo acá porque queda desactualizado con cada feature que suma tests.
 - [x] CI/CD — GitHub Actions corre `pytest` (matrix Python 3.9/3.12) en cada push/PR a `development` y `master` (US-22)
 - [ ] Coverage report
+- [ ] `check security`: detectar secrets con la clave entre comillas (`"api_key" => "..."` en PHP, `"password": "..."` en JSON/YAML) y en archivos de config como `appsettings.json` — hoy solo detecta `clave = "valor"` en código; ampliarlo trae más falsos positivos, analizarlo aparte
+- [ ] `check observability`: patrones por lenguaje — C# (`Serilog`, `UseHealthChecks`, Application Insights), Java/Kotlin (Actuator, Sentry), PHP, Ruby, Go — hoy solo entiende ts/js/py
+- [ ] `check accessibility`: extender a `.vue`/`.svelte`/`.astro` y a templates Razor/ERB/Blade (`@click`, `on:click`, `v-on:click`) — el RF-9 documenta "HTML/JSX/TSX", así que cambia el alcance: `SPEC.md` primero (Paso 2a)
+- [ ] `rocky check code` (y demás checks): salir con código ≠ 0 ante un hallazgo 🔴 — hoy siempre sale con 0 y `HealthCheckReport.has_critical` no se usa; cambia el comportamiento del CLI, decidir y documentar en `SPEC.md`
+- [ ] `rocky check code`: detectar los code smells del catálogo de `coding-principles.md` (Long Method, Long Parameter List, 3+ interfaces mezcladas con lógica, anidamiento) o bajar la promesa "code smells estructurales" del CLI, README y `welcome.py` — hoy solo mide tamaño de archivo
+- [ ] Nota puntual sobre C#/.NET (ASP.NET Core, no ASP.NET Framework): `stacks-code.md` no lo lista entre los backends — decidir dónde va (lista de stacks, `best-practices-backend.md` o el perfil derivado) dentro de la feature `reference-library`
 
 ## Documentación
 
