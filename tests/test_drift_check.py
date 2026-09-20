@@ -48,6 +48,19 @@ def test_flags_ui_only_files_when_project_has_ui(tmp_path):
     assert flagged == {"ACCESSIBILITY.md", "design-system/MASTER.md"}
 
 
+def test_flags_ui_only_files_when_project_lives_under_an_ignored_dir_name(tmp_path):
+    project = tmp_path / "build" / "proj"
+    project.mkdir(parents=True)
+    _write_state(project, license_decision="skipped")
+    for name in ("CONSTITUTION.md", "CHANGELOG.md", "SECURITY.md", "OBSERVABILITY.md"):
+        (project / name).write_text("ok", encoding="utf-8")
+    (project / "index.html").write_text("<html></html>", encoding="utf-8")
+
+    report = check_drift(project)
+    flagged = {f.file for f in report.findings}
+    assert flagged == {"ACCESSIBILITY.md", "design-system/MASTER.md"}
+
+
 def test_does_not_flag_ui_only_files_without_ui(tmp_path):
     _write_state(tmp_path, license_decision="skipped")
     for name in ("CONSTITUTION.md", "CHANGELOG.md", "SECURITY.md", "OBSERVABILITY.md"):
