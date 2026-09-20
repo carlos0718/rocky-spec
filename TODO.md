@@ -79,7 +79,7 @@
 - [x] Referencia `general-principles.md` — DRY/KISS/YAGNI/Clean Code migrados desde `coding-principles.md` + composición sobre herencia (US-34, US-36, RF-26)
 - [x] Referencia `design-patterns.md` — los 23 de GoF con la plantilla común y marca frecuente/raro; los patrones que hoy están en `coding-principles.md` se migran; partir por tipo en carpeta si pasa de ~400 líneas (US-34, US-36, RF-26)
 - [x] Referencia `best-practices-frontend.md` (US-34, RF-26)
-- [ ] Referencia `best-practices-backend.md` — incluye resolver la nota de C#/.NET de la sección Calidad (US-34, RF-26)
+- [x] Referencia `best-practices-backend.md` — agnóstica de lenguaje y framework; la nota de C#/.NET de la sección Calidad sigue abierta a propósito (se analiza aparte) (US-34, RF-26)
 - [ ] Fichas de arquitectura `monolith.md` y `layered.md` en `reference/architecture-styles/` — la monolítica incluye el monolito modular como paso previo a microservicios (US-34, RF-26)
 - [ ] Fichas de arquitectura `onion.md` y `hexagonal.md` — con la regla de dependencia y la comparación contra Clean Architecture (US-34, RF-26)
 - [ ] Fichas de arquitectura `microservices.md` y `event-driven.md` — límites de servicio, datos propios, consistencia eventual, idempotencia (US-34, RF-26)
@@ -103,7 +103,7 @@
 - [ ] `check accessibility`: extender a `.vue`/`.svelte`/`.astro` y a templates Razor/ERB/Blade (`@click`, `on:click`, `v-on:click`) — el RF-9 documenta "HTML/JSX/TSX", así que cambia el alcance: `SPEC.md` primero (Paso 2a)
 - [ ] `rocky check code` (y demás checks): salir con código ≠ 0 ante un hallazgo 🔴 — hoy siempre sale con 0 y `HealthCheckReport.has_critical` no se usa; cambia el comportamiento del CLI, decidir y documentar en `SPEC.md`
 - [ ] `rocky check code`: detectar los code smells del catálogo de `coding-principles.md` (Long Method, Long Parameter List, 3+ interfaces mezcladas con lógica, anidamiento) o bajar la promesa "code smells estructurales" del CLI, README y `welcome.py` — hoy solo mide tamaño de archivo
-- [ ] Nota puntual sobre C#/.NET (ASP.NET Core, no ASP.NET Framework): `stacks-code.md` no lo lista entre los backends — decidir dónde va (lista de stacks, `best-practices-backend.md` o el perfil derivado) dentro de la feature `reference-library`
+- [ ] Nota puntual sobre C#/.NET (ASP.NET Core, no ASP.NET Framework): `stacks-code.md` no lo lista entre los backends — decidir dónde va (lista de stacks, una sección por stack en `best-practices-backend.md` — que quedó agnóstica de framework — o el perfil derivado). Se analiza aparte, después de la feature `reference-library`
 
 ## Documentación
 
