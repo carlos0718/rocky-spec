@@ -242,7 +242,7 @@ La estructura que encontré en src/ sugiere una arquitectura Feature-based:
   3) Es otra arquitectura (la describo)
 ```
 
-Si el usuario elige **1**: documentar la arquitectura detectada directamente en el CLAUDE.md generado, con su descripción, beneficios y trade-offs según `.rocky-spec/reference/architectures.md` (tipos) y `.rocky-spec/reference/architectures/codigo.md` (árbol de carpetas de referencia para comparar contra lo detectado).
+Si el usuario elige **1**: documentar la arquitectura detectada directamente en el CLAUDE.md generado, con su descripción, beneficios y trade-offs según `.rocky-spec/reference/architectures.md` (tipos) y `.rocky-spec/reference/architectures/codigo.md` (árbol de carpetas de referencia para comparar contra lo detectado). Si el estilo detectado tiene ficha en `.rocky-spec/reference/architecture-styles/` (monolítica, en capas, Onion, Hexagonal, microservicios, orientada a eventos), abrir **solo esa ficha**: trae cómo se reconoce el estilo en el código y sus señales de alarma, para verificar si la implementación real degeneró (ej. un "microservicios" que comparte la base de datos es un monolito distribuido).
 
 Si el usuario elige **2**: ejecutar el flujo completo de P4 (scoring + recomendación educativa — ver `.rocky-spec/commands/p4-architecture.md`) igual que en proyectos nuevos, pero aclarando: *"La estructura actual es libre. Te propongo una arquitectura para que la adoptemos de acá en adelante — no hace falta refactorear lo que ya existe, sino seguir el patrón en el código nuevo."*
 
