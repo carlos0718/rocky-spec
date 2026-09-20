@@ -6,6 +6,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Added
+- **Referencia `solid.md`** — los 5 principios SOLID con la misma plantilla en cada uno (qué dice, cuándo sí, cuándo no, señal en el código, ejemplo mínimo, cómo lo aplica la skill), en vez de una tabla de una línea por principio dentro de `coding-principles.md`. (US-34, RF-26)
+
 ## [0.23.2] - 2026-09-20
 
 ### Fixed
