@@ -173,7 +173,7 @@ rocky check qa .
 
 ### Comandos disponibles
 
-Comandos de la CLI `rocky`, agrupados por qué resuelven. Para los comandos que se escriben *dentro* del agente (Claude Code / Cursor) después de un `rocky init`, ver [Los 15 comandos del agente](#los-15-comandos-del-agente).
+Comandos de la CLI `rocky`, agrupados por qué resuelven. Para los comandos que se escriben *dentro* del agente (Claude Code / Cursor) después de un `rocky init`, ver [Los 17 comandos del agente](#los-17-comandos-del-agente).
 
 #### General
 
@@ -197,7 +197,7 @@ Comandos de la CLI `rocky`, agrupados por qué resuelven. Para los comandos que 
 | Comando | Qué hace |
 |---|---|
 | `rocky build [PATH] --values <json> [--force]` | Renderiza `SPEC.md`, `CONSTITUTION.md`, `AGENTS.md`, `CLAUDE.md`, `SECURITY.md`, `OBSERVABILITY.md`, `CHANGELOG.md`, `README.md`, `TODO.md` y `LICENSE` desde `.rocky-spec/templates/` a partir de un JSON de valores — no pisa archivos existentes salvo `--force`. |
-| `rocky build [PATH] --values <json> --template <t> --output <ruta> [--force]` | Modo single-file: renderiza un solo template (ej. `MASTER.md.template`, `ACCESSIBILITY.md.template`) en vez del set fijo de arriba — `--template` y `--output` van juntos. |
+| `rocky build [PATH] --values <json> --template <t> --output <ruta> [--force]` | Modo single-file: renderiza un solo template (ej. `MASTER.md.template`, `ACCESSIBILITY.md.template`, `PRACTICES.md.template`) en vez del set fijo de arriba — `--template` y `--output` van juntos. |
 
 #### Health-checks (`rocky check`)
 
@@ -353,7 +353,7 @@ API de pagos"* y el flujo arranca sin que tipees ningún comando.
 **Cursor — manual.** Cursor no tiene auto-invocación por descripción: sus
 *commands* (`.cursor/commands/*.md`) son Markdown plano, sin frontmatter, y se
 disparan **solo cuando los tipeás** (`/rocky-spec`, `/rocky-stack`, …). Por eso
-la integración instala 15 comandos, uno por paso del flujo,
+la integración instala 17 comandos, uno por paso del flujo,
 en vez de un único punto de entrada.
 
 Para compensarlo, `rocky init --agent cursor` también genera
@@ -363,7 +363,7 @@ respuesta y le indica a Cursor que **te sugiera** el comando que corresponde
 cuando pedís algo que encaja en un paso. Sugerir, no ejecutar — la decisión de
 correrlo sigue siendo tuya.
 
-### Los 15 comandos del agente
+### Los 17 comandos del agente
 
 Son los mismos pasos del ciclo de vida para los dos agentes: cambia **cómo se
 disparan**, no qué hacen. En Cursor se tipean; en Claude Code el flujo los
@@ -381,11 +381,13 @@ recorre solo. También los podés ver en la terminal con `rocky commands`.
 | `/rocky-security` | P5.6 | SECURITY.md — auth, manejo de secrets y checklist OWASP adaptado. |
 | `/rocky-observability` | P5.7 | OBSERVABILITY.md — logging, error tracking y health endpoint. |
 | `/rocky-accessibility` | P5.8 | ACCESSIBILITY.md — criterios WCAG que este proyecto se compromete a cumplir. |
+| `/rocky-practices` | P5.9 | PRACTICES.md — principios, patrones y herramientas que aplican a este proyecto, y por qué. |
 | `/rocky-build` | P6 y P7 | Genera los archivos base del proyecto y el TODO.md inicial. |
 | `/rocky-review` | P7.5 | Revisión funcional y de QA (Three Amigos) antes de dar por cerrado el setup. |
 | `/rocky-validate` | P8 | Reporte final: qué quedó completo y qué falta. |
 | `/rocky-mode-adopt` | — | Para un proyecto que YA tiene código: lo documenta sin arrancar de cero. |
 | `/rocky-mode-resume` | — | Retoma el proyecto donde quedó y dice cuál es la próxima tarea. |
+| `/rocky-docs-sync` | — | Trazabilidad de requisitos y sync de README. En Claude es una skill aparte que se dispara sola; en Cursor se tipea. |
 
 > No confundir con la **CLI `rocky`** (`rocky init`, `rocky check`, …): esos se
 > escriben en la terminal y corren siempre a mano, en cualquiera de los dos

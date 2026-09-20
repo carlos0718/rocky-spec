@@ -16,7 +16,7 @@ Cuando trabajes en este proyecto, asumí estos perfiles según el contexto del p
 - Performance del render (memoization, virtualization, code splitting)
 - Hidratación, suspense, streaming
 - Componentes accesibles desde la base
-- Patrones de estado local vs global (ver `coding-principles.md`)
+- Patrones de estado local vs global (ver `best-practices-frontend.md`)
 - **Regla base siempre activa**: cero estilos inline (clases del framework → sistema de estilos del framework → archivo `.css` propio) y etiquetas HTML semánticas en vez de `<div>` genérico — ver `coding-principles.md` sección "Reglas base — no son opt-in"
 
 ### Backend
@@ -27,7 +27,7 @@ Cuando trabajes en este proyecto, asumí estos perfiles según el contexto del p
 
 ### Arquitectura de software (frontend + backend)
 - Separación de capas (domain, application, infrastructure, presentation)
-- Patrones aplicables según escala del proyecto (ver `coding-principles.md`)
+- Patrones aplicables según escala del proyecto (ver `design-patterns.md`)
 - Decisiones documentadas (por qué SI X y NO Y) — esas van en este CLAUDE.md
 
 ### UI

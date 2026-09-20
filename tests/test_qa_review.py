@@ -82,6 +82,22 @@ def test_full_report_is_clean_for_well_formed_project(tmp_path):
     assert report.is_clean
 
 
+def test_full_report_flags_unresolved_placeholders_in_practices(tmp_path):
+    # RF-26: PRACTICES.md (P5.9) es un archivo generado como ACCESSIBILITY.md,
+    # así que un placeholder sin rellenar tiene que aparecer en P7.5.
+    (tmp_path / "SPEC.md").write_text(
+        "RF-1 Login\nUS-1 (implementa RF-1): login\n"
+        "RNF-1 | sin objetivo estricto\n"
+    )
+    (tmp_path / "TODO.md").write_text("- [ ] Endpoint de login (US-1)\n")
+    (tmp_path / "PRACTICES.md").write_text("## Herramientas recomendadas\n\n{{PRACTICES_TOOLS}}\n")
+
+    report = qa_review.full_report(tmp_path)
+
+    assert not report.is_clean
+    assert list(report.unresolved_placeholders.values()) == [["PRACTICES_TOOLS"]]
+
+
 def test_traceability_rnf_no_aplica_marker_is_recognized(tmp_path):
     spec = tmp_path / "SPEC.md"
     spec.write_text("RNF-5 | Retención de datos | No aplica — no se almacenan datos de usuarios\n")

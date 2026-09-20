@@ -3,6 +3,8 @@
 ### P4 · Recomendar y decidir arquitectura
 
 > Referencia de tipos y criterios de decisión: `.rocky-spec/reference/architectures.md`. Los árboles de carpetas están separados por categoría — `.rocky-spec/reference/architectures/codigo.md`, `creativo.md`, `hibrido.md`, `aprendizaje.md` — abrir solo el que corresponde al tipo de proyecto ya definido en P1.
+>
+> Seis estilos tienen además una **ficha de profundidad** en `.rocky-spec/reference/architecture-styles/` (`monolith.md`, `layered.md`, `onion.md`, `hexagonal.md`, `microservices.md`, `event-driven.md`). Abrir **solo la del estilo recomendado o elegido**, para armar el Paso 2 con su analogía, sus ventajas, su "qué sacrificás" y sus señales de alarma en vez de improvisarlos — no las seis.
 
 Para **creativo** e **híbrido**, la estructura está predefinida en `.rocky-spec/reference/architectures/creativo.md` / `.rocky-spec/reference/architectures/hibrido.md` según corresponda. Mostrarla y confirmar directamente.
 
@@ -61,6 +63,11 @@ Estructura de carpetas resultante:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
+**Dos reglas al recomendar:**
+
+- **Microservicios** solo si Escalabilidad es Alta **y** Tamaño del equipo es Alta (4+) **y** hay infraestructura y observabilidad disponibles. Si no, recomendar **monolito modular** y mencionar los servicios como una evolución posible ("Monolito primero, microservicios cuando duele" — ver `.rocky-spec/reference/architecture-styles/microservices.md`).
+- **Orientada a eventos** es un **complemento**, no un estilo base: se suma a la arquitectura elegida cuando el SPEC tiene flujos asíncronos, notificaciones o picos de carga. Nunca se recomienda sola.
+
 **Tono de la explicación según el perfil del usuario:**
 
 - Si el perfil muestra poca experiencia o el usuario nunca mencionó estas arquitecturas → explicar desde cero con analogías simples. Ejemplo: *"Clean Architecture es como una empresa bien organizada: hay un CEO (el dominio) que toma decisiones de negocio, y hay empleados (la infraestructura) que ejecutan. El CEO no sabe cómo se usan las computadoras — eso es trabajo de los empleados. Así el dominio es independiente del framework."*
@@ -97,7 +104,7 @@ Después de mostrar la recomendación, ofrecer:
 
 #### Principios activos del perfil que influyen en la arquitectura
 
-Leer `.rocky-spec/reference/coding-principles.md` + sección "Principios de código" de `profile.md`:
+Leer `.rocky-spec/reference/solid.md`, `general-principles.md` y `design-patterns.md` + sección "Principios de código" de `profile.md`:
 
 - **Repository activo + DB** → separar `domain/repositories/` (interfaces) de `infrastructure/persistence/` (implementaciones), aunque la arquitectura base sea feature-based.
 - **SOLID activo + mediano+** → separar interfaces de implementaciones en general.
