@@ -81,7 +81,7 @@
 - [x] Referencia `best-practices-frontend.md` (US-34, RF-26)
 - [x] Referencia `best-practices-backend.md` — agnóstica de lenguaje y framework; la nota de C#/.NET de la sección Calidad sigue abierta a propósito (se analiza aparte) (US-34, RF-26)
 - [x] Fichas de arquitectura `monolith.md` y `layered.md` en `reference/architecture-styles/` — la monolítica incluye el monolito modular como paso previo a microservicios (US-34, RF-26)
-- [ ] Fichas de arquitectura `onion.md` y `hexagonal.md` — con la regla de dependencia y la comparación contra Clean Architecture (US-34, RF-26)
+- [x] Fichas de arquitectura `onion.md` y `hexagonal.md` — con la regla de dependencia y la comparación contra Clean Architecture (US-34, RF-26)
 - [ ] Fichas de arquitectura `microservices.md` y `event-driven.md` — límites de servicio, datos propios, consistencia eventual, idempotencia (US-34, RF-26)
 - [ ] `architectures.md` pasa a ser el mapa: apunta a cada ficha, suma la regla de dependencia y la comparación de la familia Clean/Onion/Hexagonal; `p4-architecture.md` y `mode-adopt.md` abren solo la ficha del estilo elegido o detectado (US-34, RF-26)
 - [ ] Adelgazar `coding-principles.md` (queda con code smells, tamaños, estilo y reglas base) y actualizar lo que apunta a secciones migradas: `CONSTITUTION.md.template`, `CLAUDE.md.template`, `p4-architecture.md`, `p6-p7-files-todo.md`, `security.md` (US-36, RF-26)
