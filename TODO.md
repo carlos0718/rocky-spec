@@ -70,6 +70,8 @@
 - [x] Checklist OWASP LLM Top 10 en `SECURITY.md`, condicional a servicio de IA en Servicios Externos (US-31, RF-24)
 - [x] RNF de costo/latencia/fallback en `SPEC.md`, condicional a servicio de IA en Servicios Externos (US-32, RF-24)
 - [x] Skill `rocky-docs-sync` separada de `rocky-spec` (trazabilidad de requisitos + README sync), generada por `rocky init --agent claude` y `--agent cursor`; `AGENTS.md.template` pierde esas dos secciones y gana un puntero (US-33, RF-25)
+- [x] Fix: check ignoraba proyectos bajo una carpeta llamada build/dist — `_iter_source_files` (`check code`/`security`/`observability`/`accessibility`) y `_project_has_ui` (`check drift`) comparaban `IGNORED_DIRS` contra la ruta absoluta y devolvían "sin hallazgos" para un proyecto en `/build/app`; ahora solo cuentan las carpetas dentro del proyecto (helper `_is_ignored`)
+- [x] Fix: `rocky check code` aplica los límites por tipo de archivo de `coding-principles.md` (tests 500, servicio/hook 300, tipos 300/500, config sin límite; techo de 1000 para todos) en vez de 250/400 fijos — `FILE_SIZE_LIMITS` era código muerto — y escanea `.vue`/`.svelte`/`.java`/`.kt`/`.cs`/`.rb`/`.php` e ignora `venv`/`vendor`/`obj`/`target`/`.next`/`coverage`
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
 - [ ] Integración con Gemini CLI
 - [ ] Integración con Codex CLI
