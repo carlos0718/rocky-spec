@@ -92,8 +92,8 @@ Desarrolladores individuales o equipos chicos que usan uno o más agentes de có
 - [x] `rocky build` renderiza los 10 archivos base desde `.rocky-spec/templates/` a partir de un JSON de valores, reportando placeholders sin resolver (US-10)
 - [x] `rocky check accessibility` detecta los cinco heurísticos (alt, lang, div clickeable sin rol, botón solo-ícono, contraste WCAG) sobre un proyecto real con hallazgos conocidos (US-11)
 - [ ] `rocky init --agent claude` genera `.claude/skills/rocky-spec/SKILL.md` y `.claude/skills/rocky-docs-sync/SKILL.md` como skills separadas, y `rocky init --agent cursor` genera `.cursor/commands/rocky-docs-sync.md` junto con el resto de `.cursor/commands/rocky-*.md` (US-33)
-- [ ] `rocky init` instala las cinco referencias nuevas, las seis fichas de `architecture-styles/` y el paso P5.9 en `.rocky-spec/`, y `rocky build --template PRACTICES.md.template --output PRACTICES.md` renderiza sin placeholders sin resolver (US-34, US-35)
-- [ ] Ningún archivo de `commands/`, `templates/` ni `reference/` apunta a una sección de `coding-principles.md` que ya no existe tras la migración (US-36)
+- [x] `rocky init` instala las cinco referencias nuevas, las seis fichas de `architecture-styles/` y el paso P5.9 en `.rocky-spec/`, y `rocky build --template PRACTICES.md.template --output PRACTICES.md` renderiza sin placeholders sin resolver (US-34, US-35)
+- [x] Ningún archivo de `commands/`, `templates/` ni `reference/` apunta a una sección de `coding-principles.md` que ya no existe tras la migración (US-36)
 
 ## Requisitos no funcionales
 
