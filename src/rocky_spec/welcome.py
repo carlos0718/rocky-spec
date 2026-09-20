@@ -151,6 +151,7 @@ AGENT_COMMAND_PURPOSE = {
     "security": "SECURITY.md — auth, manejo de secrets y checklist OWASP adaptado.",
     "observability": "OBSERVABILITY.md — logging, error tracking y health endpoint.",
     "accessibility": "ACCESSIBILITY.md — criterios WCAG que este proyecto se compromete a cumplir.",
+    "practices": "PRACTICES.md — principios, patrones y herramientas que aplican a este proyecto, y por qué.",
     "build": "Genera los archivos base del proyecto y el TODO.md inicial.",
     "review": "Revisión funcional y de QA (Three Amigos) antes de dar por cerrado el setup.",
     "validate": "Reporte final: qué quedó completo y qué falta.",
