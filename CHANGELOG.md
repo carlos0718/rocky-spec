@@ -8,6 +8,7 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ### Added
 - **Referencia `solid.md`** — los 5 principios SOLID con la misma plantilla en cada uno (qué dice, cuándo sí, cuándo no, señal en el código, ejemplo mínimo, cómo lo aplica la skill), en vez de una tabla de una línea por principio dentro de `coding-principles.md`. (US-34, RF-26)
+- **Referencia `general-principles.md`** — DRY, KISS, YAGNI, Clean Code y composición sobre herencia, cada uno con su "cuándo NO" y su señal en el código, más una tabla de tensiones (DRY vs YAGNI, SOLID vs YAGNI...) para decidir cuál pesa más y no sobreaplicar. (US-34, RF-26)
 
 ## [0.23.2] - 2026-09-20
 
