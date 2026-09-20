@@ -6,6 +6,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.24.0] - 2026-09-20
+
 ### Added
 - **Referencia `solid.md`** — los 5 principios SOLID con la misma plantilla en cada uno (qué dice, cuándo sí, cuándo no, señal en el código, ejemplo mínimo, cómo lo aplica la skill), en vez de una tabla de una línea por principio dentro de `coding-principles.md`. (US-34, RF-26)
 - **Referencia `general-principles.md`** — DRY, KISS, YAGNI, Clean Code y composición sobre herencia, cada uno con su "cuándo NO" y su señal en el código, más una tabla de tensiones (DRY vs YAGNI, SOLID vs YAGNI...) para decidir cuál pesa más y no sobreaplicar. (US-34, RF-26)
@@ -19,6 +21,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 - **Paso P5.9 (`commands/p5.9-practices.md`) y `templates/PRACTICES.md.template`** — deriva por proyecto qué principios, patrones y herramientas aplican según el stack (P3), la arquitectura (P4), la escala y el SPEC, lo confirma en una sola pantalla y genera `PRACTICES.md` con `rocky build --template`, igual que `ACCESSIBILITY.md` en P5.8. Un patrón solo entra si un requisito del SPEC lo pide (hay una tabla de señales), se registran también los patrones descartados con su motivo, y las herramientas quedan como recomendación: no instala nada. Se saltea en proyectos creativos puros y en Mini/Chico o prototipo genera la versión mínima, sin patrones. (US-35, RF-26)
 - **P5.9 entra al flujo: `/rocky-practices` y su fila en `rocky commands`** — el paso se suma a `COMMAND_CATALOG` entre P5.8 y P6/P7, así que Claude lo lista en el índice de la skill y Cursor recibe `.cursor/commands/rocky-practices.md`. Se actualizan el diagrama de flujo (`flow-diagram.md`, con la condición "creativo puro") y la tabla de comandos del README, que además decía 15 comandos cuando ya eran 16 (faltaba `/rocky-docs-sync`): ahora dice 17. Tests nuevos (`tests/test_reference_library.py`) verifican que `rocky init` instala las referencias, que fichas y patrones comparten la plantilla, que el template de `PRACTICES.md` renderiza sin placeholders sueltos y que ningún archivo del kit apunta a otro que no existe. (US-35, RF-26)
 - **`PRACTICES.md` se integra con lo que ya generaba la skill** — `AGENTS.md.template` lo lista en "Generado por" y lo señala desde "Patrones activos"; `rocky check qa` (P7.5) marca los placeholders sin rellenar de `PRACTICES.md` igual que en `ACCESSIBILITY.md`; P6 toma `{{ACTIVE_PATTERNS}}` del resultado de P5.9 en vez de derivarlo de nuevo; y Modo Adopción (MA-6) lo ofrece como opcional, con los patrones que el código **ya usa** y no los que convendría usar. No se agrega a `rocky check drift`, para no marcar como incompleto a todo proyecto ya adoptado. (US-35, RF-26)
+
+### Changed
+- **`coding-principles.md` ya no contiene SOLID, los principios generales ni los patrones de diseño** — pasaron a `solid.md`, `general-principles.md` y `design-patterns.md`, y sus reglas de Backend y Frontend a `best-practices-backend.md` y `best-practices-frontend.md`. El archivo pasa de 385 a 281 líneas y conserva lo que se puede medir: code smells, tamaños de archivo, reglas de estilo y reglas base. `rocky update` instala los archivos nuevos y no pisa un `coding-principles.md` que hayas editado a mano. `CONSTITUTION.md.template`, `CLAUDE.md.template`, `p4-architecture.md` y `security.md` apuntan ahora a los archivos nuevos. (US-36, RF-26)
 
 ## [0.23.2] - 2026-09-20
 
