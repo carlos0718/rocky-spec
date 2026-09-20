@@ -28,6 +28,31 @@ def test_extensions_for_unknown_check_fails_loudly():
         source_files.extensions_for("no-existe")
 
 
+@pytest.mark.parametrize("check", sorted(source_files.NOT_READ))
+def test_every_language_is_either_read_or_explicitly_not_read_with_a_reason(check):
+    # Un lenguaje nuevo en LANGUAGES no entra solo a un check con patrones propios:
+    # este test falla hasta que alguien decida si ese check lo lee o lo excluye.
+    read = source_files.languages_read(check)
+    excluded = set(source_files.NOT_READ[check])
+    assert read | excluded == set(source_files.LANGUAGES)
+    assert read & excluded == set()
+    assert all(reason.strip() for reason in source_files.NOT_READ[check].values())
+
+
+def test_unread_language_counts_counts_files_per_language_the_check_does_not_read(tmp_path):
+    (tmp_path / "a.cs").write_text("x")
+    (tmp_path / "b.cs").write_text("x")
+    (tmp_path / "c.java").write_text("x")
+    (tmp_path / "d.py").write_text("x")  # observability sí lo lee: no cuenta
+
+    assert source_files.unread_language_counts(tmp_path, "observability") == {"csharp": 2, "java": 1}
+
+
+def test_unread_language_counts_is_empty_for_checks_that_read_everything(tmp_path):
+    (tmp_path / "a.cs").write_text("x")
+    assert source_files.unread_language_counts(tmp_path, "size") == {}
+
+
 def test_iter_source_files_filters_by_extension_and_skips_ignored_dirs_inside_the_project(tmp_path):
     (tmp_path / "src").mkdir()
     (tmp_path / "src" / "a.py").write_text("x = 1")

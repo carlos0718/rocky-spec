@@ -223,6 +223,39 @@ def test_check_observability_flags_missing_error_tracking_and_health_endpoint(tm
     assert any("health check" in m for m in messages)
 
 
+def test_check_observability_does_not_claim_absence_for_a_language_it_cannot_read(tmp_path):
+    # Un proyecto C# que SÍ tiene Serilog y UseHealthChecks no puede recibir "no encontré".
+    (tmp_path / "Program.cs").write_text(
+        'using Serilog;\nvar app = builder.Build();\napp.UseHealthChecks("/health");\n'
+    )
+    messages = [f.message for f in health_check.check_observability(tmp_path).findings]
+    assert len(messages) == 1
+    assert "no evaluado" in messages[0]
+    assert "csharp (1 archivo)" in messages[0]
+    assert not any("no encontré" in m for m in messages)
+
+
+def test_check_observability_says_which_languages_were_skipped_in_a_mixed_project(tmp_path):
+    (tmp_path / "app.ts").write_text("console.log('hola');\n")
+    (tmp_path / "Program.cs").write_text("var app = builder.Build();\n")
+    (tmp_path / "Other.cs").write_text("var x = 1;\n")
+    messages = [f.message for f in health_check.check_observability(tmp_path).findings]
+    assert any("error tracking" in m for m in messages)  # lo evaluable se sigue evaluando
+    assert any("no se evaluaron" in m and "csharp (2 archivos)" in m for m in messages)
+
+
+def test_check_observability_without_any_code_says_it_evaluated_nothing(tmp_path):
+    messages = [f.message for f in health_check.check_observability(tmp_path).findings]
+    assert len(messages) == 1
+    assert "no evaluado" in messages[0]
+    assert "no encontré archivos" in messages[0]
+
+
+def test_check_observability_has_no_note_when_every_file_is_readable(tmp_path):
+    (tmp_path / "app.ts").write_text("Sentry.init({});\napp.get('/health', () => {});\n")
+    assert health_check.check_observability(tmp_path).findings == []
+
+
 def test_check_observability_recognizes_sentry_and_health_endpoint(tmp_path):
     (tmp_path / "app.ts").write_text(
         "Sentry.init({dsn: process.env.SENTRY_DSN});\n"

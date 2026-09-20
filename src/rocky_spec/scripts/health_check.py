@@ -15,7 +15,7 @@ import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from .source_files import extensions_for, iter_source_files
+from .source_files import extensions_for, iter_source_files, languages_read, unread_language_counts
 
 # Tabla "Tamaño de archivo" de coding-principles.md -> (revisar, dividir_sí_o_sí).
 # None = esa fila del doc no da un umbral para ese escalón. "default" cubre componentes
@@ -159,17 +159,28 @@ def check_observability(root: Path) -> HealthCheckReport:
     has_error_tracking = False
     has_health_endpoint = False
     console_log_count = 0
+    evaluated_files = 0
 
     for path in iter_source_files(root, extensions_for("observability")):
         try:
             text = path.read_text(encoding="utf-8", errors="ignore")
         except OSError:
             continue
+        evaluated_files += 1
         if re.search(r"Sentry\.init|@sentry/|bugsnag|rollbar", text, re.IGNORECASE):
             has_error_tracking = True
         if re.search(r"""['"](/health|/healthz|/status)['"]""", text):
             has_health_endpoint = True
         console_log_count += len(re.findall(r"console\.log\(", text))
+
+    skipped = _describe_counts(unread_language_counts(root, "observability"))
+    readable = ", ".join(sorted(languages_read("observability")))
+
+    if evaluated_files == 0:
+        # Sin nada que leer, "no encontré error tracking" sería afirmar lo que no se verificó.
+        why = f"el proyecto tiene {skipped}, sin patrones para esos lenguajes todavía" if skipped else "no encontré archivos de esos lenguajes"
+        report.findings.append(Finding("warning", f"no evaluado: este check solo lee archivos de {readable}; {why}"))
+        return report
 
     if not has_error_tracking:
         report.findings.append(Finding("warning", "no encontré error tracking configurado (Sentry u otro)"))
@@ -179,8 +190,20 @@ def check_observability(root: Path) -> HealthCheckReport:
         report.findings.append(
             Finding("warning", f"{console_log_count} apariciones de console.log — sin logging estructurado")
         )
+    if skipped:
+        report.findings.append(
+            Finding(
+                "warning",
+                f"no se evaluaron {skipped} — sin patrones para esos lenguajes todavía; "
+                f"los avisos de arriba solo valen para {readable}",
+            )
+        )
 
     return report
+
+
+def _describe_counts(counts: dict[str, int]) -> str:
+    return ", ".join(f"{name} ({n} archivo{'s' if n != 1 else ''})" for name, n in sorted(counts.items()))
 
 
 def _git_ls_files(root: Path) -> list[str]:

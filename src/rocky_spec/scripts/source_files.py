@@ -52,8 +52,35 @@ CHECK_EXTENSIONS: dict[str, tuple[str, ...]] = {
 }
 
 
+# Lenguajes que un check con patrones propios NO lee, con el motivo. Cada lenguaje de
+# LANGUAGES debe leerse o estar acá (test_source_files.py lo exige): un lenguaje nuevo
+# no entra solo a un check que no tiene patrones para él.
+_NODE_PYTHON_ONLY = "sus patrones (Sentry, /health, console.log) son de Node/Python; falta el equivalente para este lenguaje"
+NOT_READ: dict[str, dict[str, str]] = {
+    "observability": {
+        name: _NODE_PYTHON_ONLY
+        for name in ("vue", "svelte", "astro", "go", "rust", "java", "kotlin", "csharp", "ruby", "php")
+    },
+}
+
+
 def extensions_for(check: str) -> tuple[str, ...]:
     return CHECK_EXTENSIONS[check]
+
+
+def languages_read(check: str) -> set[str]:
+    scope = set(extensions_for(check))
+    return {name for name, extensions in LANGUAGES.items() if set(extensions) <= scope}
+
+
+def unread_language_counts(root: Path, check: str) -> dict[str, int]:
+    """Cuántos archivos de cada lenguaje que ``check`` no lee hay en el proyecto."""
+    owner = {ext: name for name in NOT_READ.get(check, {}) for ext in LANGUAGES[name]}
+    counts: dict[str, int] = {}
+    for path in iter_source_files(root, tuple(owner)):
+        name = owner[path.suffix.lstrip(".")]
+        counts[name] = counts.get(name, 0) + 1
+    return counts
 
 
 def is_ignored(path: Path, root: Path) -> bool:

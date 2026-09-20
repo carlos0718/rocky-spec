@@ -8,6 +8,7 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ### Fixed
 - **`rocky check security` no detectaba secrets hardcodeados en la mayoría de los lenguajes** — solo leía `.ts`, `.js`, `.py` y `.go`: un `apiKey = "..."` en `.tsx`, `.jsx`, `.rs`, `.java`, `.kt`, `.cs`, `.rb`, `.php`, `.vue` o `.svelte` pasaba sin aviso. Ahora lee todos los lenguajes de la tabla única `scripts/source_files.py`, que reemplaza las listas de extensiones que cada check tenía por su cuenta (y se habían desincronizado). La tabla suma `.mjs`, `.cjs` (Node ESM/CJS) y `.astro`: `check code` los mide y `check observability` lee `.mjs`/`.cjs`. Sigue sin detectar claves entre comillas (`"api_key" => "..."`, JSON/YAML) — pendiente en el TODO.
+- **`rocky check observability` afirmaba "no encontré error tracking / health check" en proyectos cuyo lenguaje no sabe leer** — un proyecto C# con `Serilog` y `UseHealthChecks` recibía los dos avisos porque el check solo entiende `ts`/`js`/`py` y no leía ningún archivo. Ahora, si no hay nada que evaluar, dice "no evaluado" y qué lenguajes hay; si el proyecto mezcla lenguajes, evalúa lo que puede y avisa cuáles no evaluó (ej. `csharp (2 archivos)`). Cada lenguaje de la tabla debe leerse o quedar excluido con su motivo (`NOT_READ`), así un lenguaje nuevo no entra solo a un check sin patrones para él.
 
 ## [0.23.1] - 2026-09-19
 
