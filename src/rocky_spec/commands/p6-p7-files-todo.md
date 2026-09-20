@@ -82,7 +82,7 @@ Si el usuario pide explícitamente desactivar alguna de estas para el proyecto p
 **Generar `CONSTITUTION.md`** usando `.rocky-spec/templates/CONSTITUTION.md.template` (los principios SOLID/DRY/KISS/YAGNI/Clean Code, code smells, y reglas base de seguridad ya vienen escritos — no son placeholders, aplican siempre). Solo completar:
 - `{{RATIFICATION_DATE}}` con la fecha de hoy (y `{{LAST_AMENDED_DATE}}` igual, es la primera versión).
 - `{{ARCHITECTURE_NAME}}` con la arquitectura elegida en P4.
-- `{{ACTIVE_PATTERNS}}` con los patrones relevantes según esa arquitectura (ej. Repository, Factory, Observer, Strategy). Si el perfil tiene patrones activos, incluirlos también.
+- `{{ACTIVE_PATTERNS}}`: **si P5.9 generó `PRACTICES.md`, usar exactamente el valor de ese paso** (es la fuente; no volver a derivarlo). Si P5.9 se salteó, con los patrones relevantes según esa arquitectura (ej. Repository, Factory, Observer, Strategy). Si el perfil tiene patrones activos, incluirlos también.
 - `{{STYLE_TECH}}` con la tecnología de estilos elegida (Tailwind / styled-components / CSS Modules / etc.).
 - `{{LOCKFILE_NAME}}` (Artículo 8) con el lockfile real del stack (`package-lock.json`, `poetry.lock`, `Cargo.lock`, `go.sum`) — mismo valor que se usa en `AGENTS.md`, no volver a preguntar.
 - `{{LOCAL_OVERRIDE_*}}` dejar vacío salvo que el usuario haya pedido explícitamente romper alguna regla — en ese caso, no alcanza con completarlo en silencio: confirmar con el usuario que quiere ratificar esa excepción antes de guardarla (ver "Cómo enmendar" en el propio archivo).

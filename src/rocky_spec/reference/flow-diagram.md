@@ -1,6 +1,6 @@
 # Diagrama de flujo — cómo itera la skill
 
-> Referencia visual de `rocky-spec`. No agrega reglas nuevas — es un mapa de los pasos y condicionales que ya están descriptos en `commands/*.md`, para ver de un vistazo cómo se conectan sin tener que leer los 14 archivos. Si algo acá contradice a un `commands/*.md`, ese archivo es la fuente de verdad, no este diagrama.
+> Referencia visual de `rocky-spec`. No agrega reglas nuevas — es un mapa de los pasos y condicionales que ya están descriptos en `commands/*.md`, para ver de un vistazo cómo se conectan sin tener que leer cada uno de los `commands/*.md`. Si algo acá contradice a un `commands/*.md`, ese archivo es la fuente de verdad, no este diagrama.
 
 ## 1 · Detección de modo (el router)
 
@@ -35,8 +35,11 @@ flowchart TD
     P56 --> P57["P5.7 · Observabilidad\n(mínimo si no hay backend)"]
     P57 --> qVisual2{"¿Tiene interfaz\nvisual?"}
     qVisual2 -->|sí| P58["P5.8 · Accesibilidad\n→ ACCESSIBILITY.md"]
-    qVisual2 -->|no, saltear| P67
-    P58 --> P67["P6 + P7 · Archivos base + TODO\n(rocky build)"]
+    qVisual2 -->|no, saltear| qCreativo
+    P58 --> qCreativo{"¿Es creativo\npuro?"}
+    qCreativo -->|sí, saltear| P67
+    qCreativo -->|no| P59["P5.9 · Prácticas\n→ PRACTICES.md\n(mínima si Mini/Chico o prototipo)"]
+    P59 --> P67["P6 + P7 · Archivos base + TODO\n(rocky build)"]
     P67 --> qScale{"¿Mini/Chico\no prototipo?"}
     qScale -->|sí| P75liviano["P7.5 · QA liviano\n(solo completitud)"]
     qScale -->|no| P75["P7.5 · QA completo\n(Three Amigos)"]
@@ -47,6 +50,7 @@ flowchart TD
 **Notas de los condicionales** (no repetir la letra chica de cada `commands/*.md`, solo la señal):
 - `P4.5`/`P5.8` — condición idéntica ("¿tiene interfaz visual?"), pero distinto comportamiento sin ella: `P4.5` simplemente no corre; `P5.8` tampoco genera nada mínimo (a diferencia de `P5.6`/`P5.7`, que sí generan una versión chica igual).
 - `P5.5` — se saltea directo a `P5.6` si es librería/CLI/creativo puro.
+- `P5.9` — se saltea solo en creativo puro (no hay código donde aplicar principios ni patrones); en Mini/Chico o prototipo genera la versión mínima (solo principios base, sin patrones). Sus patrones activos alimentan `{{ACTIVE_PATTERNS}}` de `CONSTITUTION.md` y `AGENTS.md` en P6.
 - `P5.6`/`P5.7` — nunca se saltean del todo: sin backend, generan la versión mínima del archivo (política de reporte de vulnerabilidades / logging del build).
 - `P7.5` — no se saltea, se aliviana (Mini/Chico o prototipo → solo el paso mecánico de completitud).
 
@@ -88,4 +92,4 @@ flowchart TD
 
 ## Cómo se conectan los tres diagramas de arriba con el código Python
 
-Ninguno de estos pasos es código — son instrucciones en `.md` que el LLM sigue conversando. Lo único determinista en toda esta cadena son los `rocky check *`/`rocky build` que algunos pasos invocan (`MA-1.5`–`MA-1.8`, y `P4.5`/`P5.8` al generar `MASTER.md`/`ACCESSIBILITY.md`) — ver el diagrama de arquitectura en el [`README.md`](../../../README.md) del paquete para esa otra mitad del sistema (`init`/`.rocky-spec/`/integraciones).
+Ninguno de estos pasos es código — son instrucciones en `.md` que el LLM sigue conversando. Lo único determinista en toda esta cadena son los `rocky check *`/`rocky build` que algunos pasos invocan (`MA-1.5`–`MA-1.8`, y `P4.5`/`P5.8`/`P5.9` al generar `MASTER.md`/`ACCESSIBILITY.md`/`PRACTICES.md`) — ver el diagrama de arquitectura en el [`README.md`](../../../README.md) del paquete para esa otra mitad del sistema (`init`/`.rocky-spec/`/integraciones).

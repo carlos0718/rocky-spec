@@ -1,6 +1,6 @@
 # Principios de código — referencia canónica
 
-> Este archivo es la fuente de verdad para los principios y patrones de diseño que la skill `/rocky-spec` aplica al generar código y al armar la arquitectura.
+> Este archivo es la fuente de verdad para las **reglas concretas y medibles** de código que la skill `/rocky-spec` aplica al generar y al adoptar proyectos: code smells, tamaño de archivo, separación de tipos, reglas de estilo y reglas base. Los **principios** (SOLID, DRY, KISS, YAGNI, Clean Code), los **patrones de diseño** y las **buenas prácticas por capa** viven en archivos propios — ver "Dónde está lo que se movió" más abajo.
 >
 > El usuario puede activar/desactivar cada uno en su `~/.claude/profile.md` sección "Principios de código".
 > Cada proyecto hereda esa configuración y la guarda en su `AGENTS.md` (importado automáticamente por `CLAUDE.md` en Claude Code).
@@ -8,8 +8,7 @@
 ## Índice
 
 - [Cómo se usa este archivo](#cómo-se-usa-este-archivo)
-- [Patrones de diseño](#patrones-de-diseño) — SOLID, Repository, MVC/MVVM, Factory, Strategy, Observer, Singleton
-- [Principios generales](#principios-generales-siempre-activos-por-default) — DRY, KISS, YAGNI, Clean Code
+- [Dónde está lo que se movió](#dónde-está-lo-que-se-movió) — SOLID, principios generales, patrones de diseño
 - [Code smells](#code-smells--catálogo-y-señales-de-alerta) — catálogo y señales de alerta
 - [Tamaño de archivo](#tamaño-de-archivo--límites-y-cuándo-dividir) — límites y cuándo dividir
 - [Separación de tipos e interfaces](#separación-de-tipos-interfaces-y-responsabilidades-por-archivo)
@@ -19,118 +18,26 @@
 
 ## Cómo se usa este archivo
 
-- **P4 (Sugiere arquitectura)**: la skill consulta los patrones activos y propone una arquitectura coherente con ellos. Ej. si Repository está activo y el proyecto tiene DB, las carpetas separan `domain/`, `application/`, `infrastructure/`.
+- **P4 (Sugiere arquitectura)**: la skill consulta los principios y patrones activos (`solid.md`, `general-principles.md`, `design-patterns.md`) y propone una arquitectura coherente con ellos. Ej. si Repository está activo y el proyecto tiene DB, las carpetas separan `domain/`, `application/`, `infrastructure/`.
 - **P6 (Genera archivos base)**: cuando la skill genera código de scaffolding (componentes, configs, etc.), respeta las reglas de estilo activas. Ej. si "no estilos inline" está activo y el stack es React+Tailwind, los componentes ejemplo usan clases Tailwind, no `style={{}}`.
 - **Modo Adopción (MA-1.5)**: al adoptar un proyecto existente, la skill corre un health-check rápido contra los límites de tamaño de archivo y los code smells de este documento, y reporta lo que encuentra.
 - **AGENTS.md del proyecto** (importado por `CLAUDE.md`): hereda los principios para que cualquier agente futuro en ese proyecto — Claude Code u otro — los respete también.
 
 ---
 
-## Patrones de diseño
+## Dónde está lo que se movió
 
-### SOLID (los 5 principios)
+SOLID, los principios generales y los patrones de diseño tenían su sección acá. Ahora cada uno vive en su propio archivo, con la misma plantilla (qué es, cuándo sí, cuándo no, señal en el código, ejemplo mínimo, cómo lo aplica la skill):
 
-Conjunto base de principios para código mantenible orientado a objetos (y aplicable a otros paradigmas).
+| Antes en este archivo | Ahora en |
+|---|---|
+| SOLID | `.rocky-spec/reference/solid.md` |
+| DRY, KISS, YAGNI, Clean Code | `.rocky-spec/reference/general-principles.md` |
+| Repository, Factory, Strategy, Observer, Singleton (y el resto de GoF) | `.rocky-spec/reference/design-patterns.md` |
+| MVC / MVVM | `.rocky-spec/reference/architectures.md` — son arquitecturas de UI, no patrones de clases |
+| Reglas de Backend/API y Frontend/React | `.rocky-spec/reference/best-practices-backend.md` y `best-practices-frontend.md` |
 
-| Letra | Significado | Idea en 1 frase |
-|---|---|---|
-| **S** | Single Responsibility | Cada clase/módulo tiene una sola razón para cambiar. |
-| **O** | Open/Closed | Abierto para extender, cerrado para modificar. |
-| **L** | Liskov Substitution | Las subclases deben ser usables donde se usa la clase base sin romper nada. |
-| **I** | Interface Segregation | Mejor varias interfaces específicas que una grande con métodos que no se usan. |
-| **D** | Dependency Inversion | Dependé de abstracciones, no de implementaciones concretas. |
-
-**Cuándo aplicarlo**: proyectos medianos a grandes. En un script de 50 líneas SOLID es overkill.
-
-**Cómo lo aplica la skill**: si está activo y el proyecto es mediano+, la arquitectura sugerida en P4 separa interfaces de implementaciones (`domain/repositories/UserRepository.ts` como interface, `infrastructure/persistence/UserRepositoryPg.ts` como implementación).
-
-### Repository
-
-Separar el acceso a datos (DB, API, archivos) de la lógica de negocio. La lógica habla con una abstracción, no con la DB directamente.
-
-**Cuándo**: cualquier proyecto con persistencia. Casi siempre vale la pena.
-
-**Cómo lo aplica la skill**: crea `domain/repositories/<Entity>Repository.ts` (interface) + `infrastructure/persistence/<Entity>RepositoryImpl.ts` (implementación concreta). Los servicios reciben la interface, no la implementación.
-
-### MVC / MVVM
-
-Separación clásica: Model (datos), View (UI), Controller (orquesta) o ViewModel (estado de la vista).
-
-**Cuándo**: apps con UI no triviales. Para una landing simple no aporta.
-
-**Cómo lo aplica la skill**: en frameworks que lo nativamente esperan (Rails, Django, NestJS, Angular) lo respeta sin pensarlo. En React/Vue moderno, "MVC" se traduce a separar `components/` (V) de `services/` o `stores/` (M+C).
-
-### Factory
-
-Encapsular la creación de objetos cuando es condicional o compleja.
-
-**Cuándo**: cuando hay 3+ tipos de un mismo objeto que se crean con lógica distinta (ej. crear distintos tipos de notificación: email, SMS, push).
-
-**Cómo lo aplica la skill**: cuando el código generado tiene `if/switch` largo para crear objetos, lo refactoriza en una factory.
-
-### Strategy
-
-Encapsular algoritmos intercambiables detrás de una interface.
-
-**Cuándo**: cuando varios algoritmos hacen "lo mismo" con implementación distinta (ej. distintos métodos de pago, distintos sistemas de descuento).
-
-### Observer / Pub-Sub
-
-Suscriptores reciben notificaciones de cambios sin acoplarse al emisor.
-
-**Cuándo**: events, UI reactiva, integración entre módulos desacoplados.
-
-**En frontend moderno**: ya viene gratis con Redux, Zustand, Pinia, Signals.
-
-### Singleton
-
-Una sola instancia de algo en toda la app.
-
-**Cuándo**: rara vez. Es fácil de abusar y dificulta testing. Solo para casos como conexión a DB, logger global, configuración.
-
-**Regla de la skill**: si está activo, advertir si se está usando "por costumbre" cuando podría inyectarse.
-
----
-
-## Principios generales (siempre activos por default)
-
-### DRY — Don't Repeat Yourself
-
-No duplicar **conocimiento** (no necesariamente código). Si la misma regla de negocio aparece en 3 lugares, cualquier cambio requiere modificar los 3 — y vas a olvidarte de uno.
-
-**Anti-patrón**: copy-paste de lógica entre archivos.
-**Correcto**: extraer a función/módulo compartido.
-
-**Cuándo NO aplicar**: la duplicación accidental no es real duplicación. Si dos funciones se parecen pero modelan cosas conceptualmente distintas, NO unirlas (acoplamiento prematuro).
-
-### KISS — Keep It Simple, Stupid
-
-La solución más simple que resuelve el problema gana. La complejidad es deuda.
-
-**Aplicación práctica**:
-- Preferir funciones planas sobre clases si no se necesita estado/herencia.
-- Evitar abstracciones especulativas.
-- Si una librería resuelve algo en 1 línea pero suma 5MB al bundle, evaluar si vale.
-
-### YAGNI — You Aren't Gonna Need It
-
-No programes para necesidades futuras hipotéticas. Programá para lo que se necesita HOY.
-
-**Anti-patrón**: "vamos a hacerlo configurable por si en el futuro queremos cambiar X".
-**Correcto**: hacelo hardcoded. Cuando el futuro llega (si llega), refactorizás.
-
-**Cuándo NO aplicar**: cosas que son MUY caras de cambiar después (esquema de DB, contrato de API público, identidad visual de marca). Esas sí merecen pensarse de antemano.
-
-### Clean Code (Bob Martin)
-
-Conjunto de hábitos:
-
-- **Nombres descriptivos**: `getUserByEmail(email)` > `getUser(e)` > `getU(e)`.
-- **Funciones cortas**: si una función no entra en pantalla, probablemente hace demasiado.
-- **Una función, una cosa**: dividir hasta que cada función haga UNA cosa.
-- **Comentarios para el "por qué", no para el "qué"**: el qué se entiende del código bien nombrado.
-- **No state global mutable**: dificulta el razonamiento.
-- **Early returns** en vez de pirámides de `if`.
+Este archivo conserva lo que se **mide o se verifica**: los umbrales de tamaño, el catálogo de smells, las reglas de estilo y las reglas base.
 
 ---
 
@@ -141,15 +48,15 @@ Un "code smell" no es un bug: el código funciona, pero algo en su forma anticip
 | Smell | Señal concreta | Qué sugerir |
 |---|---|---|
 | **God File / God Object** | Un archivo hace de todo: UI + lógica + tipos + llamadas a API. Ver umbrales en "Tamaño de archivo" abajo. | Partir por responsabilidad: extraer tipos, extraer lógica pura, extraer subcomponentes. |
-| **Long Method** | Una función no entra en pantalla (> 30 líneas, ver Clean Code arriba) o tiene más de 3-4 niveles de anidamiento. | Extraer sub-funciones con nombres descriptivos; aplicar early returns. |
-| **Duplicate Code** | El mismo bloque (o casi) aparece en 3+ lugares. | Extraer a función/módulo compartido (DRY) — pero solo si es duplicación real, no accidental (ver nota de DRY arriba). |
+| **Long Method** | Una función no entra en pantalla (> 30 líneas, ver Clean Code en `general-principles.md`) o tiene más de 3-4 niveles de anidamiento. | Extraer sub-funciones con nombres descriptivos; aplicar early returns. |
+| **Duplicate Code** | El mismo bloque (o casi) aparece en 3+ lugares. | Extraer a función/módulo compartido (DRY) — pero solo si es duplicación real, no accidental (ver la nota de DRY en `general-principles.md`). |
 | **Feature Envy** | Una función usa más datos/métodos de OTRO módulo que de los suyos propios. | Mover la función al módulo cuyos datos usa. |
 | **Shotgun Surgery** | Un solo cambio de negocio obliga a tocar 5+ archivos distintos. | Señal de que la responsabilidad está mal repartida; consolidar en un solo lugar (a veces es DRY al revés: falta abstracción). |
 | **Primitive Obsession** | Usar `string`/`number` sueltos para conceptos con reglas propias (email, dinero, IDs). | Crear un tipo/value object (`type Email = string` con validación, o una clase `Money`). |
 | **Long Parameter List** | Una función recibe 4+ parámetros posicionales. | Agrupar en un objeto de opciones (`{ userId, email, role }`) o usar builder. |
 | **Data Clumps** | Los mismos 3-4 campos viajan juntos por todos lados como parámetros sueltos (`street, city, zip` repetido). | Agruparlos en un tipo/struct propio (`Address`). |
-| **Speculative Generality** | Abstracciones, flags o parámetros "por si en el futuro..." que nadie usa hoy. | Aplicar YAGNI — eliminar hasta que haga falta de verdad. |
-| **Comments as Deodorant** | Un comentario largo explicando qué hace un bloque confuso, en vez de renombrar/reestructurar. | Reescribir con nombres claros; el comentario debería explicar el "por qué", no el "qué" (ver Clean Code arriba). |
+| **Speculative Generality** | Abstracciones, flags o parámetros "por si en el futuro..." que nadie usa hoy. | Aplicar YAGNI (`general-principles.md`) — eliminar hasta que haga falta de verdad. |
+| **Comments as Deodorant** | Un comentario largo explicando qué hace un bloque confuso, en vez de renombrar/reestructurar. | Reescribir con nombres claros; el comentario debería explicar el "por qué", no el "qué" (ver Clean Code en `general-principles.md`). |
 | **Dead Code** | Funciones, imports o ramas de `if` que ya nadie ejecuta. | Borrar. Git guarda el historial; no hace falta comentarlo "por las dudas". |
 
 **Cómo lo aplica la skill**: en **P6** evita introducir estos smells al generar código nuevo. En **Modo Adopción (MA-1.5)** los busca en el código existente y los reporta — sin refactorizar nada sin permiso explícito del usuario.
@@ -198,7 +105,7 @@ Esto es una extensión natural de "Funciones < 30 líneas": el mismo principio a
 **Por qué importa:**
 - Un archivo de tipos se puede importar desde cualquier lado sin arrastrar lógica de implementación (evita dependencias circulares).
 - Cambiar la forma de un dato no obliga a tocar el archivo que además tiene la lógica — reduce el blast radius de un cambio (ver Shotgun Surgery arriba).
-- Hace el archivo de implementación más corto y enfocado en UNA cosa (Single Responsibility, ver SOLID arriba).
+- Hace el archivo de implementación más corto y enfocado en UNA cosa (Single Responsibility, ver `solid.md`).
 
 **Cómo lo aplica la skill**: en **P6**, si el stack elegido es TypeScript (u otro lenguaje tipado) y la entidad del dominio (definida en P1.7) tiene 2+ campos o se comparte entre capas, genera el archivo de tipos separado desde el arranque en vez de esperar a que el archivo crezca.
 
@@ -340,18 +247,7 @@ En TS, evitar `any`. Preferir tipos explícitos sobre `unknown` cuando se sabe l
 
 ## Reglas específicas por tipo de proyecto
 
-### Backend / API
-
-- Validación de input en el borde (middleware o decorador), no esparcida en handlers.
-- Manejo de errores centralizado (error middleware, no try/catch en cada handler).
-- Logs estructurados (JSON), no `console.log` con strings.
-
-### Frontend / React
-
-- Componentes funcionales con hooks, no clases (salvo legacy).
-- Estado local primero, global solo cuando hace falta cruzar componentes lejanos.
-- Memoización (`useMemo`, `useCallback`) solo cuando hay problema medido de performance, no preventivamente.
-- Props tipadas explícitamente.
+- **Backend / API** y **Frontend**: sus reglas (validación en el borde, errores centralizados, logs estructurados; componentes funcionales, estado local primero, memoización solo con problema medido, props tipadas) viven ahora en `best-practices-backend.md` y `best-practices-frontend.md`, con su señal de falla y su "cuándo NO".
 
 ### Scripts / CLI
 
@@ -374,7 +270,7 @@ Heredados del perfil global, con esta excepción:
 
 ### Reglas base — no son opt-in
 
-A diferencia de los principios de arriba (configurables por perfil), estas **siempre se aplican**, sin importar lo que diga `profile.md`:
+A diferencia de los principios (SOLID, DRY, etc. — ver `solid.md` y `general-principles.md` — configurables por perfil), estas **siempre se aplican**, sin importar lo que diga `profile.md`:
 
 - **NO usar estilos inline** (clases del framework → sistema de estilos del framework → archivo `.css` propio, en ese orden de prioridad) — solo proyectos con interfaz visual.
 - **Etiquetas semánticas HTML** (header/nav/main/article/section/aside/footer en vez de div genérico) — solo proyectos con interfaz visual.

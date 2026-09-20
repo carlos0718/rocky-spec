@@ -1,6 +1,6 @@
 # Seguridad — referencia canónica
 
-> Este archivo es la fuente de verdad para las prácticas de seguridad que la skill `rocky-spec` aplica al generar y adoptar proyectos. Es a seguridad lo que `coding-principles.md` es a Clean Code y `ui-design-guidelines.md` es a diseño.
+> Este archivo es la fuente de verdad para las prácticas de seguridad que la skill `rocky-spec` aplica al generar y adoptar proyectos. Es a seguridad lo que `general-principles.md` es a los principios de código y `ui-design-guidelines.md` es a diseño.
 
 ## Índice
 
@@ -37,7 +37,7 @@ No todos los proyectos necesitan mitigar los 10 con el mismo rigor — un script
 | A06 | Vulnerable and Outdated Components | Dependencias con CVEs conocidos sin parchear | Dependency scanning configurado en CI (ver sección Dependency scanning) | **Base** — cualquier proyecto de código |
 | A07 | Identification and Authentication Failures | Passwords débiles permitidos, sin límite de intentos de login, sesiones que no expiran | Política mínima de password, rate limiting en `/login` y `/signup`, expiración de tokens/sesiones | **Base** — cualquier proyecto con auth |
 | A08 | Software and Data Integrity Failures | CI/CD sin verificación de integridad, dependencias de fuentes no confiables | `package-lock.json`/`poetry.lock`/equivalente siempre commiteado (reproducibilidad), no instalar paquetes fuera de los registries oficiales | **Base** — cualquier proyecto de código |
-| A09 | Security Logging and Monitoring Failures | No hay forma de detectar un ataque en curso o post-mortem | Logs estructurados (ya cubierto en `coding-principles.md`) + no loguear datos sensibles (passwords, tokens, tarjetas) en texto plano | **Base** — cualquier proyecto con backend |
+| A09 | Security Logging and Monitoring Failures | No hay forma de detectar un ataque en curso o post-mortem | Logs estructurados (ya cubierto en `observability.md`) + no loguear datos sensibles (passwords, tokens, tarjetas) en texto plano | **Base** — cualquier proyecto con backend |
 | A10 | Server-Side Request Forgery (SSRF) | El backend hace requests a URLs controladas por el usuario sin validar destino | Si el proyecto acepta URLs de usuario (webhooks, importadores, proxies) → whitelist de dominios permitidos, nunca fetch directo a input crudo | Si aplica — solo proyectos que hacen requests salientes basados en input del usuario |
 
 ## OWASP LLM Top 10 adaptado

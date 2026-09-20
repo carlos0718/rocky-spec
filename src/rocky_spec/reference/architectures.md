@@ -1,8 +1,10 @@
 # Arquitecturas — referencia completa para `/rocky-spec`
 
-Este archivo tiene dos partes:
+Este archivo es el **mapa** y tiene dos partes:
 1. **Tipos de arquitectura** — qué son, cuándo usarlas, cuándo no, y la matriz de decisión que usa P4.
 2. **Árboles de carpetas** — la estructura concreta que la skill crea en P5.
+
+Seis de los estilos —monolítica, en capas, Onion, Hexagonal, microservicios y orientada a eventos— tienen además una **ficha de profundidad** en `.rocky-spec/reference/architecture-styles/` con diagrama, carpetas de ejemplo, señales de alarma, qué se gana y qué se sacrifica, y cómo se combinan con otros. **Abrir la ficha solo cuando el estilo ya está elegido o detectado**, no las seis.
 
 ---
 
@@ -43,6 +45,8 @@ La arquitectura más simple posible. Todo el código vive en un mismo proceso: i
 - Cuando se anticipa crecimiento fuerte en 6+ meses
 
 **Señal de alarma:** "todo está en el mismo archivo" o "no hay separación entre lo que muestra la pantalla y lo que calcula el servidor".
+
+**Ficha completa** (incluye el monolito modular): `.rocky-spec/reference/architecture-styles/monolith.md`
 
 ---
 
@@ -89,6 +93,8 @@ Organiza el código en capas verticales: Presentación → Lógica de negocio �
 
 ❌ **Cuándo NO:**
 - Cuando la lógica de negocio está tan ligada a la DB que el "acceso a datos" termina teniendo reglas de negocio (el problema del anemic domain model)
+
+**Ficha completa:** `.rocky-spec/reference/architecture-styles/layered.md`
 
 ---
 
@@ -174,6 +180,8 @@ La diferencia clave con Clean: Hexagonal es más explícita sobre los "ports" (i
 ❌ **Cuándo NO:**
 - Proyectos simples (overkill)
 
+**Ficha completa:** `.rocky-spec/reference/architecture-styles/hexagonal.md`
+
 ---
 
 #### 7. Onion Architecture
@@ -184,6 +192,22 @@ Variante de Clean/Hexagonal. Las capas van desde el dominio central hasta la inf
 ✅ **Cuándo usarla:**
 - Dominio complejo, larga vida útil del proyecto
 - Similar a Clean y Hexagonal — los tres son variantes del mismo principio
+
+❌ **Cuándo NO:**
+- CRUD sin reglas de negocio, MVPs, o equipos que no la conocen (el ritual de capas cuesta más de lo que aporta)
+
+**Ficha completa:** `.rocky-spec/reference/architecture-styles/onion.md`
+
+#### La regla de dependencia — lo que comparten Clean, Hexagonal y Onion
+
+Los tres (#5, #6 y #7) son **el mismo principio con distinto vocabulario**: el código de negocio **no depende** de la infraestructura; la infraestructura depende del negocio. La flecha de dependencia apunta siempre hacia el dominio, y la interfaz la define el negocio (principio D de `solid.md`).
+
+| | Clean | Hexagonal | Onion |
+|---|---|---|---|
+| Énfasis | Círculos: Entities → Use Cases → Adapters → Frameworks | La frontera: puertos y adaptadores | Los anillos internos del dominio |
+| Prescribe capas internas | Sí | No | Sí |
+
+Elegir entre ellos por el **vocabulario del equipo y del ecosistema**, no por mérito técnico: importa más aplicar la regla con disciplina que el nombre elegido. Si el problema es "varios canales de entrada o proveedores intercambiables", el vocabulario de Hexagonal lo describe mejor; si es "proteger un dominio rico", Onion o Clean. Se combinan: "Hexagonal por fuera, Onion por dentro". Comparación completa en `.rocky-spec/reference/architecture-styles/onion.md`.
 
 ---
 
@@ -221,6 +245,8 @@ La aplicación se divide en múltiples servicios pequeños, cada uno con su prop
 
 **Regla de oro:** "Monolito primero. Microservicios cuando duele." — Martin Fowler
 
+**Ficha completa** (prerrequisitos, señales del monolito distribuido, sagas): `.rocky-spec/reference/architecture-styles/microservices.md`
+
 ---
 
 #### 10. Arquitectura Orientada a Eventos (Event-Driven)
@@ -238,6 +264,10 @@ En vez de que el servicio A llame directamente al servicio B, A publica un event
 - Proyectos simples donde una llamada directa es suficiente
 - Sin infraestructura de mensajería (Kafka, RabbitMQ, SQS) disponible
 
+Es un **complemento** de otro estilo, no un estilo base: se suma a la arquitectura elegida.
+
+**Ficha completa** (evento vs comando, idempotencia, outbox): `.rocky-spec/reference/architecture-styles/event-driven.md`
+
 ---
 
 ### Matriz de decisión rápida
@@ -249,10 +279,11 @@ En vez de que el servicio A llame directamente al servicio B, A publica un event
 | App web CRUD con backend simple | MVC o N-tier |
 | SPA mediana / SaaS frontend con múltiples features | Feature-based mediana |
 | App mobile o frontend muy reactivo | MVVM |
+| Producto que crece, un solo equipo, dominio todavía incierto | Monolito modular |
 | Fullstack con dominio moderado, equipo chico | Clean Architecture simplificada (sin over-engineering) |
 | Fullstack con dominio complejo, largo plazo, 3+ personas | Clean / Hexagonal / Onion |
 | Sistema con múltiples canales de entrada (API + CLI + cron) | Hexagonal (Ports & Adapters) |
-| Plataforma grande, múltiples equipos, escala independiente | Microservicios (con precaución) |
+| Plataforma grande, múltiples equipos, escala independiente | Microservicios (solo si hay equipos, escala e infraestructura que lo justifiquen; si no, monolito modular) |
 | Flujos asíncronos, notificaciones, alta carga | Event-Driven (complementa otra arquitectura) |
 
 ---

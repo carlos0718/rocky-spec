@@ -98,7 +98,8 @@ def build(
 
     ``only=(template_name, output_relative)`` renderiza un solo template en
     vez del set fijo de ``BASE_FILES`` — para templates condicionales que no
-    aplican a todo proyecto (``MASTER.md.template``, ``ACCESSIBILITY.md.template``),
+    aplican a todo proyecto (``MASTER.md.template``, ``ACCESSIBILITY.md.template``,
+    ``PRACTICES.md.template``),
     que antes quedaban afuera de este mecanismo determinista por completo."""
     templates_dir = project_root / SHARED_DIR_NAME / TEMPLATES_DIR_NAME
     result = BuildResult()

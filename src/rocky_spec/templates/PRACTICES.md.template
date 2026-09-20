@@ -1,0 +1,59 @@
+# Practices — {{PROJECT_NAME}}
+
+> Generado por skill `rocky-spec` · Referencias de la skill: `.rocky-spec/reference/solid.md`, `general-principles.md`, `design-patterns.md`, `best-practices-frontend.md` / `best-practices-backend.md` y `architecture-styles/`. Documento vivo — se actualiza cada vez que cambia una decisión de prácticas, con su línea en "Historial de cambios".
+>
+> `CONSTITUTION.md` fija las reglas que no se negocian. Seguridad (`SECURITY.md`) responde "¿nos atacan?", observabilidad (`OBSERVABILITY.md`) "¿funciona?", accesibilidad (`ACCESSIBILITY.md`) "¿lo puede usar cualquiera?". Este archivo responde **"¿qué prácticas, patrones y herramientas concretas usa ESTE proyecto, y por qué?"** — derivadas del stack, la arquitectura y el SPEC, no una lista genérica de todo lo que existe.
+
+## De dónde sale esto
+
+| Dato | Valor |
+|---|---|
+| **Frontend** | {{FRONTEND}} |
+| **Backend** | {{BACKEND}} |
+| **Arquitectura** | {{ARCHITECTURE_NAME}} |
+| **Escala** | {{PRACTICES_SCALE}} <!-- mismo valor que la escala de seguridad de P5.6 --> |
+| **Versión de este documento** | {{PRACTICES_MODE, default: completa}} <!-- completa | mínima (Mini/Chico o prototipo: solo principios base, sin patrones) --> |
+
+## Principios activos
+
+{{PRACTICES_PRINCIPLES}} <!-- tabla: | Principio | Cómo se aplica en este proyecto | -->
+
+## Patrones activos
+
+**Resumen**: {{ACTIVE_PATTERNS}}
+
+{{PRACTICES_PATTERNS_TABLE, default: _Ninguno todavía — un patrón entra cuando un requisito del SPEC lo pide._}} <!-- tabla: | Patrón | Dónde se aplica | Lo pide (RF-N / decisión) | -->
+
+> Un patrón entra a esta tabla **solo si un requisito del SPEC lo pide** (columna "Lo pide"). Que exista en el catálogo de la skill (`design-patterns.md`) no lo hace aplicable: es la defensa contra sobreaplicar patrones.
+
+## Patrones descartados a propósito
+
+{{PRACTICES_DISCARDED, default: _Ninguno registrado._}} <!-- ej. "Microservicios — equipo de 1 persona, ver decisión de arquitectura" -->
+
+## Buenas prácticas por capa
+
+{{PRACTICES_LAYERS, default: _No aplica en la versión mínima — ver `.rocky-spec/reference/best-practices-*.md` cuando el proyecto crezca._}} <!-- qué secciones de best-practices-frontend/backend aplican y por qué -->
+
+## Herramientas recomendadas
+
+{{PRACTICES_TOOLS}} <!-- tabla: | Objetivo | Herramienta | Estado (ya en el stack / recomendada) | -->
+
+> **Son una recomendación.** La skill no instala nada por su cuenta: cada herramienta se suma cuando el proyecto decide adoptarla, y esa decisión va al historial de este archivo.
+
+## Cómo se verifica
+
+Hoy estas prácticas se aplican al escribir y revisar código; **ningún comando las verifica todavía**. `rocky check code .` mide tamaño de archivo, y `rocky check security`/`observability`/`accessibility` cubren sus áreas, pero ninguno lee este archivo. Una verificación automática contra `PRACTICES.md` es un requisito posterior del kit, no algo que ya exista.
+
+## Fuera de alcance de este documento
+
+No reemplaza el criterio del equipo ni una revisión de código: recoge las decisiones de prácticas que se tomaron al arrancar, con su porqué. Cuando el SPEC cambia (una feature nueva, un servicio externo nuevo), los patrones de este archivo deben revisarse.
+
+---
+
+## Historial de cambios
+
+> Cada vez que cambia una decisión de prácticas (un patrón que entra o sale, una herramienta que se adopta), se agrega una línea acá.
+
+| Fecha | Cambio | Commit |
+|-------|--------|--------|
+| {{DATE}} | Practices inicial (P5.9) | {{INITIAL_COMMIT}} |
