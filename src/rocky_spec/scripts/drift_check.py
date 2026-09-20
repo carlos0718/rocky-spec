@@ -28,8 +28,9 @@ import json
 from pathlib import Path
 
 from .build import BASE_FILES, SHARED_DIR_NAME as BUILD_SHARED_DIR_NAME, TEMPLATES_DIR_NAME
-from .health_check import Finding, HealthCheckReport, _is_ignored
+from .health_check import Finding, HealthCheckReport
 from .render_template import extract_headers
+from .source_files import extensions_for, iter_source_files
 
 SKILL_STATE_FILE = ".skill-state.json"
 
@@ -39,8 +40,6 @@ ALWAYS_GENERATED = ("CONSTITUTION.md", "CHANGELOG.md", "SECURITY.md", "OBSERVABI
 
 # Archivos que MA-6 solo genera si el proyecto tiene interfaz visual.
 UI_ONLY_GENERATED = ("ACCESSIBILITY.md", "design-system/MASTER.md")
-
-UI_EXTENSIONS = ("html", "jsx", "tsx")
 
 
 def _content_drift_findings(root: Path) -> list[Finding]:
@@ -79,14 +78,7 @@ def _content_drift_findings(root: Path) -> list[Finding]:
 
 
 def _project_has_ui(root: Path) -> bool:
-    for path in root.rglob("*"):
-        if path.is_dir():
-            continue
-        if _is_ignored(path, root):
-            continue
-        if path.suffix.lstrip(".") in UI_EXTENSIONS:
-            return True
-    return False
+    return any(True for _ in iter_source_files(root, extensions_for("ui")))
 
 
 def check_drift(root: Path) -> HealthCheckReport:

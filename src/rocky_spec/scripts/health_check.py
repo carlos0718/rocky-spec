@@ -15,17 +15,7 @@ import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
 
-IGNORED_DIRS = {
-    "node_modules", ".git", "dist", "build", ".venv", "__pycache__",
-    # generados o de terceros — no son código del proyecto
-    "venv", "vendor", "obj", "target", ".next", "coverage",
-}
-
-# Extensiones que mide `check_file_sizes`: los stacks de reference/stacks-code.md
-# (incl. Vue/Svelte, que la tabla de coding-principles.md nombra explícitamente).
-SIZE_CHECKED_EXTENSIONS = (
-    "ts", "tsx", "js", "jsx", "vue", "svelte", "py", "go", "rs", "java", "kt", "cs", "rb", "php",
-)
+from .source_files import extensions_for, iter_source_files
 
 # Tabla "Tamaño de archivo" de coding-principles.md -> (revisar, dividir_sí_o_sí).
 # None = esa fila del doc no da un umbral para ese escalón. "default" cubre componentes
@@ -79,25 +69,6 @@ class HealthCheckReport:
         return any(f.severity == "critical" for f in self.findings)
 
 
-def _is_ignored(path: Path, root: Path) -> bool:
-    """Solo mira las carpetas *dentro* de ``root``: un proyecto que vive bajo una
-    carpeta llamada como una de IGNORED_DIRS (ej. ``WORKDIR /build`` en Docker)
-    no debe quedar entero ignorado."""
-    return any(part in IGNORED_DIRS for part in path.relative_to(root).parent.parts)
-
-
-def _iter_source_files(root: Path, extensions: tuple[str, ...]) -> list[Path]:
-    files = []
-    for path in root.rglob("*"):
-        if path.is_dir():
-            continue
-        if _is_ignored(path, root):
-            continue
-        if path.suffix.lstrip(".") in extensions:
-            files.append(path)
-    return files
-
-
 def _is_test_dir(part: str) -> bool:
     return part.lower() in _TEST_DIRS or part.lower().endswith((".tests", ".test"))  # MyApp.Tests (C#)
 
@@ -122,7 +93,7 @@ def _file_kind(relative: Path) -> str:
 def check_file_sizes(root: Path) -> HealthCheckReport:
     """Equivalente determinista de MA-1.5 — límites de coding-principles.md."""
     report = HealthCheckReport(category="code")
-    for path in _iter_source_files(root, SIZE_CHECKED_EXTENSIONS):
+    for path in iter_source_files(root, extensions_for("size")):
         try:
             n_lines = sum(1 for _ in path.open(encoding="utf-8", errors="ignore"))
         except OSError:
@@ -159,7 +130,7 @@ def check_security(root: Path) -> HealthCheckReport:
         if re.fullmatch(r"\.env(\.[a-z]+)?", Path(f).name) and not f.endswith(".env.example"):
             report.findings.append(Finding("critical", f".env commiteado en el repo: {f}"))
 
-    for path in _iter_source_files(root, ("ts", "js", "py", "go")):
+    for path in iter_source_files(root, extensions_for("secrets")):
         try:
             text = path.read_text(encoding="utf-8", errors="ignore")
         except OSError:
@@ -189,7 +160,7 @@ def check_observability(root: Path) -> HealthCheckReport:
     has_health_endpoint = False
     console_log_count = 0
 
-    for path in _iter_source_files(root, ("ts", "tsx", "js", "jsx", "py")):
+    for path in iter_source_files(root, extensions_for("observability")):
         try:
             text = path.read_text(encoding="utf-8", errors="ignore")
         except OSError:
