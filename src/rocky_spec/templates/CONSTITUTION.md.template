@@ -27,7 +27,7 @@
 | **YAGNI** | No implementar lo que no se necesita hoy. |
 | **Clean Code** | Nombres que se explican solos. Funciones < 30 líneas. Early returns. Logs estructurados, nunca `console.log("texto")` — ver `OBSERVABILITY.md` para la librería y el formato exacto de este proyecto. |
 
-Detalle completo, ejemplos y contraejemplos en `.rocky-spec/reference/coding-principles.md` de la skill.
+Detalle completo, ejemplos y contraejemplos en `.rocky-spec/reference/solid.md` y `.rocky-spec/reference/general-principles.md` de la skill (y en `coding-principles.md` para tamaños de archivo, estilo y code smells).
 
 ## Artículo 2 — Tamaño y estructura de archivos
 

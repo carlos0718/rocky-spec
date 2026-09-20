@@ -104,7 +104,7 @@ Después de mostrar la recomendación, ofrecer:
 
 #### Principios activos del perfil que influyen en la arquitectura
 
-Leer `.rocky-spec/reference/coding-principles.md` + sección "Principios de código" de `profile.md`:
+Leer `.rocky-spec/reference/solid.md`, `general-principles.md` y `design-patterns.md` + sección "Principios de código" de `profile.md`:
 
 - **Repository activo + DB** → separar `domain/repositories/` (interfaces) de `infrastructure/persistence/` (implementaciones), aunque la arquitectura base sea feature-based.
 - **SOLID activo + mediano+** → separar interfaces de implementaciones en general.

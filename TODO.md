@@ -84,7 +84,7 @@
 - [x] Fichas de arquitectura `onion.md` y `hexagonal.md` — con la regla de dependencia y la comparación contra Clean Architecture (US-34, RF-26)
 - [x] Fichas de arquitectura `microservices.md` y `event-driven.md` — límites de servicio, datos propios, consistencia eventual, idempotencia (US-34, RF-26)
 - [x] `architectures.md` pasa a ser el mapa: apunta a cada ficha, suma la regla de dependencia y la comparación de la familia Clean/Onion/Hexagonal; `p4-architecture.md` y `mode-adopt.md` abren solo la ficha del estilo elegido o detectado (US-34, RF-26)
-- [ ] Adelgazar `coding-principles.md` (queda con code smells, tamaños, estilo y reglas base) y actualizar lo que apunta a secciones migradas: `CONSTITUTION.md.template`, `CLAUDE.md.template`, `p4-architecture.md`, `p6-p7-files-todo.md`, `security.md` (US-36, RF-26)
+- [x] Adelgazar `coding-principles.md` (queda con code smells, tamaños, estilo y reglas base) y actualizar lo que apunta a secciones migradas: `CONSTITUTION.md.template`, `CLAUDE.md.template`, `p4-architecture.md`, `p6-p7-files-todo.md`, `security.md` (US-36, RF-26)
 - [ ] `commands/p5.9-practices.md` + `templates/PRACTICES.md.template` — deriva principios/patrones/herramientas por proyecto, confirmación en una pantalla, generado con `rocky build --template` (US-35, RF-26)
 - [ ] Wiring de P5.9 en el kit: `COMMAND_CATALOG` (`scaffold.py`), `welcome.py`, tabla de comandos del README, `flow-diagram.md` y tests del catálogo (US-35, RF-26)
 - [ ] Wiring de P5.9 en lo que se genera: `AGENTS.md.template`, `qa_review.py`, fila en MA-6 de `mode-adopt.md`, docstring de `build.py` y test de render de `PRACTICES.md.template` (US-35, RF-26)
