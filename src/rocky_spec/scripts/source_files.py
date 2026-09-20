@@ -20,9 +20,10 @@ IGNORED_DIRS = {
 # lenguaje -> extensiones: los stacks de reference/stacks-code.md, más C#.
 LANGUAGES: dict[str, tuple[str, ...]] = {
     "typescript": ("ts", "tsx"),
-    "javascript": ("js", "jsx"),
+    "javascript": ("js", "jsx", "mjs", "cjs"),
     "vue": ("vue",),
     "svelte": ("svelte",),
+    "astro": ("astro",),
     "python": ("py",),
     "go": ("go",),
     "rust": ("rs",),
@@ -43,7 +44,7 @@ def _extensions_of(*languages: str) -> tuple[str, ...]:
 # check -> extensiones que lee.
 CHECK_EXTENSIONS: dict[str, tuple[str, ...]] = {
     "size": CODE_EXTENSIONS,
-    "secrets": ("ts", "js", "py", "go"),
+    "secrets": CODE_EXTENSIONS,  # la regex no depende del lenguaje: `clave = "valor"`
     "observability": _extensions_of("typescript", "javascript", "python"),
     "accessibility": ("html", "jsx", "tsx"),
     "contrast": ("css", "html", "jsx", "tsx"),

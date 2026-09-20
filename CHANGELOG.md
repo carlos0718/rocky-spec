@@ -6,6 +6,9 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+### Fixed
+- **`rocky check security` no detectaba secrets hardcodeados en la mayoría de los lenguajes** — solo leía `.ts`, `.js`, `.py` y `.go`: un `apiKey = "..."` en `.tsx`, `.jsx`, `.rs`, `.java`, `.kt`, `.cs`, `.rb`, `.php`, `.vue` o `.svelte` pasaba sin aviso. Ahora lee todos los lenguajes de la tabla única `scripts/source_files.py`, que reemplaza las listas de extensiones que cada check tenía por su cuenta (y se habían desincronizado). La tabla suma `.mjs`, `.cjs` (Node ESM/CJS) y `.astro`: `check code` los mide y `check observability` lee `.mjs`/`.cjs`. Sigue sin detectar claves entre comillas (`"api_key" => "..."`, JSON/YAML) — pendiente en el TODO.
+
 ## [0.23.1] - 2026-09-19
 
 ### Fixed

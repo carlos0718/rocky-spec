@@ -2,7 +2,7 @@ import subprocess
 
 import pytest
 
-from rocky_spec.scripts import health_check
+from rocky_spec.scripts import health_check, source_files
 
 
 @pytest.fixture
@@ -129,7 +129,7 @@ def test_check_file_sizes_config_and_constants_have_no_size_tier_below_the_ceili
     assert health_check.check_file_sizes(tmp_path).findings == []
 
 
-@pytest.mark.parametrize("extension", ["vue", "svelte", "java", "kt", "cs", "rb", "php"])
+@pytest.mark.parametrize("extension", ["vue", "svelte", "astro", "mjs", "cjs", "java", "kt", "cs", "rb", "php"])
 def test_check_file_sizes_scans_stacks_the_kit_supports(tmp_path, extension):
     _write_lines(tmp_path / "src" / f"Big.{extension}", 450)
     assert any("dividir sí o sí" in m for m in _messages(health_check.check_file_sizes(tmp_path)))
@@ -166,7 +166,8 @@ def test_check_security_scans_project_that_lives_under_an_ignored_dir_name(tmp_p
     project = tmp_path / "dist" / "proj"
     project.mkdir(parents=True)
     subprocess.run(["git", "init", "-q"], cwd=project, check=True)
-    (project / "config.js").write_text("const API_KEY = 'sk-live-abc123def456ghi789jkl';\n")
+    secret_value = "sk-live-abc123def456ghi789jkl"
+    (project / "config.js").write_text(f"const API_KEY = '{secret_value}';\n")
     report = health_check.check_security(project)
     assert any("secret hardcodeado" in f.message for f in report.findings)
 
@@ -185,6 +186,27 @@ def test_check_security_detects_hardcoded_secret_without_leaking_value(git_repo)
     assert any("secret hardcodeado" in f.message for f in critical)
     # Nunca debe filtrarse el valor real del secret en el mensaje.
     assert all(secret_value not in f.message for f in report.findings)
+
+
+@pytest.mark.parametrize("extension", source_files.CODE_EXTENSIONS)
+def test_check_security_detects_secret_in_every_language_the_kit_reads(tmp_path, extension):
+    secret_value = "sk-live-abc123def456ghi789jkl"
+    (tmp_path / f"leak.{extension}").write_text(f"const apiKey = '{secret_value}';\n")
+    report = health_check.check_security(tmp_path)
+    critical = [f for f in report.findings if f.severity == "critical"]
+    assert any("secret hardcodeado" in f.message for f in critical)
+    assert all(secret_value not in f.message for f in report.findings)
+
+
+@pytest.mark.parametrize("extension", ["mjs", "cjs"])
+def test_check_observability_reads_esm_and_cjs_files(tmp_path, extension):
+    (tmp_path / f"app.{extension}").write_text(
+        "Sentry.init({dsn: process.env.SENTRY_DSN});\n"
+        "app.get('/health', () => {});\n"
+    )
+    messages = [f.message for f in health_check.check_observability(tmp_path).findings]
+    assert not any("error tracking" in m for m in messages)
+    assert not any("health check" in m for m in messages)
 
 
 def test_check_security_ignores_placeholder_values(git_repo):
