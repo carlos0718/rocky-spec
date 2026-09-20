@@ -6,6 +6,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.23.1] - 2026-09-19
+
 ### Fixed
 - **`rocky check` ignoraba proyectos enteros que vivían bajo una carpeta llamada `build`, `dist`, `node_modules`, `.git`, etc.** — el filtro de carpetas ignoradas comparaba contra la ruta absoluta completa en vez de solo las carpetas dentro del proyecto. Un proyecto en `/build/app` (típico `WORKDIR /build` de Docker) devolvía "✅ sin hallazgos" en `check code`, `check security` (incluidos los secrets hardcodeados), `check observability` y `check accessibility`, y `check drift` no detectaba su UI. Ahora solo cuentan las carpetas dentro del proyecto.
 - **`rocky check code` ignoraba los límites por tipo de archivo de `coding-principles.md`** — `FILE_SIZE_LIMITS` estaba definido pero nunca se usaba: todo archivo se medía con 250/400 líneas. Resultado: tests (el doc les da 500), servicios/hooks (300), archivos de tipos (300/500) y config/constantes (sin límite práctico) generaban falsos positivos 🟡. Ahora se clasifica por nombre y carpetas *dentro del proyecto* y se aplica la tabla del doc; el techo duro de 1000 líneas sigue valiendo para todos. El mensaje indica qué límite se aplicó (ej. "límite de tipos"). Los archivos sin fila propia en el doc mantienen 250/400.
