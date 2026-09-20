@@ -19,8 +19,22 @@ def test_code_extensions_is_every_extension_of_every_language():
 
 @pytest.mark.parametrize("check", sorted(source_files.CHECK_EXTENSIONS))
 def test_every_check_scope_only_uses_known_extensions(check):
-    known = set(source_files.CODE_EXTENSIONS) | {"html", "css"}
+    known = set(source_files.CODE_EXTENSIONS) | set(source_files.TEMPLATE_EXTENSIONS) | {"css"}
     assert set(source_files.extensions_for(check)) <= known
+
+
+def test_iter_source_files_matches_extensions_case_insensitively_and_compound_ones(tmp_path):
+    (tmp_path / "Big.CS").write_text("x")
+    (tmp_path / "welcome.blade.php").write_text("x")
+    (tmp_path / "plain.php").write_text("x")
+
+    assert {p.name for p in source_files.iter_source_files(tmp_path, ("cs",))} == {"Big.CS"}
+    assert {p.name for p in source_files.iter_source_files(tmp_path, ("blade.php",))} == {"welcome.blade.php"}
+
+
+def test_unread_language_counts_does_not_break_on_uppercase_extensions(tmp_path):
+    (tmp_path / "Big.CS").write_text("x")
+    assert source_files.unread_language_counts(tmp_path, "observability") == {"csharp": 1}
 
 
 def test_extensions_for_unknown_check_fails_loudly():

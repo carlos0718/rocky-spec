@@ -41,6 +41,25 @@ def _extensions_of(*languages: str) -> tuple[str, ...]:
     return tuple(ext for name in languages for ext in LANGUAGES[name])
 
 
+# Vistas y templates que alojan HTML, más allá de los componentes de UI de LANGUAGES.
+# "blade.php" es compuesta: el sufijo real de una vista Laravel es `.php`, igual que el de
+# una API PHP sin UI, así que se distingue por el nombre completo.
+TEMPLATE_EXTENSIONS: tuple[str, ...] = (
+    "html", "htm",
+    "cshtml", "razor",  # .NET: Razor Pages / MVC, Blazor
+    "erb", "haml", "slim",  # Rails
+    "blade.php", "twig",  # PHP: Laravel, Symfony
+    "ejs", "hbs", "handlebars", "njk", "pug",  # Node
+    "jinja", "j2",  # Python (Django/Flask usan `.html`)
+    "jsp",  # Java
+    "gohtml",  # Go
+    "liquid", "mustache",
+)
+
+# ¿Este proyecto tiene interfaz visual? Templates + componentes de UI.
+UI_EXTENSIONS: tuple[str, ...] = TEMPLATE_EXTENSIONS + _extensions_of("vue", "svelte", "astro") + ("jsx", "tsx")
+
+
 # check -> extensiones que lee.
 CHECK_EXTENSIONS: dict[str, tuple[str, ...]] = {
     "size": CODE_EXTENSIONS,
@@ -48,7 +67,7 @@ CHECK_EXTENSIONS: dict[str, tuple[str, ...]] = {
     "observability": _extensions_of("typescript", "javascript", "python"),
     "accessibility": ("html", "jsx", "tsx"),
     "contrast": ("css", "html", "jsx", "tsx"),
-    "ui": ("html", "jsx", "tsx"),
+    "ui": UI_EXTENSIONS,
 }
 
 
@@ -78,7 +97,7 @@ def unread_language_counts(root: Path, check: str) -> dict[str, int]:
     owner = {ext: name for name in NOT_READ.get(check, {}) for ext in LANGUAGES[name]}
     counts: dict[str, int] = {}
     for path in iter_source_files(root, tuple(owner)):
-        name = owner[path.suffix.lstrip(".")]
+        name = owner[path.suffix.lstrip(".").lower()]
         counts[name] = counts.get(name, 0) + 1
     return counts
 
@@ -91,10 +110,13 @@ def is_ignored(path: Path, root: Path) -> bool:
 
 
 def iter_source_files(root: Path, extensions: tuple[str, ...]) -> Iterator[Path]:
+    """Archivos bajo ``root`` cuyo nombre termina en alguna de ``extensions``, sin
+    distinguir mayúsculas (Windows) y aceptando extensiones compuestas (``blade.php``)."""
+    suffixes = tuple(f".{ext}" for ext in extensions)
     for path in root.rglob("*"):
         if path.is_dir():
             continue
         if is_ignored(path, root):
             continue
-        if path.suffix.lstrip(".") in extensions:
+        if path.name.lower().endswith(suffixes):
             yield path
