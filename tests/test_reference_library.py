@@ -10,7 +10,7 @@ from pathlib import Path
 
 from rocky_spec import scaffold
 from rocky_spec.integrations import INTEGRATION_REGISTRY, SHARED_DIR_NAME
-from rocky_spec.scripts import render_template
+from rocky_spec.scripts import build, render_template
 
 PACKAGE = Path(str(resources.files("rocky_spec")))
 REFERENCE = PACKAGE / "reference"
@@ -130,6 +130,31 @@ def test_practices_template_only_leaves_the_mandatory_placeholders_open():
         "PROJECT_NAME", "FRONTEND", "BACKEND", "ARCHITECTURE_NAME", "PRACTICES_SCALE",
         "PRACTICES_PRINCIPLES", "ACTIVE_PATTERNS", "PRACTICES_TOOLS", "DATE", "INITIAL_COMMIT",
     }
+
+
+def test_build_single_file_generates_practices_from_the_installed_template(tmp_path):
+    # Lo que P5.9 le pide a `rocky build`: renderizar PRACTICES.md.template
+    # desde .rocky-spec/ del proyecto destino, sin tocar los archivos base.
+    scaffold.ensure_shared_knowledge(tmp_path)
+    values = {
+        "PROJECT_NAME": "demo",
+        "FRONTEND": "React",
+        "BACKEND": "No aplica",
+        "ARCHITECTURE_NAME": "Feature-based",
+        "PRACTICES_SCALE": "Producto real",
+        "PRACTICES_PRINCIPLES": "| KISS | funciones planas |",
+        "ACTIVE_PATTERNS": "Adapter",
+        "PRACTICES_TOOLS": "| Linter | ESLint | recomendada |",
+        "DATE": "2026-09-20",
+        "INITIAL_COMMIT": "(pendiente)",
+    }
+
+    result = build.build(tmp_path, values, only=("PRACTICES.md.template", "PRACTICES.md"))
+
+    assert result.generated == ["PRACTICES.md"]
+    assert result.unresolved == {}
+    assert "# Practices — demo" in (tmp_path / "PRACTICES.md").read_text(encoding="utf-8")
+    assert not (tmp_path / "SPEC.md").exists()
 
 
 def test_every_architecture_style_has_the_common_sheet_template():

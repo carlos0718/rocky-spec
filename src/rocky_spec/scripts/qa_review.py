@@ -119,6 +119,7 @@ def full_report(project_root: Path) -> TraceabilityReport:
             project_root / "SECURITY.md",
             project_root / "OBSERVABILITY.md",
             project_root / "ACCESSIBILITY.md",
+            project_root / "PRACTICES.md",
             project_root / "CONSTITUTION.md",
             project_root / "design-system" / "MASTER.md",
         ]

@@ -197,7 +197,7 @@ Comandos de la CLI `rocky`, agrupados por qué resuelven. Para los comandos que 
 | Comando | Qué hace |
 |---|---|
 | `rocky build [PATH] --values <json> [--force]` | Renderiza `SPEC.md`, `CONSTITUTION.md`, `AGENTS.md`, `CLAUDE.md`, `SECURITY.md`, `OBSERVABILITY.md`, `CHANGELOG.md`, `README.md`, `TODO.md` y `LICENSE` desde `.rocky-spec/templates/` a partir de un JSON de valores — no pisa archivos existentes salvo `--force`. |
-| `rocky build [PATH] --values <json> --template <t> --output <ruta> [--force]` | Modo single-file: renderiza un solo template (ej. `MASTER.md.template`, `ACCESSIBILITY.md.template`) en vez del set fijo de arriba — `--template` y `--output` van juntos. |
+| `rocky build [PATH] --values <json> --template <t> --output <ruta> [--force]` | Modo single-file: renderiza un solo template (ej. `MASTER.md.template`, `ACCESSIBILITY.md.template`, `PRACTICES.md.template`) en vez del set fijo de arriba — `--template` y `--output` van juntos. |
 
 #### Health-checks (`rocky check`)
 

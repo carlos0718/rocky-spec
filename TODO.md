@@ -87,7 +87,7 @@
 - [x] Adelgazar `coding-principles.md` (queda con code smells, tamaños, estilo y reglas base) y actualizar lo que apunta a secciones migradas: `CONSTITUTION.md.template`, `CLAUDE.md.template`, `p4-architecture.md`, `p6-p7-files-todo.md`, `security.md` (US-36, RF-26)
 - [x] `commands/p5.9-practices.md` + `templates/PRACTICES.md.template` — deriva principios/patrones/herramientas por proyecto, confirmación en una pantalla, generado con `rocky build --template` (US-35, RF-26)
 - [x] Wiring de P5.9 en el kit: `COMMAND_CATALOG` (`scaffold.py`), `welcome.py`, tabla de comandos del README, `flow-diagram.md` y tests del catálogo (US-35, RF-26)
-- [ ] Wiring de P5.9 en lo que se genera: `AGENTS.md.template`, `qa_review.py`, fila en MA-6 de `mode-adopt.md`, docstring de `build.py` y test de render de `PRACTICES.md.template` (US-35, RF-26)
+- [x] Wiring de P5.9 en lo que se genera: `AGENTS.md.template`, `qa_review.py`, fila en MA-6 de `mode-adopt.md`, docstring de `build.py` y test de render de `PRACTICES.md.template` (US-35, RF-26)
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
 - [ ] Integración con Gemini CLI
 - [ ] Integración con Codex CLI
