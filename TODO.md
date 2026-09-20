@@ -72,6 +72,9 @@
 - [x] Skill `rocky-docs-sync` separada de `rocky-spec` (trazabilidad de requisitos + README sync), generada por `rocky init --agent claude` y `--agent cursor`; `AGENTS.md.template` pierde esas dos secciones y gana un puntero (US-33, RF-25)
 - [x] Fix: check ignoraba proyectos bajo una carpeta llamada build/dist — `_iter_source_files` (`check code`/`security`/`observability`/`accessibility`) y `_project_has_ui` (`check drift`) comparaban `IGNORED_DIRS` contra la ruta absoluta y devolvían "sin hallazgos" para un proyecto en `/build/app`; ahora solo cuentan las carpetas dentro del proyecto (helper `_is_ignored`)
 - [x] Fix: `rocky check code` aplica los límites por tipo de archivo de `coding-principles.md` (tests 500, servicio/hook 300, tipos 300/500, config sin límite; techo de 1000 para todos) en vez de 250/400 fijos — `FILE_SIZE_LIMITS` era código muerto — y escanea `.vue`/`.svelte`/`.java`/`.kt`/`.cs`/`.rb`/`.php` e ignora `venv`/`vendor`/`obj`/`target`/`.next`/`coverage`
+- [x] Fix: `check security` leía solo `ts`/`js`/`py`/`go` — no detectaba secrets hardcodeados en `.tsx`, `.jsx`, `.rs`, `.java`, `.kt`, `.cs`, `.rb`, `.php`, `.vue` ni `.svelte`; ahora lee todos los lenguajes de la tabla única `scripts/source_files.py` (que suma `.mjs`, `.cjs` y `.astro`, también para `check code` y `check observability`)
+- [x] Fix: `check observability` afirmaba "no encontré error tracking / health check" en proyectos de un lenguaje que no sabe leer (ej. C# con Serilog) — ahora informa "no evaluado" y qué lenguajes omitió; `NOT_READ` en `source_files.py` obliga a decidir por cada lenguaje nuevo si el check lo lee o lo excluye con motivo
+- [x] Fix: `check drift` detectaba "tiene interfaz visual" solo por `.html`/`.jsx`/`.tsx` — ahora reconoce vistas Razor (`.cshtml`/`.razor`), Rails, Laravel (`.blade.php`), Vue/Svelte/Astro, Node, Jinja, Twig, JSP, Liquid, Mustache y Go templates (`UI_EXTENSIONS` en `source_files.py`); la comparación de extensiones ya no distingue mayúsculas
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
 - [ ] Integración con Gemini CLI
 - [ ] Integración con Codex CLI
@@ -82,6 +85,12 @@
 - [x] Suite de tests (render_template, health_check, qa_review, integrations, version_check, versioning, build, welcome, accessibility_check, update) — correr `pytest -q` para el conteo actual, no se mantiene un número fijo acá porque queda desactualizado con cada feature que suma tests.
 - [x] CI/CD — GitHub Actions corre `pytest` (matrix Python 3.9/3.12) en cada push/PR a `development` y `master` (US-22)
 - [ ] Coverage report
+- [ ] `check security`: detectar secrets con la clave entre comillas (`"api_key" => "..."` en PHP, `"password": "..."` en JSON/YAML) y en archivos de config como `appsettings.json` — hoy solo detecta `clave = "valor"` en código; ampliarlo trae más falsos positivos, analizarlo aparte
+- [ ] `check observability`: patrones por lenguaje — C# (`Serilog`, `UseHealthChecks`, Application Insights), Java/Kotlin (Actuator, Sentry), PHP, Ruby, Go — hoy solo entiende ts/js/py
+- [ ] `check accessibility`: extender a `.vue`/`.svelte`/`.astro` y a templates Razor/ERB/Blade (`@click`, `on:click`, `v-on:click`) — el RF-9 documenta "HTML/JSX/TSX", así que cambia el alcance: `SPEC.md` primero (Paso 2a)
+- [ ] `rocky check code` (y demás checks): salir con código ≠ 0 ante un hallazgo 🔴 — hoy siempre sale con 0 y `HealthCheckReport.has_critical` no se usa; cambia el comportamiento del CLI, decidir y documentar en `SPEC.md`
+- [ ] `rocky check code`: detectar los code smells del catálogo de `coding-principles.md` (Long Method, Long Parameter List, 3+ interfaces mezcladas con lógica, anidamiento) o bajar la promesa "code smells estructurales" del CLI, README y `welcome.py` — hoy solo mide tamaño de archivo
+- [ ] Nota puntual sobre C#/.NET (ASP.NET Core, no ASP.NET Framework): `stacks-code.md` no lo lista entre los backends — decidir dónde va (lista de stacks, `best-practices-backend.md` o el perfil derivado) dentro de la feature `reference-library`
 
 ## Documentación
 
