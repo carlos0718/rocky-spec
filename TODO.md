@@ -77,7 +77,7 @@
 - [x] Fix: `check drift` detectaba "tiene interfaz visual" solo por `.html`/`.jsx`/`.tsx` — ahora reconoce vistas Razor (`.cshtml`/`.razor`), Rails, Laravel (`.blade.php`), Vue/Svelte/Astro, Node, Jinja, Twig, JSP, Liquid, Mustache y Go templates (`UI_EXTENSIONS` en `source_files.py`); la comparación de extensiones ya no distingue mayúsculas
 - [x] Referencia `solid.md` — migra los 5 principios desde `coding-principles.md`, con la plantilla común (cuándo sí, cuándo no, señal en el código, ejemplo mínimo) (US-34, US-36, RF-26)
 - [x] Referencia `general-principles.md` — DRY/KISS/YAGNI/Clean Code migrados desde `coding-principles.md` + composición sobre herencia (US-34, US-36, RF-26)
-- [ ] Referencia `design-patterns.md` — los 23 de GoF con la plantilla común y marca frecuente/raro; los patrones que hoy están en `coding-principles.md` se migran; partir por tipo en carpeta si pasa de ~400 líneas (US-34, US-36, RF-26)
+- [x] Referencia `design-patterns.md` — los 23 de GoF con la plantilla común y marca frecuente/raro; los patrones que hoy están en `coding-principles.md` se migran; partir por tipo en carpeta si pasa de ~400 líneas (US-34, US-36, RF-26)
 - [ ] Referencia `best-practices-frontend.md` (US-34, RF-26)
 - [ ] Referencia `best-practices-backend.md` — incluye resolver la nota de C#/.NET de la sección Calidad (US-34, RF-26)
 - [ ] Fichas de arquitectura `monolith.md` y `layered.md` en `reference/architecture-styles/` — la monolítica incluye el monolito modular como paso previo a microservicios (US-34, RF-26)
