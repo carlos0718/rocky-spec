@@ -6,6 +6,12 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.24.1] - 2026-09-21
+
+### Fixed
+- **`CONSTITUTION.md.template` seguía congelando la versión en la regla de enmienda** — el arreglo de v0.12.0 solo llegó al `CONSTITUTION.md` de este repo, no al template: todo proyecto nuevo heredaba "subir `1.0.0`" aunque su Constitution ya fuera por otra versión. Ahora la regla apunta al campo "Versión de esta Constitution", no a un número.
+- **Marcadores de `MASTER.md.template`, `TODO.md.template` y `AGENTS.md.template` que `rocky check qa` no podía detectar** — `{{...}}` (tabla de estados de componente) y `{{feature-slug-1}}`/`{{feature-slug-2}}` no cumplen el formato de placeholder (MAYÚSCULAS y guiones bajos), así que si nadie los rellenaba sobrevivían en el archivo generado sin ningún aviso. Pasan a `{{COMPONENT_1_HOVER}}`/`_FOCUS`/`_ACTIVE`/`_DISABLED` y `{{FEATURE_SLUG_1}}`/`{{FEATURE_SLUG_2}}`. El `{{fecha}}` de `AGENTS.md.template` era texto de ejemplo, no un valor a rellenar: ahora dice `AAAA-MM-DD`.
+
 ## [0.24.0] - 2026-09-20
 
 ### Added

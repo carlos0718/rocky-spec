@@ -33,6 +33,15 @@ def test_find_unresolved_empty_when_all_resolved():
     assert find_unresolved(rendered) == []
 
 
+def test_find_unresolved_detects_placeholder_inside_backticks():
+    # Los templates reales ponen placeholders entre backticks (ej. el lockfile en
+    # CONSTITUTION.md.template). Si `find_unresolved` ignorara lo que va entre
+    # backticks para evitar falsos positivos, un placeholder realmente olvidado
+    # dejaría de detectarse -- falso negativo, peor que el falso positivo -- y
+    # `rocky build` comparte esta función.
+    assert find_unresolved("Lockfile: `{{LOCKFILE_NAME}}`") == ["LOCKFILE_NAME"]
+
+
 # --- extract_headers (compartido entre drift_check.py y build.py, RF-22/RF-23) ---
 
 
