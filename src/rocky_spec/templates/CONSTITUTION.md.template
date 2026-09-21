@@ -15,7 +15,7 @@
 - **MINOR**: se agrega un artículo nuevo (ej. sumar un requisito de accesibilidad que antes no estaba).
 - **PATCH**: aclaración de redacción sin cambio de fondo.
 
-**Cómo enmendar**: nunca en silencio dentro de un commit de feature. Si una tarea hace evidente que un artículo ya no tiene sentido para este proyecto, es señal de pausar y conversarlo explícitamente con el humano — no de bandear la regla y seguir. Una vez acordado el cambio, actualizar este archivo, subir `{{CONSTITUTION_VERSION}}` según la regla de arriba, y agregar la línea correspondiente al Historial de enmiendas al final.
+**Cómo enmendar**: nunca en silencio dentro de un commit de feature. Si una tarea hace evidente que un artículo ya no tiene sentido para este proyecto, es señal de pausar y conversarlo explícitamente con el humano — no de bandear la regla y seguir. Una vez acordado el cambio, actualizar este archivo, subir la **Versión de esta Constitution** según la regla de arriba, y agregar la línea correspondiente al Historial de enmiendas al final.
 
 ## Artículo 1 — Principios de código
 

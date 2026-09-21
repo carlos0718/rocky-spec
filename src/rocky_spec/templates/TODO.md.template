@@ -122,8 +122,8 @@
 <!-- Formato "por features" — una fila por historia de usuario o grupo de historias relacionadas -->
 | Grupo | Historias | Progreso | Archivo |
 |---|---|---|---|
-| {{FEATURE_GROUP_1}} | {{US_IDS_1}} | {{DONE_1}}/{{TOTAL_1}} | `todos/{{feature-slug-1}}.md` |
-| {{FEATURE_GROUP_2}} | {{US_IDS_2}} | {{DONE_2}}/{{TOTAL_2}} | `todos/{{feature-slug-2}}.md` |
+| {{FEATURE_GROUP_1}} | {{US_IDS_1}} | {{DONE_1}}/{{TOTAL_1}} | `todos/{{FEATURE_SLUG_1}}.md` |
+| {{FEATURE_GROUP_2}} | {{US_IDS_2}} | {{DONE_2}}/{{TOTAL_2}} | `todos/{{FEATURE_SLUG_2}}.md` |
 | Infraestructura / Deploy | — | {{DEPLOY_DONE}}/{{DEPLOY_TOTAL}} | `todos/infraestructura-deploy.md` |
 | Seguridad | — | {{SECURITY_DONE}}/{{SECURITY_TOTAL}} | `todos/seguridad.md` |
 | Observabilidad | — | {{OBS_DONE}}/{{OBS_TOTAL}} | `todos/observabilidad.md` |
