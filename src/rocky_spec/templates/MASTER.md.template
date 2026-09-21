@@ -92,7 +92,7 @@
 
 | Componente | Default | Hover | Focus | Active | Disabled |
 |---|---|---|---|---|---|
-| {{COMPONENT_1}} | ✓ | {{...}} | {{...}} | {{...}} | {{...}} |
+| {{COMPONENT_1}} | ✓ | {{COMPONENT_1_HOVER}} | {{COMPONENT_1_FOCUS}} | {{COMPONENT_1_ACTIVE}} | {{COMPONENT_1_DISABLED}} |
 
 ## Motion — principios de animación
 

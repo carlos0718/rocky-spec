@@ -88,6 +88,7 @@
 - [x] `commands/p5.9-practices.md` + `templates/PRACTICES.md.template` — deriva principios/patrones/herramientas por proyecto, confirmación en una pantalla, generado con `rocky build --template` (US-35, RF-26)
 - [x] Wiring de P5.9 en el kit: `COMMAND_CATALOG` (`scaffold.py`), `welcome.py`, tabla de comandos del README, `flow-diagram.md` y tests del catálogo (US-35, RF-26)
 - [x] Wiring de P5.9 en lo que se genera: `AGENTS.md.template`, `qa_review.py`, fila en MA-6 de `mode-adopt.md`, docstring de `build.py` y test de render de `PRACTICES.md.template` (US-35, RF-26)
+- [x] Corregir los `{{...}}` que no eran placeholders: fila del historial de `SPEC.md` sin llaves (falso positivo de `rocky check qa`), versión de la Constitution congelada en `CONSTITUTION.md.template`, y marcadores que `find_unresolved` no reconoce (`{{fecha}}`, `{{...}}`, `{{feature-slug-N}}`) — con `tests/test_placeholder_hygiene.py`
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
 - [ ] Integración con Gemini CLI
 - [ ] Integración con Codex CLI
