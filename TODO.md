@@ -111,6 +111,7 @@
 
 - [x] README.md
 - [x] CHANGELOG.md
+- [x] `USAGE.md` — flujo real de punta a punta (planificación previa, GitFlow con cada `push`/`merge` confirmado por `AskUserQuestion`, TODO único vs. orquestador, trazabilidad RF→US→RNF→tarea); README simplificado (descripción + tabla del nombre anterior sacada)
 - [ ] Documentar cómo agregar una integración nueva (guía paso a paso, hoy solo está en el README a alto nivel)
 
 ## Infraestructura / Deploy

@@ -2,18 +2,9 @@
 
 ![rocky-spec](assets/rocky-spec-banner.png)
 
-Toolkit multi-agente para **Spec-Driven Development**, nivel **Spec-Anchored** (el spec es un documento vivo, no una foto del día 1 — ver `src/rocky_spec/reference/methodologies.md`).
+Toolkit multi-agente para **Spec-Driven Development**, nivel **Spec-Anchored**: convierte a tu agente de código en un colaborador que planifica antes de tocar nada, deja `SPEC.md`/`TODO.md` sincronizados con cada cambio, y para a pedir confirmación explícita antes de cualquier `push`, `merge`, `tag` o borrado de rama — en vez de un generador de documentación que se desactualiza apenas arranca el código real. Ver [`USAGE.md`](USAGE.md) para el flujo completo con ejemplos.
 
-Nacido como una skill de Claude, ahora es un framework agnóstico de agente: la misma base de conocimiento (`.rocky-spec/`) sirve para Claude Code, Cursor, y los agentes que se agreguen — sin duplicar contenido entre ellos.
-
-## Dos nombres, y por qué son distintos
-
-| Nombre | Qué es | Dónde vive |
-|---|---|---|
-| **`rocky`** | El comando que se tipea en la terminal una vez instalado el paquete | `[project.scripts]` en `pyproject.toml` |
-| **`rocky-spec`** | El nombre de **todo lo demás**: el paquete pip/PyPI, la skill original con la que se desarrolla este framework, y la skill que `rocky init --agent claude` genera **dentro de cada proyecto destino** | Paquete → este repo. Skill original → `~/.claude/skills/rocky-spec/`. Skill generada → `.claude/skills/rocky-spec/SKILL.md` de cada proyecto, invocable ahí como `/rocky-spec` |
-
-Antes del rename (`charless` → `rocky-spec`) había una tercera variante — la skill original se llamaba `charless-ia`, distinta del paquete `spec-charless` — para dejar claro que una construye a la otra. Ese matiz ya no aplica: ambas se llaman `rocky-spec` ahora. La única diferencia real que queda es el **comando** (`rocky`, corto para tipear) vs. **todo el resto del framework** (`rocky-spec`, el nombre completo).
+`rocky` es el comando de terminal (`rocky init`, `rocky check`, ...); `rocky-spec` es el nombre del paquete y de la skill que instala. Nacido como una skill de Claude, ahora es un framework agnóstico de agente: la misma base de conocimiento (`.rocky-spec/`) sirve para Claude Code, Cursor, y los agentes que se agreguen — sin duplicar contenido entre ellos.
 
 ## Instalación
 
@@ -170,6 +161,8 @@ rocky check qa .
 > lee `.rocky-spec/` y empieza a hacer las preguntas del flujo (P0 en
 > adelante) — ver [Por qué en Claude Code no ejecutás nada y en Cursor
 > sí](#por-qué-en-claude-code-no-ejecutás-nada-y-en-cursor-sí).
+
+**¿Cómo es una sesión real, de punta a punta?** Ver [`USAGE.md`](USAGE.md): planificación antes de tocar código, GitFlow con cada `push`/`merge` confirmado por `AskUserQuestion`, TODO único vs. orquestador, y trazabilidad RF → US → RNF → tarea.
 
 ### Comandos disponibles
 
