@@ -270,7 +270,7 @@ src/rocky_spec/
 │   ├── claude.py               (genera .claude/skills/rocky-spec/SKILL.md)
 │   └── cursor.py                (genera .cursor/commands/*.md + .cursor/rules/rocky.mdc)
 └── scripts/
-    ├── render_template.py       (relleno determinista de {{PLACEHOLDER}})
+    ├── render_template.py       (relleno determinista de placeholders)
     ├── health_check.py           (equivalente en código de MA-1.5/1.6/1.7)
     └── qa_review.py               (equivalente en código de P7.5 — trazabilidad RF→US→RNF→tarea)
 ```

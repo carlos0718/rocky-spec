@@ -13,10 +13,38 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from .build import BASE_FILES
 from .render_template import find_unresolved
 
 ID_PATTERN = re.compile(r"\b(RF|US|RNF)-(\d+)\b")
 IMPLEMENTS_PATTERN = re.compile(r"implementa (RF-\d+)")
+
+# Archivos que `rocky build`/P6-P7 genera solo bajo condición (arquitectura
+# con UI, P5.8, P5.9, P8.5 opcional) o exclusivos de proyecto creativo -- no
+# entran a BASE_FILES porque no todo proyecto los tiene, pero si existen
+# también deben quedar libres de placeholders sin resolver. Ver
+# commands/p5.8-accessibility.md, p5.9-practices.md, p4.5-design-system.md,
+# p8-p8.5-validation-systemprompt.md, p6-p7-files-todo.md sección Creativo.
+OPTIONAL_TRACKED_FILES: tuple[str, ...] = (
+    "ACCESSIBILITY.md",
+    "PRACTICES.md",
+    "design-system/MASTER.md",
+    "SYSTEM_PROMPT.md",
+    "BRIEF.md",
+    "STORYBOARD.md",
+)
+
+
+def tracked_file_candidates() -> list[str]:
+    """Todo archivo (ruta relativa a la raíz del proyecto) que `rocky check qa`
+    podría llegar a revisar si existe. Se deriva de ``BASE_FILES`` en vez de
+    mantener una lista aparte -- antes de esto, el título de
+    `commands/p7.5-qa-review.md`, su propio grep de fallback y esta función
+    tenían tres listas distintas, ninguna coincidía con las otras dos, y
+    ninguna incluía `AGENTS.md`/`CLAUDE.md`/`CHANGELOG.md`/`README.md` pese a
+    ser archivos base generados por `rocky build` -- ver
+    tests/test_placeholder_hygiene.py."""
+    return [output for _, output in BASE_FILES] + list(OPTIONAL_TRACKED_FILES)
 
 
 @dataclass
@@ -113,17 +141,9 @@ def full_report(project_root: Path) -> TraceabilityReport:
     report = check_traceability(spec, *todo_paths)
 
     tracked_files = [
-        f
-        for f in [
-            project_root / "SPEC.md",
-            project_root / "SECURITY.md",
-            project_root / "OBSERVABILITY.md",
-            project_root / "ACCESSIBILITY.md",
-            project_root / "PRACTICES.md",
-            project_root / "CONSTITUTION.md",
-            project_root / "design-system" / "MASTER.md",
-        ]
-        if f.exists()
+        project_root / relative
+        for relative in tracked_file_candidates()
+        if (project_root / relative).exists()
     ]
     report.unresolved_placeholders = check_placeholder_completeness(*tracked_files)
     return report

@@ -11,6 +11,15 @@ sobreviven sin que ningún chequeo avise.
 
 Los tests miran la *salida* (lo que se renderiza / lo que ve el chequeo), no
 solo el string de entrada.
+
+Un cuarto caso, distinto de los tres anteriores (no es sobre la sintaxis de
+un placeholder, es sobre qué archivos mira `rocky check qa`): el título de
+`commands/p7.5-qa-review.md`, su propio grep de fallback y
+`qa_review.py` tenían tres listas de archivos distintas entre sí, y ninguna
+incluía `AGENTS.md`/`CLAUDE.md`/`CHANGELOG.md`/`README.md` pese a ser
+archivos base que `rocky build` genera siempre. `qa_review.tracked_file_candidates()`
+pasa a derivarse de `build.BASE_FILES` para que sea imposible que ambas
+listas vuelvan a divergir.
 """
 import re
 from importlib import resources
@@ -18,7 +27,7 @@ from pathlib import Path
 
 import pytest
 
-from rocky_spec.scripts import qa_review, render_template
+from rocky_spec.scripts import build, qa_review, render_template
 
 PACKAGE = Path(str(resources.files("rocky_spec")))
 TEMPLATES = sorted((PACKAGE / "templates").glob("*.template"))
@@ -69,3 +78,43 @@ def test_repo_root_docs_have_no_unresolved_placeholders():
     # mismo aviso, y el ruido hace que se ignoren los avisos reales.
     report = qa_review.full_report(REPO_ROOT)
     assert report.unresolved_placeholders == {}
+
+
+# --- qa_review.tracked_file_candidates() -- el "hueco de los huecos" ---
+
+
+def test_tracked_candidates_cover_every_base_file():
+    # Anti-drift: qa_review deriva su lista de BASE_FILES en vez de repetirla a
+    # mano -- este test protege esa relación aunque alguien vuelva a hardcodear
+    # una lista propia en qa_review.py más adelante (la regresión real).
+    base_file_outputs = {output for _, output in build.BASE_FILES}
+    assert base_file_outputs <= set(qa_review.tracked_file_candidates())
+
+
+@pytest.mark.parametrize(
+    "relative_path",
+    [
+        "AGENTS.md",
+        "CLAUDE.md",
+        "CHANGELOG.md",
+        "README.md",
+        "SYSTEM_PROMPT.md",
+        "BRIEF.md",
+        "STORYBOARD.md",
+    ],
+)
+def test_full_report_flags_unresolved_placeholder_in_previously_untracked_file(tmp_path, relative_path):
+    # Regresión: antes de tracked_file_candidates(), `rocky check qa` nunca
+    # miraba estos archivos -- un {{PLACEHOLDER}} olvidado en, por ejemplo,
+    # AGENTS.md (el template con más placeholders derivados a mano, 39) podía
+    # quedar en el proyecto generado sin que ningún chequeo lo detectara.
+    (tmp_path / "SPEC.md").write_text("RF-1 Login\nUS-1 (implementa RF-1): login\n")
+    (tmp_path / "TODO.md").write_text("- [ ] Endpoint de login (US-1)\n")
+    target = tmp_path / relative_path
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text("Placeholder sin rellenar: {{ALGO_PENDIENTE}}\n")
+
+    report = qa_review.full_report(tmp_path)
+
+    assert not report.is_clean
+    assert list(report.unresolved_placeholders.values()) == [["ALGO_PENDIENTE"]]

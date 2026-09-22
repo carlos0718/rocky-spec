@@ -18,6 +18,24 @@ Soporta dos formas de placeholder:
                                         chequeo de completitud lo detecte)
     {{NOMBRE, default: el valor}}   -> si `values` no trae NOMBRE, usa el
                                         default embebido en el propio template
+
+Dos reglas de autoría para quien agregue un placeholder nuevo a un
+`.template` (no las aplica el código, dependen de quien escribe):
+
+1. Un placeholder se sustituye **una sola vez, en el momento del render** —
+   después queda texto fijo. Si el campo puede cambiar durante la vida del
+   documento (una versión, un contador), no repitas `{{ESE_NOMBRE}}` en otra
+   parte del mismo template esperando que "siga el valor actual": va a
+   quedar congelado con el valor del día del render. Referencialo por su
+   nombre en prosa en su lugar (ej. "la **Versión de esta Constitution**"
+   en vez de `{{CONSTITUTION_VERSION}}` repetido en la regla de enmienda de
+   `CONSTITUTION.md.template` — bug real, corregido).
+2. Si necesitás *nombrar* un placeholder dentro de una explicación (no
+   dejarlo como sitio de sustitución), nunca lo envuelvas en `{{ }}` — usá
+   el nombre pelado o entre backticks. `find_unresolved` no distingue "esto
+   quedó sin rellenar" de "esto es una mención"; cualquier `{{MAYUSCULA}}`
+   que sobreviva se reporta como incompleto (bug real: una fila del
+   Historial de cambios de `SPEC.md` nombraba `{{LOCKFILE_NAME}}` así).
 """
 from __future__ import annotations
 
