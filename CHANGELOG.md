@@ -6,6 +6,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ## [Unreleased]
 
+## [0.24.2] - 2026-09-22
+
 ### Fixed
 - **`rocky check qa` solo miraba 7 de los archivos que `rocky build` genera** — el título de `commands/p7.5-qa-review.md`, su propio grep de fallback y `qa_review.py` tenían tres listas de archivos distintas entre sí, y ninguna incluía `AGENTS.md`, `CLAUDE.md`, `CHANGELOG.md` ni `README.md` pese a ser archivos base que se generan siempre — un placeholder olvidado en `AGENTS.md` (el template con más placeholders derivados a mano) podía quedar en un proyecto generado sin que nada lo detectara. `qa_review.tracked_file_candidates()` ahora se deriva de `build.BASE_FILES` y suma `SYSTEM_PROMPT.md`/`BRIEF.md`/`STORYBOARD.md`, en vez de mantener una lista propia desincronizada.
 
