@@ -80,7 +80,7 @@ Este mecanismo está documentado también en el `AGENTS.md` de cada proyecto gen
 1. Preguntar el nombre de la fase si no es obvio por el contexto: *"¿Cómo le decimos a esta fase? (ej. `mvp`, `v2-marketplace`, `beta-publica`)"*
 2. Crear `specs/<nombre-slug>/` (slug: minúsculas, guiones, sin espacios).
 3. Copiar el `SPEC.md` actual, tal cual está, a `specs/<nombre-slug>/SPEC.md` — es una foto congelada, no se vuelve a editar después.
-4. Agregar una línea en el "Historial de cambios" del `SPEC.md` de la raíz: `{{fecha}} | Fase "<nombre>" cerrada — snapshot en specs/<nombre-slug>/SPEC.md | {{commit}}`.
+4. Agregar una línea en el "Historial de cambios" del `SPEC.md` de la raíz: `AAAA-MM-DD | Fase "<nombre>" cerrada — snapshot en specs/<nombre-slug>/SPEC.md | <hash-del-commit>`.
 5. El `SPEC.md` de la raíz sigue vivo y se sigue editando normalmente para lo que sigue — este mecanismo no lo pausa ni lo reemplaza.
 
 **Relación con `CHANGELOG.md`/tags** (ver `.rocky-spec/reference/versioning.md`): son mecanismos parecidos pero no son lo mismo. Un release (tag `vX.Y.Z`) marca un punto exacto del código. Un snapshot de fase marca un punto del **alcance acordado**, con el nombre que el equipo le puso a esa etapa — pueden coincidir en el tiempo (cerrar el MVP y taguear `v1.0.0` el mismo día) pero no tienen por qué: se puede cerrar una fase de spec sin hacer un release de código todavía, o al revés.
