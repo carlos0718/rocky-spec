@@ -8,6 +8,64 @@ es un generador de documentación que corre una vez y se desactualiza: es un
 colaborador que planifica antes de tocar código y frena en los puntos donde
 una decisión es tuya, no suya.
 
+Hay dos formas de empezar — un proyecto en blanco, o uno que ya tiene código
+— y cada una tiene su propia sección más abajo. Todo lo que sigue después
+(planificación de cambios, GitFlow, trazabilidad) aplica igual a las dos, una
+vez que el proyecto ya tiene `.rocky-spec/` instalado.
+
+## Arrancando un proyecto nuevo — las preguntas de P0 a P8
+
+Después de `rocky init --agent claude` (o `cursor`), decirle al agente algo
+como *"quiero armar un proyecto nuevo"* dispara una entrevista estructurada,
+no un formulario único: 17 pasos (`P0` a `P8.5`, ver la tabla completa en el
+[README](README.md#los-17-comandos-del-agente)), cada uno preguntando solo lo
+que le corresponde — stack en P3, arquitectura en P4, design system en P4.5,
+nivel de seguridad en P5.6, y así. No todos los pasos aplican siempre: una
+API sin interfaz visual salta P4.5 (design system) y P5.8 (accesibilidad),
+por ejemplo.
+
+Donde hay una decisión con opciones conocidas (tono visual, escala de
+seguridad, sí/no a TDD), la pregunta se muestra como menú con default
+sugerido, no como texto libre a interpretar — reduce la ambigüedad de la
+respuesta y hace más rápido decidir. `SPEC.md`, `AGENTS.md` y el resto de los
+archivos base recién se generan al final (P6/P7), con todo lo recolectado en
+la entrevista — nunca antes.
+
+![Ejemplo de pregunta con menú durante el armado del proyecto](assets/usage-onboarding-question.png)
+
+## Adoptar un proyecto existente
+
+Si el directorio ya tiene código pero nunca corrió esta skill, el agente
+detecta la diferencia solo (no hay `.skill-state.json`) y entra en **Modo
+Adopción** en vez del flujo de arriba — la idea no es empezar de cero, es
+retro-aplicar las convenciones sobre lo que ya existe.
+
+1. **Escaneo automático** (`package.json`/`requirements.txt`/etc., estructura
+   de carpetas, ramas de git) más cuatro health-checks — código (tamaño de
+   archivo, code smells), seguridad (`.env` commiteado, secrets hardcodeados,
+   vulnerabilidades conocidas), observabilidad (error tracking, logging,
+   health endpoint) y accesibilidad si el proyecto tiene interfaz visual.
+2. **Te muestra lo que encontró** — stack detectado, hallazgos por categoría
+   con su severidad (🔴/🟡), y qué archivos de la skill ya existen — y pide
+   **solo** los tres datos que no se pueden inferir del código: de qué trata
+   el proyecto, qué tipo es, y si tiene backend/DB. Si un archivo como
+   `README.md` ya tiene una descripción, la reusa en vez de preguntar de
+   nuevo.
+3. Arma `SPEC.md`, el dominio y la arquitectura **a partir de lo que ya está
+   escrito**, no de cero.
+4. **Genera solo lo que falta.** La regla no tiene excepción: nunca
+   sobreescribe un archivo que ya existe salvo que se lo confirmes vos
+   explícitamente — `README.md`, convenciones propias, todo lo que ya tenías
+   se respeta.
+5. El `TODO.md` que arma **refleja el estado real**: lo que el código ya
+   hace aparece marcado `- [x]` desde el día uno, no en blanco esperando que
+   lo vuelvas a hacer.
+6. Termina con el mismo reporte de cierre que el flujo de creación — qué se
+   generó, qué quedó pendiente, y cómo seguir (*"continuemos"*, *"qué
+   sigue"*).
+
+![Hallazgos del escaneo automático en Modo Adopción](assets/usage-adoption-scan.png)
+
 ## Planificación — nada se toca sin plan ni confirmación
 
 Antes de que se escriba una sola línea de código o de `SPEC.md`, cualquier
@@ -36,7 +94,7 @@ ocasión: se mostró un plan de estructura, el usuario pidió dos ajustes (sumar
 esta sección y la de capturas del final) antes de aprobar nada, y solo
 después de la confirmación se creó la rama y se escribió el contenido.
 
-![Plan y pregunta antes de crear la rama](assets/usage-plan-question.png)
+![Plan mostrado antes de tocar código, con la pregunta explícita al final](assets/usage-plan-questions.png)
 
 ## GitFlow, paso a paso
 
@@ -82,7 +140,9 @@ sus últimas dos versiones — se puede seguir en `git log --oneline` y en
 
 ![Cálculo de versión y pregunta de taguear](assets/usage-version-check.png)
 
-![Qué ramas borrar y oferta de limpiar la sesión](assets/usage-branch-cleanup.png)
+![AskUserQuestion preguntando qué ramas borrar](assets/usage-branch-cleanup.png)
+
+![AskUserQuestion ofreciendo limpiar la sesión](assets/usage-session-cleanup.png)
 
 ## `AskUserQuestion` — qué es y en qué momentos aparece
 
@@ -142,16 +202,22 @@ del [README](README.md#health-checks-rocky-check).
 
 ## Capturas pendientes
 
-Todavía no hay screenshots reales en este repo — solo el banner de
-`assets/`. Las imágenes de arriba están referenciadas por nombre de archivo;
-en cuanto se agreguen a `assets/` con esos nombres, se ven solas, sin tocar
-este documento de nuevo.
+Las imágenes de arriba están referenciadas por nombre de archivo; en cuanto
+se agreguen a `assets/` con esos nombres, se ven solas, sin tocar este
+documento de nuevo. Un video no se reproduce inline poniéndolo en `assets/`
+—GitHub solo embebe video subido a través de su propio editor web (drag &
+drop en un PR/comentario), no un archivo referenciado por ruta relativa—, así
+que para una secuencia de varios pasos (como la entrevista P0→P8) conviene un
+GIF corto en vez de un `.mp4` commiteado.
 
-| Archivo | Qué debería mostrar | Sección |
-|---|---|---|
-| `assets/usage-plan-question.png` | El plan de una tarea + la pregunta antes de crear la rama | Planificación |
-| `assets/usage-push-confirm.png` | `AskUserQuestion` confirmando un `git push` | GitFlow |
-| `assets/usage-merge-confirm.png` | `AskUserQuestion` confirmando un `git merge` | GitFlow |
-| `assets/usage-version-check.png` | Salida de `rocky check version` + la pregunta de taguear | GitFlow |
-| `assets/usage-branch-cleanup.png` | `AskUserQuestion` preguntando qué ramas borrar + oferta de limpiar sesión | GitFlow |
-| `assets/usage-todo-orchestrator.png` | Estructura de carpeta `todos/` en el explorador de archivos | TODO orquestador |
+| Archivo | Qué debería mostrar | Sección | Estado |
+|---|---|---|---|
+| `assets/usage-onboarding-question.png` | Una pregunta con menú durante el armado inicial (ej. tono visual de P4.5, o escala de seguridad de P5.6) | Arrancando un proyecto nuevo | Pendiente |
+| `assets/usage-adoption-scan.png` | Pantalla de MA-2 con los hallazgos del escaneo automático + el pedido de los 3 datos que no se infieren | Adoptar un proyecto existente | Pendiente |
+| `assets/usage-plan-questions.png` | Plan de una tarea + pregunta antes de tocar código | Planificación | ✅ En `assets/` |
+| `assets/usage-push-confirm.png` | `AskUserQuestion` confirmando un `git push` | GitFlow | Pendiente |
+| `assets/usage-merge-confirm.png` | `AskUserQuestion` confirmando un `git merge` | GitFlow | Pendiente |
+| `assets/usage-version-check.png` | Salida de `rocky check version` + la pregunta de taguear | GitFlow | Pendiente |
+| `assets/usage-branch-cleanup.png` | `AskUserQuestion` preguntando qué ramas borrar | GitFlow | ✅ En `assets/` |
+| `assets/usage-session-cleanup.png` | `AskUserQuestion` ofreciendo limpiar la sesión | GitFlow | ✅ En `assets/` |
+| `assets/usage-todo-orchestrator.png` | Estructura de carpeta `todos/` en el explorador de archivos | TODO orquestador | Pendiente |
