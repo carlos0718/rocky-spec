@@ -311,6 +311,16 @@ def config_confirmations(path: Path, push: str | None, branch_delete: str | None
         if not perms["invalid"] and not perms["added"] and not perms["removed"]:
             click.echo("    · ya estaban alineadas")
 
+    stale = build_script.stale_policy_docs(project_root)
+    if stale:
+        click.echo("\n⚠️  Estos archivos todavía describen la política anterior:")
+        for f in stale:
+            click.echo(f"    {f}")
+        click.echo(
+            "    Regeneralos con `rocky build --update --template <ARCHIVO>.template --output <ARCHIVO>` "
+            "(deja un backup `_<ARCHIVO>` para portar a mano lo que hayas editado)."
+        )
+
 
 @main.command(name="commands")
 def commands() -> None:

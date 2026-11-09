@@ -28,6 +28,34 @@ DEFAULT_CONFIRMATIONS: dict[str, str] = {
 }
 
 
+# Placeholders de los templates cuyo texto depende de la política, y qué
+# acción los decide. El texto vive en
+# ``templates/fragments/confirmations/<PLACEHOLDER>.<auto|ask>.md`` — conocimiento
+# en español editable como cualquier template, no strings en el código.
+CONFIRMATION_FRAGMENTS: dict[str, str] = {
+    "CONFIRM_ROW_PUSH": "push",
+    "PUSH_STEP": "push",
+    "CONFIRM_ROW_BRANCH_DELETE": "branch_delete",
+    "BRANCH_DELETE_AFTER_MERGE": "branch_delete",
+    "BRANCH_DELETE_RELEASE_STEP": "branch_delete",
+}
+FRAGMENTS_SUBDIR = ("fragments", "confirmations")
+
+
+def confirmation_fragment_values(templates_dir: Path, policy: dict[str, str]) -> dict[str, str]:
+    """Valores de los placeholders de política para ``policy``, leídos de los
+    archivos de fragmento. Un fragmento que falta (``.rocky-spec/`` anterior a
+    RF-33) simplemente no se incluye: el placeholder queda sin resolver y
+    ``rocky build`` lo reporta, que es la señal de correr ``rocky update``."""
+    base = templates_dir.joinpath(*FRAGMENTS_SUBDIR)
+    values: dict[str, str] = {}
+    for placeholder, action in CONFIRMATION_FRAGMENTS.items():
+        path = base / f"{placeholder}.{policy[action]}.md"
+        if path.exists():
+            values[placeholder] = path.read_text(encoding="utf-8").strip()
+    return values
+
+
 def workflow_path(project_root: Path) -> Path:
     return project_root / SHARED_DIR_NAME / WORKFLOW_FILE_NAME
 

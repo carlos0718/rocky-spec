@@ -231,7 +231,7 @@ Cada ítem del `TODO.md` (o del archivo de grupo correspondiente en `todos/`, si
    feat: render product listing with filters (TODO: Listado de productos con filtros)
    test: add login flow unit tests (TODO: Escribir primer smoke test)
    ```
-4. Ofrecer el `git push` inmediatamente — no acumular commits sin pushear —, pero **no ejecutarlo solo**: pedir la confirmación con `AskUserQuestion`, una pregunta por rama, como fija la tabla acción → mecanismo del Artículo 7 de `CONSTITUTION.md` (detalle operativo en "Branching" más abajo). "Inmediatamente" es sobre *cuándo se ofrece*, no sobre saltear la confirmación.
+{{PUSH_STEP}}
 
 **Regla de sincronía:** el checkbox del TODO (único o de grupo) y el código que resuelve esa tarea viajan **siempre en el mismo commit**. Nunca marcar `- [x]` sin commitear el cambio correspondiente, y nunca commitear una tarea resuelta sin actualizar su checkbox. Si el código está a medias, el checkbox queda en `- [ ]` y el mensaje del commit incluye `(WIP)`.
 
@@ -340,10 +340,12 @@ git checkout -b feature/nombre-corto    # o fix/nombre-corto
 # Al terminar, mergear de vuelta (o abrir PR, según cómo trabaje el equipo)
 git checkout development
 git merge feature/nombre-corto
-git push
+git push origin development
 ```
 
-**El merge nunca es automático — es un punto de parada explícito, no el último paso de una cadena.** Después de commitear y pushear la rama `feature/*`/`fix/*` (o de dejar lista una rama `development` para un release), parar ahí y mostrar al usuario un resumen del cambio: qué se hizo, qué archivos se tocaron, resultado de tests/checks relevantes. Recién con confirmación explícita ejecutar `git merge` — pedida con `AskUserQuestion`, igual que el push, y no con un "dale" suelto en el chat: una frase libre no distingue entre aprobar el merge y aprobar además el tag y el push que suelen venir detrás. Nunca encadenar commit → push → merge sin que el usuario vea qué se está por integrar a `development` o `main`. Esto aplica igual a ambos sentidos del merge: `feature/*`/`fix/*` → `development`, y `development` → `main` en un release.
+**El merge nunca es automático — es un punto de parada explícito, no el último paso de una cadena.** Después de commitear y pushear la rama `feature/*`/`fix/*` (o de dejar lista una rama `development` para un release), parar ahí y mostrar al usuario un resumen del cambio: qué se hizo, qué archivos se tocaron, resultado de tests/checks relevantes. Recién con confirmación explícita ejecutar `git merge` — pedida con `AskUserQuestion`, igual que el tag, y no con un "dale" suelto en el chat: una frase libre no distingue entre aprobar el merge y aprobar además el tag y el push que suelen venir detrás. Nunca encadenar commit → push → merge sin que el usuario vea qué se está por integrar a `development` o `main`. Esto aplica igual a ambos sentidos del merge: `feature/*`/`fix/*` → `development`, y `development` → `main` en un release.
+
+{{BRANCH_DELETE_AFTER_MERGE}}
 
 **Esto es insistente a propósito** — es común que esta convención quede escrita pero en la práctica todo se siga commiteando directo a `main`/`development`. Por eso el Branch Discipline Check (paso 0-ter del Workflow de Git, arriba) no es solo una mención pasiva: antes de cada commit no trivial, si la rama actual es `main` o `development`, avisar explícitamente y ofrecer crear la rama correspondiente ahí mismo — no asumir que "ya se sabe" y dejarlo pasar.
 
@@ -365,7 +367,7 @@ Este proyecto sigue [SemVer](https://semver.org/lang/es/) (`MAJOR.MINOR.PATCH`) 
   3. `git tag -a vX.Y.Z -m "Release vX.Y.Z"` y `git push origin vX.Y.Z`
   4. Publicar el Release en GitHub — el tag y el Release son dos objetos distintos: pushear el tag no crea el Release, y sin este paso la pestaña "Releases" de GitHub se queda mostrando una versión "Latest" vieja aunque haya tags más nuevos. `gh release create vX.Y.Z --title vX.Y.Z --notes-file <(sección correspondiente de CHANGELOG.md)` (o "Draft a new release" en la web).
   5. **Release Sync Check — verificar que la rama principal (`main`) quedó al día:** comparar el archivo de versión del proyecto (`pyproject.toml`, `package.json`, `Cargo.toml`, etc., según el stack — {{BACKEND}}) en `origin/main` contra la `X.Y.Z` recién tageada. Si no coinciden (el tag/Release ya existen pero `main` todavía tiene una versión vieja del archivo), instaladores que clonan el HEAD del branch por defecto del remoto (`git+...` sin `@ref`, `uv tool install`, `pip install git+...`) van a instalar una versión vieja aunque el tag/Release más reciente ya diga otra cosa. Ofrecer el merge `development → main` ahí mismo, **con `AskUserQuestion`** (mismo mecanismo que cualquier merge, ver "Branching" arriba) — no asumir que "ya se va a mergear después". Este chequeo corre siempre que se taguea un release, no solo cuando hay sospecha de desfasaje.
-  6. **Cierre del flujo — limpieza de rama y de sesión, en la misma pausa.** Después de mergear a la rama principal: listar `git branch --merged development` (menos `development`/`main`) y preguntarle al usuario cuáles borrar (local + remoto) **con `AskUserQuestion`** — nunca borrar sin confirmar, y nunca ofrecer una rama que no esté 100% mergeada. Usar `git branch -d` y no `-D`: si la rama no estuviera mergeada, `-d` se niega y actúa como red de seguridad además de la verificación previa.
+  6. **Cierre del flujo — limpieza de rama y de sesión, en la misma pausa.** {{BRANCH_DELETE_RELEASE_STEP}}
 
      En esa misma pausa, ofrecer también limpiar la sesión actual (`AskUserQuestion` aparte) — el estado del trabajo vive en `TODO.md`/`SPEC.md`/`CHANGELOG.md`, no en la conversación, así que seguir arrastrando el historial de una integración ya cerrada es consumo de tokens sin beneficio:
      - Si el entorno da visibilidad del consumo de contexto de la sesión (en Claude Code, la señal de tokens/contexto restante que aparece en los reminders del sistema), usarla para graduar el mensaje: 🟢 consumo bajo, 🟡 medio, 🔴 alto. Si el entorno no da esa visibilidad (otros agentes), mostrar la recomendación sin el dato — la pregunta sigue siendo válida sin él.

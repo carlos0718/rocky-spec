@@ -8,6 +8,7 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/), y 
 
 ### Added
 - **Política de confirmaciones configurable (RF-33)** — el push a `feature/*`/`fix/*` y el borrado de la rama después de su merge dejan de pedir confirmación por defecto; el merge, el tag, el release (`gh release create`), `git branch -D` y el push a ramas principales siguen preguntando siempre. La política vive en `.rocky-spec/workflow.json` y se cambia con `rocky config confirmations --push ask|auto --branch-delete ask|auto`, que también realinea `permissions.ask` de `.claude/settings.json`: agrega lo que falta y quita solo las reglas que rocky-spec gestiona, nunca las del usuario. Un proyecto generado antes de esto pierde `git push *` y `git branch -d *` de `ask` la próxima vez que corra `rocky init` o `rocky config confirmations`.
+- **`CONSTITUTION.md` y `AGENTS.md` generados según la política** — la tabla del Artículo 7, el paso de push del Workflow de Git, el borrado de la rama después del merge y el paso 6 del release salen de fragmentos (`templates/fragments/confirmations/`) que `rocky build` y `rocky build --update` resuelven desde `workflow.json`, en vez de un texto fijo. `rocky config confirmations` avisa qué archivos generados quedaron con la política anterior, y P5 pregunta la política antes de generar los archivos.
 
 ## [0.24.2] - 2026-09-22
 

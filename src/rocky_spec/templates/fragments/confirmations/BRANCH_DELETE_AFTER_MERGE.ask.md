@@ -1,0 +1,1 @@
+**Después de un merge `feature/*`/`fix/*` → `development`, no borrar la rama todavía** (política `branch_delete: ask` de `.rocky-spec/workflow.json`): el borrado se pregunta junto con el resto de la limpieza, en el paso 6 de "Cómo hacer un release" (más abajo).

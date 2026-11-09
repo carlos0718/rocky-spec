@@ -120,6 +120,18 @@ No tengo permisos para ejecutar comandos en esta sesión.
 Te voy a mostrar todo para que lo corras vos. Decime "listo" cuando termines.
 ```
 
+#### Confirmaciones de git durante el desarrollo
+
+Antes del reporte, una sola pregunta con `AskUserQuestion` (es elegir entre alternativas, Artículo 7):
+
+> "Mientras trabajemos en ramas `feature/*`/`fix/*`, ¿pusheo cada commit sin preguntarte?"
+> - **Sí, pushear sin preguntar (recomendado)** — el push a una rama de feature no integra nada; la parada real es el merge.
+> - **No, preguntame antes de cada push**
+
+Y aclarar en la misma pantalla lo que **no** es configurable: el merge (en ambos sentidos), el bump de versión, el tag y el release siempre se preguntan. La rama se borra sola después de su merge (con `git branch -d`, que se niega si no está 100% mergeada); si el usuario prefiere que eso también se pregunte, se cambia con `--branch-delete ask`.
+
+Guardar la respuesta con `rocky config confirmations . --push auto` (o `--push ask`) — escribe `.rocky-spec/workflow.json` y ajusta los permisos del agente. Se corre **antes** de `rocky build` en P6, así `CONSTITUTION.md` y `AGENTS.md` salen con la política elegida. Si el usuario no contesta o el CLI no está disponible, rige el default (`push: auto`, `branch_delete: auto`).
+
 #### Reporte intermedio al final de P5
 
 Antes de pasar a P6, mostrar resumen:
@@ -127,6 +139,7 @@ Antes de pasar a P6, mostrar resumen:
 ```
 === Resumen de P5 ===
 Modo elegido:   Paso a paso
+Push a feature: automático (rocky config confirmations)
 Ejecutados:     5 / 6
 Saltados:       1 (npm i -D vitest — usuario eligió omitir)
 Fallidos:       0

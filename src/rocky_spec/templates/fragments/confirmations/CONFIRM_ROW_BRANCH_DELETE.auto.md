@@ -1,0 +1,1 @@
+| Borrar la rama `feature/*`/`fix/*` después de su merge (local y remoto) | Automático, solo con `git branch -d`, que se niega si la rama no está 100% mergeada. Se vuelve a preguntar con `rocky config confirmations --branch-delete ask` |

@@ -19,6 +19,7 @@ import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from ..workflow import confirmation_fragment_values, load_confirmations
 from .render_template import extract_headers, find_unresolved, render
 
 TEMPLATES_DIR_NAME = "templates"
@@ -86,6 +87,38 @@ def _persist_values(project_root: Path, values: dict[str, str]) -> None:
     values_path.write_text(json.dumps(merged, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def _with_fragments(project_root: Path, templates_dir: Path, values: dict[str, str]) -> dict[str, str]:
+    """``values`` más los fragmentos que decide el CLI (hoy, la política de
+    confirmaciones de ``workflow.json``). Los fragmentos ganan: son derivados
+    deterministas de la configuración del proyecto, no algo que el LLM
+    redacte — y no se persisten en ``build-values.json`` por el mismo motivo."""
+    policy = load_confirmations(project_root)
+    return {**values, **confirmation_fragment_values(templates_dir, policy)}
+
+
+def stale_policy_docs(project_root: Path) -> list[str]:
+    """Archivos raíz generados que no reflejan la política vigente de
+    ``workflow.json``: algún fragmento que su template usa no aparece en el
+    archivo. Lo usa ``rocky config confirmations`` para avisar qué regenerar
+    con ``rocky build --update``. Heurístico por presencia de texto: un
+    archivo editado a mano en esas líneas también aparece como desalineado."""
+    templates_dir = project_root / SHARED_DIR_NAME / TEMPLATES_DIR_NAME
+    fragments = confirmation_fragment_values(templates_dir, load_confirmations(project_root))
+    stale: list[str] = []
+    for template_name, output_relative in BASE_FILES:
+        template_path = templates_dir / template_name
+        output_path = project_root / output_relative
+        if not template_path.exists() or not output_path.exists():
+            continue
+        template_text = template_path.read_text(encoding="utf-8")
+        output_text = output_path.read_text(encoding="utf-8")
+        for placeholder, text in fragments.items():
+            if "{{" + placeholder + "}}" in template_text and text not in output_text:
+                stale.append(output_relative)
+                break
+    return stale
+
+
 def build(
     project_root: Path,
     values: dict[str, str],
@@ -103,6 +136,7 @@ def build(
     que antes quedaban afuera de este mecanismo determinista por completo."""
     templates_dir = project_root / SHARED_DIR_NAME / TEMPLATES_DIR_NAME
     result = BuildResult()
+    render_values = _with_fragments(project_root, templates_dir, values)
 
     if only:
         entries = [only]
@@ -129,7 +163,7 @@ def build(
             continue
 
         template_text = template_path.read_text(encoding="utf-8")
-        rendered = render(template_text, values)
+        rendered = render(template_text, render_values)
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(rendered, encoding="utf-8")
         result.generated.append(output_relative)
@@ -196,7 +230,7 @@ def update_file(
     output_path.rename(backup_path)
 
     template_text = template_path.read_text(encoding="utf-8")
-    rendered = render(template_text, values)
+    rendered = render(template_text, _with_fragments(project_root, templates_dir, values))
     output_path.write_text(rendered, encoding="utf-8")
 
     backup_headers = extract_headers(backup_content)
