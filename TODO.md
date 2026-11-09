@@ -90,6 +90,12 @@
 - [x] Wiring de P5.9 en lo que se genera: `AGENTS.md.template`, `qa_review.py`, fila en MA-6 de `mode-adopt.md`, docstring de `build.py` y test de render de `PRACTICES.md.template` (US-35, RF-26)
 - [x] Corregir los `{{...}}` que no eran placeholders: fila del historial de `SPEC.md` sin llaves (falso positivo de `rocky check qa`), versión de la Constitution congelada en `CONSTITUTION.md.template`, y marcadores que `find_unresolved` no reconoce (`{{fecha}}`, `{{...}}`, `{{feature-slug-N}}`) — con `tests/test_placeholder_hygiene.py`
 - [x] `rocky check qa` ensanchado a `AGENTS.md`, `CLAUDE.md`, `CHANGELOG.md`, `README.md`, `SYSTEM_PROMPT.md`, `BRIEF.md`, `STORYBOARD.md` (antes solo miraba 7 de los ~13 archivos que `rocky build`/P4.5/P5.8/P5.9/P8.5 pueden generar) — `tracked_file_candidates()` se deriva de `BASE_FILES` en vez de una lista propia, y un test anti-drift protege esa relación
+- [ ] Núcleo de perfiles: `methodology.py` (los 4 perfiles, scoring del triage, `methodology.json`) + `rocky build` por perfil con fragmentos; `spec-anchored` reproduce el output actual (US-39, RF-27, RF-29)
+- [ ] Triage P1.2: `commands/p1.2-methodology.md`, `rocky methodology triage/show`, `rocky init --methodology`, pre-respuestas en P4/P5.6/P5.7/P5.9/P7.5/P6-P7 y paso nuevo en Modo Adopción (US-37, US-38, RF-28)
+- [ ] Lean y Spec-First: `SPEC-lite.md.template`, fragmentos de los dos perfiles, `rocky methodology freeze`, `rocky check qa` y `mode-resume.md` según perfil, router de la skill generada (US-40, RF-30)
+- [ ] Spec-as-Source: `source-map.json`, `rocky check source` y `commands/spec-as-source.md` (US-41, RF-31)
+- [ ] Escalado guiado: `rocky methodology upgrade` + `rocky check methodology` con umbrales 🟡/🔴 (US-42, RF-32)
+- [ ] Docs de perfiles: `methodologies.md` (matriz de perfiles; corregir TDD línea 3 vs. 94 y la ruta vieja `~/.claude/skills/`), `flow-diagram.md`, README, USAGE y `welcome.py` (RF-27 a RF-32)
 - [ ] Publicar en PyPI — opcional, no bloquea el uso (US-8)
 - [ ] Integración con Gemini CLI
 - [ ] Integración con Codex CLI
