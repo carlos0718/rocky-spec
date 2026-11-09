@@ -6,7 +6,7 @@
 
 ## Gobernanza
 
-- **Versión de esta Constitution**: 1.6.0
+- **Versión de esta Constitution**: 1.7.0
 - **Fecha de ratificación**: 2026-08-31
 - **Última enmienda**: 2026-09-06
 
@@ -79,14 +79,16 @@ Estos patrones son la forma concreta en que este proyecto aplica el Artículo 1 
 - La versión del proyecto sigue **SemVer** (`MAJOR.MINOR.PATCH`) — romper compatibilidad es siempre MAJOR, sin excepción, incluso si el cambio fue chico de programar.
 - Un release (tag de versión) es una decisión explícita, nunca automática por acumulación de commits.
 - El trabajo del día a día se hace en `feature/*`/`fix/*`, nunca directo sobre `master`/`development` — ver `AGENTS.md` sección "Branching". Al mergear a `development` o `master`, recordar (no ejecutar solo) si corresponde bumpear versión.
-- **Ninguna acción que publique, integre o destruya se ejecuta sola.** Antes de cada una: parar, mostrar un resumen de lo que se está por hacer, y esperar la confirmación **por el mecanismo que fija esta tabla**. Nunca encadenar commit → push → merge, ni inferir un permiso de una frase suelta del chat.
+- **Ninguna acción que integre, versione o destruya se ejecuta sola**, salvo las que esta tabla marca como automáticas. Antes de cada una: parar, mostrar un resumen de lo que se está por hacer, y esperar la confirmación **por el mecanismo que fija esta tabla**. Nunca encadenar push → merge, ni inferir un permiso de una frase suelta del chat. Lo configurable (push y borrado de ramas) se cambia con `rocky config confirmations`, que también ajusta los permisos del agente.
 
   | Acción | Mecanismo de confirmación |
   |---|---|
-  | `git push` — cualquier rama, cualquier tamaño de cambio | `AskUserQuestion`, una pregunta **por rama** |
+  | `git push` a `feature/*`/`fix/*` | Automático, sin preguntar — siempre con la rama explícita (`git push origin <rama>`). Se vuelve a preguntar con `rocky config confirmations --push ask` |
+  | `git push` a `development`/`master` | `AskUserQuestion` — salvo el push que completa un merge ya confirmado con esa misma pregunta |
   | `git merge` — en ambos sentidos (`feature/*`→`development`, `development`→`master`) | `AskUserQuestion` |
-  | `git tag` / publicar un release | `AskUserQuestion` — nunca taguear por acumulación de commits |
-  | Borrar ramas (local o remoto) | `AskUserQuestion` — y solo ramas 100% mergeadas, salvo decisión explícita del humano |
+  | Bump de versión, `git tag`, publicar un release | `AskUserQuestion` — nunca taguear por acumulación de commits |
+  | Borrar la rama `feature/*`/`fix/*` después de su merge (local y remoto) | Automático, solo con `git branch -d`, que se niega si la rama no está 100% mergeada. Se vuelve a preguntar con `rocky config confirmations --branch-delete ask` |
+  | `git branch -D` (forzado) o borrar una rama que no está 100% mergeada | `AskUserQuestion`, siempre |
   | Elegir entre alternativas de diseño o implementación | `AskUserQuestion` con las opciones reales |
   | Avisos que **no** piden decisión (Spec Drift, TODO Size) | Texto en la respuesta, sin bloquear |
 
@@ -120,3 +122,4 @@ Excepciones explícitas a algún artículo de arriba, acordadas para este proyec
 | 2026-09-04 | 1.4.0 | Artículo 7: la pausa antes de `git push` deja de depender del impacto del cambio — aplica siempre, para cualquier commit, vía `AskUserQuestion` | Pedido explícito del usuario para simplificar la regla de 1.3.0: en vez de juzgar caso a caso si un cambio es "breaking o de alcance grande", preguntar siempre |
 | 2026-09-06 | 1.5.0 | Artículo 7: los dos bullets sueltos de `merge` y `push` se reemplazan por una **tabla acción → mecanismo** que cierra el alcance (push, merge, tag, borrado de ramas, elección entre alternativas) y separa las confirmaciones de los avisos que no piden decisión | Pedido explícito del usuario de validar si el uso de `AskUserQuestion` estaba definido "y no en prosa". No lo estaba: solo regía para `push`, `merge` seguía aceptando texto libre, y ni el borrado de ramas ni el tag fijaban mecanismo. La revisión además destapó que `AGENTS.md` se contradecía a sí mismo ("hacer `git push` inmediatamente" en el paso 4 del workflow vs. la pausa obligatoria 80 líneas después) y que los templates distribuidos no llevaban nada de esto |
 | 2026-09-09 | 1.6.0 | Artículo 7: la rama de integración se renombra de `dev` a `development` — mismo rol y reglas, solo cambia el nombre | Pedido explícito del usuario |
+| 2026-11-09 | 1.7.0 | Artículo 7: el push a `feature/*`/`fix/*` y el borrado de la rama después de su merge pasan a ser automáticos (configurable con `rocky config confirmations`, RF-33). El merge, el bump de versión, el tag, el release, `git branch -D` y el push a `development`/`master` se siguen confirmando con `AskUserQuestion`. Revierte en parte las enmiendas 1.3.0 y 1.4.0 | Pedido explícito del usuario: preguntar en cada push frenaba el trabajo sin proteger nada — el push a una rama de feature no integra; la parada real es el merge |
