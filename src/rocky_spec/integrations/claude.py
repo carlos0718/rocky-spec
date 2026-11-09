@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from ..workflow import DEFAULT_CONFIRMATIONS, load_confirmations
 from .base import (
     CommandDefinition,
     IntegrationBase,
@@ -19,13 +20,45 @@ from .base import (
 # Van en ``ask`` y no en ``deny`` a propósito: ``deny`` impediría ejecutarlas
 # incluso con autorización explícita del usuario, y estas son operaciones
 # legítimas del día a día. ``ask`` frena y deja decidir.
-PERMISSION_ASK_RULES = [
-    "Bash(git push *)",
+#
+# Desde RF-33 la lista depende de la política de `.rocky-spec/workflow.json`
+# (ver workflow.py). Las de ALWAYS_ASK_RULES no son configurables: integrar,
+# versionar y destruir sin la red de `-d` siempre se confirman. Los patrones de
+# push a ramas principales comparan el texto del comando, no la rama actual
+# — un `git push` pelado parado en `development` no los dispara; por eso el
+# Artículo 7 exige escribir la rama explícita.
+ALWAYS_ASK_RULES = [
     "Bash(git merge *)",
     "Bash(git tag *)",
-    "Bash(git branch -d *)",
+    "Bash(gh release create *)",
     "Bash(git branch -D *)",
+    "Bash(git push * main)",
+    "Bash(git push * master)",
+    "Bash(git push * development)",
 ]
+
+# Reglas que entran solo si la acción configurable está en "ask".
+POLICY_ASK_RULES: dict[str, list[str]] = {
+    "push": ["Bash(git push *)"],
+    "branch_delete": ["Bash(git branch -d *)", "Bash(git push * --delete *)"],
+}
+
+# Todo lo que rocky-spec gestiona: lo único que puede llegar a quitar de
+# `permissions.ask`. Una regla del usuario fuera de este set nunca se toca.
+MANAGED_ASK_RULES = ALWAYS_ASK_RULES + [r for rules in POLICY_ASK_RULES.values() for r in rules]
+
+
+def permission_ask_rules(policy: dict[str, str]) -> list[str]:
+    """Reglas ``ask`` que corresponden a ``policy`` (acción → auto|ask)."""
+    rules = list(ALWAYS_ASK_RULES)
+    for action, action_rules in POLICY_ASK_RULES.items():
+        if policy.get(action) == "ask":
+            rules.extend(action_rules)
+    return rules
+
+
+# Las reglas con la política por defecto (push y borrado automáticos).
+PERMISSION_ASK_RULES = permission_ask_rules(DEFAULT_CONFIRMATIONS)
 
 CLAUDE_SETTINGS_PATH = ".claude/settings.json"
 
@@ -143,15 +176,20 @@ Leer `{shared_dir}/commands/docs-sync.md` y seguirlo al pie de la letra.
 DOCS_SYNC_COMMAND_KEY = "docs-sync"
 
 
-def ensure_permission_rules(project_root: Path) -> dict[str, list[str]]:
-    """Suma las reglas del Artículo 7 a ``.claude/settings.json`` **sin pisar**
-    lo que el usuario ya tenga: si el archivo existe se leen sus claves, se
-    agregan solo las reglas que falten, y todo lo demás se conserva tal cual.
+def ensure_permission_rules(
+    project_root: Path, policy: dict[str, str] | None = None
+) -> dict[str, list[str]]:
+    """Alinea ``.claude/settings.json`` con las reglas del Artículo 7 para
+    ``policy`` (por defecto, la de ``.rocky-spec/workflow.json``) **sin pisar**
+    lo que el usuario ya tenga: se agregan las reglas que falten y se quitan
+    solo las que rocky-spec gestiona (``MANAGED_ASK_RULES``) y la política ya
+    no pide — una regla escrita por el usuario nunca se toca.
 
-    Devuelve un dict con tres listas para que el CLI informe qué pasó:
-    ``added`` (reglas nuevas), ``shadowed`` (reglas que quedan sin efecto
-    porque el usuario tiene el mismo comando en ``allow``) e ``invalid``
-    (el archivo existe pero no es JSON parseable — no se toca nada).
+    Devuelve un dict con cuatro listas para que el CLI informe qué pasó:
+    ``added`` (reglas nuevas), ``removed`` (reglas gestionadas que la política
+    dejó de pedir), ``shadowed`` (reglas que quedan sin efecto porque el
+    usuario tiene el mismo comando en ``allow``) e ``invalid`` (el archivo
+    existe pero no es JSON parseable — no se toca nada).
 
     **No pasa por el manifiesto a propósito.** ``uninstall`` borra los archivos
     trackeados cuyo hash no cambió, así que registrar acá el ``settings.json``
@@ -164,7 +202,10 @@ def ensure_permission_rules(project_root: Path) -> dict[str, list[str]]:
     confirmación nunca aparece. Se avisa en vez de sacarla del ``allow``,
     que sería pisar una decisión del usuario.
     """
-    result: dict[str, list[str]] = {"added": [], "shadowed": [], "invalid": []}
+    result: dict[str, list[str]] = {"added": [], "removed": [], "shadowed": [], "invalid": []}
+    if policy is None:
+        policy = load_confirmations(project_root)
+    wanted = permission_ask_rules(policy)
     settings_path = project_root / CLAUDE_SETTINGS_PATH
 
     settings: dict = {}
@@ -189,14 +230,19 @@ def ensure_permission_rules(project_root: Path) -> dict[str, list[str]]:
         result["invalid"].append(CLAUDE_SETTINGS_PATH)
         return result
 
-    for rule in PERMISSION_ASK_RULES:
+    for rule in list(ask):
+        if rule in MANAGED_ASK_RULES and rule not in wanted:
+            ask.remove(rule)
+            result["removed"].append(rule)
+
+    for rule in wanted:
         if rule not in ask:
             ask.append(rule)
             result["added"].append(rule)
         if rule in allow:
             result["shadowed"].append(rule)
 
-    if not result["added"]:
+    if not result["added"] and not result["removed"]:
         return result  # nada que escribir: no tocar el archivo ni su mtime
 
     settings_path.parent.mkdir(parents=True, exist_ok=True)

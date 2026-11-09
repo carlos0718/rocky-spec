@@ -5,8 +5,9 @@ from pathlib import Path
 
 import click
 
-from . import scaffold
+from . import scaffold, workflow
 from .integrations import INTEGRATION_REGISTRY, SHARED_DIR_NAME
+from .integrations.claude import ensure_permission_rules
 from .integrations.cursor import CURSOR_RULE_PATH
 from .scripts import accessibility_check
 from .scripts import anchor_check
@@ -74,23 +75,7 @@ def init(path: Path, agents: tuple[str, ...], force: bool) -> None:
         # rocky-spec solo le suma las reglas que falten.
         perms = getattr(integration, "last_permission_result", None)
         if perms:
-            if perms["invalid"]:
-                click.echo(
-                    "    ⚠️  .claude/settings.json existe pero no es JSON válido — "
-                    "no se tocó. Agregá las reglas del Artículo 7 a mano."
-                )
-            elif perms["added"]:
-                click.echo(
-                    f"    + {len(perms['added'])} regla(s) de confirmación en "
-                    ".claude/settings.json (permissions.ask)"
-                )
-            if perms["shadowed"]:
-                click.echo(
-                    "    ⚠️  estas reglas no van a pedir confirmación porque el mismo "
-                    "comando está en permissions.allow (allow gana sobre ask):"
-                )
-                for rule in perms["shadowed"]:
-                    click.echo(f"         {rule}")
+            _print_permission_result(perms)
 
         # Anclas al conocimiento compartido (CLAUDE.md -> @AGENTS.md, rocky.mdc
         # -> puntero a .rocky-spec/). Ninguna de las dos entra al manifiesto:
@@ -251,6 +236,80 @@ def update(path: Path, dry_run: bool) -> None:
         click.echo("\n⚠️  Drift de Modo Adopción detectado:")
         _print_report(drift_report)
         _print_drift_next_steps()
+
+
+def _print_permission_result(perms: dict[str, list[str]]) -> None:
+    """Reporte común de ``claude.ensure_permission_rules`` (init y config)."""
+    if perms["invalid"]:
+        click.echo(
+            "    ⚠️  .claude/settings.json existe pero no es JSON válido — "
+            "no se tocó. Ajustá las reglas del Artículo 7 a mano."
+        )
+        return
+    if perms["added"]:
+        click.echo(
+            f"    + {len(perms['added'])} regla(s) de confirmación en "
+            ".claude/settings.json (permissions.ask)"
+        )
+    if perms.get("removed"):
+        click.echo(
+            f"    - {len(perms['removed'])} regla(s) de confirmación quitadas "
+            "(la política ya no las pide):"
+        )
+        for rule in perms["removed"]:
+            click.echo(f"         {rule}")
+    if perms["shadowed"]:
+        click.echo(
+            "    ⚠️  estas reglas no van a pedir confirmación porque el mismo "
+            "comando está en permissions.allow (allow gana sobre ask):"
+        )
+        for rule in perms["shadowed"]:
+            click.echo(f"         {rule}")
+
+
+@main.group(name="config")
+def config() -> None:
+    """Configuración del flujo de trabajo del proyecto (.rocky-spec/workflow.json)."""
+
+
+@config.command(name="confirmations")
+@click.argument("path", type=click.Path(exists=True, file_okay=False, path_type=Path), default=".")
+@click.option("--push", type=click.Choice(workflow.CONFIRMATION_MODES), help="Push a feature/* y fix/*: auto (default) o ask.")
+@click.option(
+    "--branch-delete",
+    type=click.Choice(workflow.CONFIRMATION_MODES),
+    help="Borrar la rama después de su merge: auto (default) o ask.",
+)
+def config_confirmations(path: Path, push: str | None, branch_delete: str | None) -> None:
+    """Muestra o cambia qué acciones de git piden confirmación (Artículo 7).
+
+    Merge, bump/tag/release, `git branch -D` y el push a ramas principales
+    preguntan siempre — no son configurables."""
+    project_root = path.resolve()
+    changes = {k: v for k, v in (("push", push), ("branch_delete", branch_delete)) if v}
+
+    if changes:
+        policy = workflow.save_confirmations(project_root, changes)
+    else:
+        policy = workflow.load_confirmations(project_root)
+
+    click.echo("Política de confirmaciones (Artículo 7):")
+    labels = {"push": "push a feature/* y fix/*", "branch_delete": "borrar rama tras su merge"}
+    for action, mode in policy.items():
+        shown = "automático" if mode == workflow.AUTO else "pregunta"
+        click.echo(f"    {labels[action]:<28} {shown}")
+    click.echo("    merge, bump/tag/release, branch -D, push a ramas principales: pregunta (fijo)")
+
+    if not changes:
+        return
+
+    click.echo(f"\n✓ Guardado en {SHARED_DIR_NAME}/workflow.json")
+    if (project_root / ".claude").is_dir():
+        click.echo("Reglas de .claude/settings.json:")
+        perms = ensure_permission_rules(project_root, policy)
+        _print_permission_result(perms)
+        if not perms["invalid"] and not perms["added"] and not perms["removed"]:
+            click.echo("    · ya estaban alineadas")
 
 
 @main.command(name="commands")

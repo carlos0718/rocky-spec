@@ -141,13 +141,94 @@ def test_permission_rules_report_rules_shadowed_by_allow(tmp_path):
 
     (tmp_path / ".claude").mkdir()
     (tmp_path / ".claude" / "settings.json").write_text(
-        json.dumps({"permissions": {"allow": ["Bash(git push *)"]}}), encoding="utf-8"
+        json.dumps({"permissions": {"allow": ["Bash(git merge *)"]}}), encoding="utf-8"
     )
 
     result = ensure_permission_rules(tmp_path)
 
-    assert result["shadowed"] == ["Bash(git push *)"]
-    assert _settings(tmp_path)["permissions"]["allow"] == ["Bash(git push *)"]
+    assert result["shadowed"] == ["Bash(git merge *)"]
+    assert _settings(tmp_path)["permissions"]["allow"] == ["Bash(git merge *)"]
+
+
+def test_default_policy_asks_merge_and_release_but_not_push_or_branch_delete(tmp_path):
+    # RF-33: push a feature/fix y borrado tras el merge son automáticos por
+    # defecto; integrar y versionar siempre preguntan.
+    from rocky_spec.integrations.claude import ensure_permission_rules
+
+    ensure_permission_rules(tmp_path)
+    ask = _settings(tmp_path)["permissions"]["ask"]
+
+    for rule in ("Bash(git merge *)", "Bash(git tag *)", "Bash(gh release create *)",
+                 "Bash(git branch -D *)", "Bash(git push * main)", "Bash(git push * development)"):
+        assert rule in ask
+    assert "Bash(git push *)" not in ask
+    assert "Bash(git branch -d *)" not in ask
+
+
+def test_policy_ask_adds_push_and_branch_delete_rules(tmp_path):
+    from rocky_spec.integrations.claude import ensure_permission_rules
+
+    result = ensure_permission_rules(tmp_path, {"push": "ask", "branch_delete": "ask"})
+    ask = _settings(tmp_path)["permissions"]["ask"]
+
+    assert "Bash(git push *)" in ask
+    assert "Bash(git branch -d *)" in ask
+    assert "Bash(git push * --delete *)" in ask
+    assert "Bash(git push *)" in result["added"]
+
+
+def test_switching_policy_back_to_auto_removes_only_managed_rules(tmp_path):
+    # Un proyecto generado antes de RF-33 tiene `git push *` y `git branch -d *`
+    # en ask. Al alinear con la política por defecto se quitan esas — y solo
+    # esas: una regla del usuario nunca se toca.
+    import json
+
+    from rocky_spec.integrations.claude import ensure_permission_rules
+
+    (tmp_path / ".claude").mkdir()
+    legacy = ["Bash(rm -rf *)", "Bash(git push *)", "Bash(git merge *)",
+              "Bash(git tag *)", "Bash(git branch -d *)", "Bash(git branch -D *)"]
+    (tmp_path / ".claude" / "settings.json").write_text(
+        json.dumps({"permissions": {"ask": legacy}}), encoding="utf-8"
+    )
+
+    result = ensure_permission_rules(tmp_path)
+    ask = _settings(tmp_path)["permissions"]["ask"]
+
+    assert sorted(result["removed"]) == ["Bash(git branch -d *)", "Bash(git push *)"]
+    assert ask[0] == "Bash(rm -rf *)", "se tocó una regla del usuario"
+    assert "Bash(git push *)" not in ask
+    assert "Bash(git merge *)" in ask
+
+
+def test_permission_rules_follow_workflow_json(tmp_path):
+    from rocky_spec.integrations.claude import ensure_permission_rules
+    from rocky_spec.workflow import save_confirmations
+
+    save_confirmations(tmp_path, {"push": "ask"})
+    ensure_permission_rules(tmp_path)
+    ask = _settings(tmp_path)["permissions"]["ask"]
+
+    assert "Bash(git push *)" in ask
+    assert "Bash(git branch -d *)" not in ask
+
+
+def test_config_confirmations_cli_realigns_settings(tmp_path):
+    from click.testing import CliRunner
+
+    from rocky_spec.cli import main
+
+    (tmp_path / ".claude").mkdir()
+    runner = CliRunner()
+
+    result = runner.invoke(main, ["config", "confirmations", str(tmp_path), "--push", "ask"])
+    assert result.exit_code == 0, result.output
+    assert "Bash(git push *)" in _settings(tmp_path)["permissions"]["ask"]
+
+    result = runner.invoke(main, ["config", "confirmations", str(tmp_path), "--push", "auto"])
+    assert result.exit_code == 0, result.output
+    assert "Bash(git push *)" not in _settings(tmp_path)["permissions"]["ask"]
+    assert "quitadas" in result.output
 
 
 def test_permission_rules_leave_a_corrupt_settings_file_untouched(tmp_path):
